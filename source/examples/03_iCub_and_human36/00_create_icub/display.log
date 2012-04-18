@@ -1,0 +1,391 @@
+17:16:53: Creating resource group General
+17:16:53: Creating resource group Internal
+17:16:53: Creating resource group Autodetect
+17:16:53: SceneManagerFactory for type 'DefaultSceneManager' registered.
+17:16:53: Registering ResourceManager for type Material
+17:16:53: Registering ResourceManager for type Mesh
+17:16:53: Registering ResourceManager for type Skeleton
+17:16:53: MovableObjectFactory for type 'ParticleSystem' registered.
+17:16:53: OverlayElementFactory for type Panel registered.
+17:16:53: OverlayElementFactory for type BorderPanel registered.
+17:16:53: OverlayElementFactory for type TextArea registered.
+17:16:53: Registering ResourceManager for type Font
+17:16:53: ArchiveFactory for archive type FileSystem registered.
+17:16:53: ArchiveFactory for archive type Zip registered.
+17:16:53: DDS codec registering
+17:16:53: FreeImage version: 3.13.1
+17:16:53: This program uses FreeImage, a free, open source image library supporting all common bitmap formats. See http://freeimage.sourceforge.net for details
+17:16:53: Supported formats: bmp,ico,jpg,jif,jpeg,jpe,jng,koa,iff,lbm,mng,pbm,pbm,pcd,pcx,pgm,pgm,png,ppm,ppm,ras,tga,targa,tif,tiff,wap,wbmp,wbm,psd,cut,xbm,xpm,gif,hdr,g3,sgi,exr,j2k,j2c,jp2,pfm,pct,pict,pic,bay,bmq,cr2,crw,cs1,dc2,dcr,dng,erf,fff,hdr,k25,kdc,mdc,mos,mrw,nef,orf,pef,pxn,raf,raw,rdc,sr2,srf,arw,3fr,cine,ia,kc2,mef,nrw,qtk,rw2,sti,drf,dsc,ptx,cap,iiq,rwz
+17:16:53: Registering ResourceManager for type HighLevelGpuProgram
+17:16:53: Registering ResourceManager for type Compositor
+17:16:53: MovableObjectFactory for type 'Entity' registered.
+17:16:53: MovableObjectFactory for type 'Light' registered.
+17:16:53: MovableObjectFactory for type 'BillboardSet' registered.
+17:16:53: MovableObjectFactory for type 'ManualObject' registered.
+17:16:53: MovableObjectFactory for type 'BillboardChain' registered.
+17:16:53: MovableObjectFactory for type 'RibbonTrail' registered.
+17:16:53: *-*-* OGRE Initialising
+17:16:53: *-*-* Version 1.7.1 (Cthugha)
+17:16:53: Loading library C:\xde\bin\Plugin_BSPSceneManager.dll
+17:16:53: Installing plugin: BSP Scene Manager
+17:16:53: Plugin successfully installed
+17:16:53: Loading library C:\xde\bin\Plugin_CgProgramManager.dll
+17:16:53: Installing plugin: Cg Program Manager
+17:16:53: Plugin successfully installed
+17:16:53: Loading library C:\xde\bin\Plugin_PCZSceneManager.dll
+17:16:53: Installing plugin: Portal Connected Zone Scene Manager
+17:16:53: PCZone Factory Type 'ZoneType_Default' registered
+17:16:53: Plugin successfully installed
+17:16:53: Loading library C:\xde\bin\Plugin_OctreeZone.dll
+17:16:53: Installing plugin: Octree Zone Factory
+17:16:53: Plugin successfully installed
+17:16:53: Loading library C:\xde\bin\Plugin_ParticleFX.dll
+17:16:53: Installing plugin: ParticleFX
+17:16:53: Particle Emitter Type 'Point' registered
+17:16:53: Particle Emitter Type 'Box' registered
+17:16:53: Particle Emitter Type 'Ellipsoid' registered
+17:16:53: Particle Emitter Type 'Cylinder' registered
+17:16:53: Particle Emitter Type 'Ring' registered
+17:16:53: Particle Emitter Type 'HollowEllipsoid' registered
+17:16:53: Particle Affector Type 'LinearForce' registered
+17:16:53: Particle Affector Type 'ColourFader' registered
+17:16:53: Particle Affector Type 'ColourFader2' registered
+17:16:53: Particle Affector Type 'ColourImage' registered
+17:16:53: Particle Affector Type 'ColourInterpolator' registered
+17:16:53: Particle Affector Type 'Scaler' registered
+17:16:53: Particle Affector Type 'Rotator' registered
+17:16:53: Particle Affector Type 'DirectionRandomiser' registered
+17:16:53: Particle Affector Type 'DeflectorPlane' registered
+17:16:53: Plugin successfully installed
+17:16:53: Loading library C:\xde\bin\Plugin_OctreeSceneManager.dll
+17:16:53: Installing plugin: Octree & Terrain Scene Manager
+17:16:53: Plugin successfully installed
+17:16:53: Loading library C:\xde\bin\RenderSystem_GL.dll
+17:16:53: Installing plugin: GL RenderSystem
+17:16:53: OpenGL Rendering Subsystem created.
+17:16:53: Plugin successfully installed
+17:16:53: Added resource location 'C:\xde\bin\..\share/resources/ogre/manikin' of type 'FileSystem' to resource group 'General'
+17:16:53: Added resource location 'C:\xde\bin\..\share/resources/ogre/meshes' of type 'FileSystem' to resource group 'General'
+17:16:53: Added resource location 'C:\xde\bin\..\share/resources/ogre/materials' of type 'FileSystem' to resource group 'General'
+17:16:53: Added resource location 'C:\xde\bin\..\share/resources/ogre/materials/textures' of type 'FileSystem' to resource group 'General'
+17:16:53: WARNING: Unable to open resource location C:\xde\bin\..\share/resources/ogre/materials/textures/ocean
+17:16:53: Added resource location 'C:\xde\bin\..\share/resources/ogre/materials/programs' of type 'FileSystem' to resource group 'General'
+17:16:53: Added resource location 'C:\xde\bin\..\share/resources/ogre/materials/core' of type 'FileSystem' to resource group 'General'
+17:16:53: Added resource location 'C:\xde\bin\..\share/resources/ogre/materials/shadow' of type 'FileSystem' to resource group 'General'
+17:16:53: Added resource location 'C:\xde\bin\..\share/resources/ogre/materials/ssao' of type 'FileSystem' to resource group 'General'
+17:16:53: CPU Identifier & Features
+17:16:53: -------------------------
+17:16:53:  *   CPU ID: GenuineIntel: Intel(R) Core(TM) i5-2410M CPU @ 2.30GHz
+17:16:53:  *      SSE: yes
+17:16:53:  *     SSE2: yes
+17:16:53:  *     SSE3: yes
+17:16:53:  *      MMX: yes
+17:16:53:  *   MMXEXT: yes
+17:16:53:  *    3DNOW: no
+17:16:53:  * 3DNOWEXT: no
+17:16:53:  *     CMOV: yes
+17:16:53:  *      TSC: yes
+17:16:53:  *      FPU: yes
+17:16:53:  *      PRO: yes
+17:16:53:  *       HT: no
+17:16:53: -------------------------
+17:16:53: *** Starting Win32GL Subsystem ***
+17:16:53: GLRenderSystem::_createRenderWindow "mainWindow", 1024x768 windowed  miscParams: FSAA=0 FSAAHint= colourDepth=32 displayFrequency=0 gamma=false vsync=false vsyncInterval=1 
+17:16:53: Created Win32Window 'mainWindow' : 1040x728, 32bpp
+17:16:53: GL_VERSION = 3.1.0 - Build 8.15.10.2509
+17:16:53: GL_VENDOR = Intel
+17:16:53: GL_RENDERER = Intel(R) HD Graphics Family
+17:16:53: GL_EXTENSIONS = GL_EXT_blend_minmax GL_EXT_blend_subtract GL_EXT_blend_color GL_EXT_abgr GL_EXT_texture3D GL_EXT_clip_volume_hint GL_EXT_compiled_vertex_array GL_SGIS_texture_edge_clamp GL_SGIS_generate_mipmap GL_EXT_draw_range_elements GL_SGIS_texture_lod GL_EXT_rescale_normal GL_EXT_packed_pixels GL_EXT_texture_edge_clamp GL_EXT_separate_specular_color GL_ARB_multitexture GL_EXT_texture_env_combine GL_EXT_bgra GL_EXT_blend_func_separate GL_EXT_secondary_color GL_EXT_fog_coord GL_EXT_texture_env_add GL_ARB_texture_cube_map GL_ARB_transpose_matrix GL_ARB_texture_env_add GL_IBM_texture_mirrored_repeat GL_EXT_multi_draw_arrays GL_NV_blend_square GL_ARB_texture_compression GL_3DFX_texture_compression_FXT1 GL_EXT_texture_filter_anisotropic GL_ARB_texture_border_clamp GL_ARB_point_parameters GL_ARB_texture_env_combine GL_ARB_texture_env_dot3 GL_ARB_texture_env_crossbar GL_EXT_texture_compression_s3tc GL_ARB_shadow GL_ARB_window_pos GL_EXT_shadow_funcs GL_EXT_stencil_wrap GL_ARB_vertex_program GL_EXT_texture_rectangle GL_ARB_fragment_program GL_EXT_stencil_two_side GL_ATI_separate_stencil GL_ARB_vertex_buffer_object GL_EXT_texture_lod_bias GL_ARB_occlusion_query GL_ARB_fragment_shader GL_ARB_shader_objects GL_ARB_shading_language_100 GL_ARB_texture_non_power_of_two GL_ARB_vertex_shader GL_NV_texgen_reflection GL_ARB_point_sprite GL_ARB_fragment_program_shadow GL_EXT_blend_equation_separate GL_ARB_depth_texture GL_ARB_texture_rectangle GL_ARB_draw_buffers GL_ARB_color_buffer_float GL_ARB_half_float_pixel GL_ARB_texture_float GL_ARB_pixel_buffer_object GL_EXT_framebuffer_object GL_ARB_draw_instanced GL_ARB_half_float_vertex GL_EXT_draw_buffers2 GL_WIN_swap_hint GL_EXT_texture_sRGB GL_ARB_multisample GL_EXT_packed_float GL_EXT_texture_shared_exponent GL_ARB_texture_rg GL_ARB_texture_compression_rgtc GL_NV_conditional_render GL_EXT_texture_swizzle GL_ARB_sync GL_ARB_framebuffer_sRGB GL_EXT_packed_depth_stencil GL_ARB_depth_buffer_float GL_EXT_transform_feedback GL_EXT_framebuffer_blit GL_EXT_framebuffer_multisample GL_ARB_framebuffer_object GL_EXT_texture_array GL_EXT_texture_integer GL_ARB_map_buffer_range GL_EXT_texture_snorm GL_INTEL_performance_queries GL_ARB_copy_buffer GL_ARB_sampler_objects GL_NV_primitive_restart GL_ARB_seamless_cube_map GL_ARB_uniform_buffer_object GL_ARB_depth_clamp GL_ARB_vertex_array_bgra GL_ARB_draw_elements_base_vertex GL_ARB_fragment_coord_conventions GL_EXT_gpu_program_parameters GL_ARB_compatibility GL_ARB_vertex_array_object 
+17:16:53: Supported WGL extensions: WGL_EXT_depth_float WGL_ARB_buffer_region WGL_ARB_extensions_string WGL_ARB_make_current_read WGL_ARB_pixel_format WGL_ARB_pbuffer WGL_EXT_extensions_string WGL_EXT_swap_control WGL_ARB_multisample WGL_ARB_pixel_format_float WGL_ARB_framebuffer_sRGB WGL_ARB_create_context WGL_EXT_pixel_format_packed_float 
+17:16:53: ***************************
+17:16:53: *** GL Renderer Started ***
+17:16:53: ***************************
+17:16:53: Registering ResourceManager for type GpuProgram
+17:16:53: GLSL support detected
+17:16:53: GL: Using GL_EXT_framebuffer_object for rendering to textures (best)
+17:16:53: FBO PF_UNKNOWN depth/stencil support: D0S1 D0S4 D0S8 D0S16 D16S0 D24S0 D32S0 Packed-D24S8 
+17:16:53: FBO PF_A8 depth/stencil support: D0S0 D0S1 D0S4 D0S8 D0S16 D16S0 D24S0 D32S0 Packed-D24S8 
+17:16:53: FBO PF_R5G6B5 depth/stencil support: D0S0 D0S1 D0S4 D0S8 D0S16 D16S0 D24S0 D32S0 Packed-D24S8 
+17:16:53: FBO PF_B5G6R5 depth/stencil support: D0S0 D0S1 D0S4 D0S8 D0S16 D16S0 D24S0 D32S0 Packed-D24S8 
+17:16:53: FBO PF_R8G8B8 depth/stencil support: D0S0 D0S1 D0S4 D0S8 D0S16 D16S0 D24S0 D32S0 Packed-D24S8 
+17:16:53: FBO PF_B8G8R8 depth/stencil support: D0S0 D0S1 D0S4 D0S8 D0S16 D16S0 D24S0 D32S0 Packed-D24S8 
+17:16:53: FBO PF_A8R8G8B8 depth/stencil support: D0S0 D0S1 D0S4 D0S8 D0S16 D16S0 D24S0 D32S0 Packed-D24S8 
+17:16:53: FBO PF_B8G8R8A8 depth/stencil support: D0S0 D0S1 D0S4 D0S8 D0S16 D16S0 D24S0 D32S0 Packed-D24S8 
+17:16:53: FBO PF_A2R10G10B10 depth/stencil support: D0S0 D0S1 D0S4 D0S8 D0S16 D16S0 D24S0 D32S0 Packed-D24S8 
+17:16:53: FBO PF_A2B10G10R10 depth/stencil support: D0S0 D0S1 D0S4 D0S8 D0S16 D16S0 D24S0 D32S0 Packed-D24S8 
+17:16:53: FBO PF_FLOAT16_RGB depth/stencil support: D0S0 D0S1 D0S4 D0S8 D0S16 D16S0 D24S0 D32S0 Packed-D24S8 
+17:16:53: FBO PF_FLOAT16_RGBA depth/stencil support: D0S0 D0S1 D0S4 D0S8 D0S16 D16S0 D24S0 D32S0 Packed-D24S8 
+17:16:53: FBO PF_FLOAT32_RGB depth/stencil support: D0S0 D0S1 D0S4 D0S8 D0S16 D16S0 D24S0 D32S0 Packed-D24S8 
+17:16:53: FBO PF_FLOAT32_RGBA depth/stencil support: D0S0 D0S1 D0S4 D0S8 D0S16 D16S0 D24S0 D32S0 Packed-D24S8 
+17:16:53: FBO PF_X8R8G8B8 depth/stencil support: D0S0 D0S1 D0S4 D0S8 D0S16 D16S0 D24S0 D32S0 Packed-D24S8 
+17:16:53: FBO PF_X8B8G8R8 depth/stencil support: D0S0 D0S1 D0S4 D0S8 D0S16 D16S0 D24S0 D32S0 Packed-D24S8 
+17:16:53: FBO PF_SHORT_RGBA depth/stencil support: D0S0 D0S1 D0S4 D0S8 D0S16 D16S0 D24S0 D32S0 Packed-D24S8 
+17:16:53: FBO PF_R3G3B2 depth/stencil support: D0S0 D0S1 D0S4 D0S8 D0S16 D16S0 D24S0 D32S0 Packed-D24S8 
+17:16:53: FBO PF_SHORT_RGB depth/stencil support: D0S0 D0S1 D0S4 D0S8 D0S16 D16S0 D24S0 D32S0 Packed-D24S8 
+17:16:53: [GL] : Valid FBO targets PF_UNKNOWN PF_A8 PF_R5G6B5 PF_B5G6R5 PF_R8G8B8 PF_B8G8R8 PF_A8R8G8B8 PF_B8G8R8A8 PF_A2R10G10B10 PF_A2B10G10R10 PF_FLOAT16_RGB PF_FLOAT16_RGBA PF_FLOAT32_RGB PF_FLOAT32_RGBA PF_X8R8G8B8 PF_X8B8G8R8 PF_SHORT_RGBA PF_R3G3B2 PF_SHORT_RGB 
+17:16:53: RenderSystem capabilities
+17:16:53: -------------------------
+17:16:53: RenderSystem Name: OpenGL Rendering Subsystem
+17:16:53: GPU Vendor: intel
+17:16:53: Device Name: Intel(R) HD Graphics Family
+17:16:53: Driver Version: 3.1.0.0
+17:16:53:  * Fixed function pipeline: yes
+17:16:53:  * Hardware generation of mipmaps: no
+17:16:53:  * Texture blending: yes
+17:16:53:  * Anisotropic texture filtering: yes
+17:16:53:  * Dot product texture operation: yes
+17:16:53:  * Cube mapping: yes
+17:16:53:  * Hardware stencil buffer: yes
+17:16:53:    - Stencil depth: 8
+17:16:53:    - Two sided stencil support: yes
+17:16:53:    - Wrap stencil values: yes
+17:16:53:  * Hardware vertex / index buffers: yes
+17:16:53:  * Vertex programs: yes
+17:16:53:  * Number of floating-point constants for vertex programs: 256
+17:16:53:  * Number of integer constants for vertex programs: 0
+17:16:53:  * Number of boolean constants for vertex programs: 0
+17:16:53:  * Fragment programs: yes
+17:16:53:  * Number of floating-point constants for fragment programs: 256
+17:16:53:  * Number of integer constants for fragment programs: 0
+17:16:53:  * Number of boolean constants for fragment programs: 0
+17:16:53:  * Geometry programs: no
+17:16:53:  * Number of floating-point constants for geometry programs: 26214
+17:16:53:  * Number of integer constants for geometry programs: 29557
+17:16:53:  * Number of boolean constants for geometry programs: 11877
+17:16:53:  * Supported Shader Profiles: arbfp1 arbvp1 glsl
+17:16:53:  * Texture Compression: yes
+17:16:53:    - DXT: yes
+17:16:53:    - VTC: no
+17:16:53:    - PVRTC: no
+17:16:53:  * Scissor Rectangle: yes
+17:16:53:  * Hardware Occlusion Query: yes
+17:16:53:  * User clip planes: yes
+17:16:53:  * VET_UBYTE4 vertex element type: yes
+17:16:53:  * Infinite far plane projection: yes
+17:16:53:  * Hardware render-to-texture: yes
+17:16:53:  * Floating point textures: yes
+17:16:53:  * Non-power-of-two textures: yes
+17:16:53:  * Volume textures: yes
+17:16:53:  * Multiple Render Targets: 8
+17:16:53:    - With different bit depths: yes
+17:16:53:  * Point Sprites: yes
+17:16:53:  * Extended point parameters: yes
+17:16:53:  * Max Point Size: 255
+17:16:53:  * Vertex texture fetch: yes
+17:16:53:  * Number of world matrices: 0
+17:16:53:  * Number of texture units: 16
+17:16:53:  * Stencil buffer depth: 8
+17:16:53:  * Number of vertex blend matrices: 0
+17:16:53:    - Max vertex textures: 16
+17:16:53:    - Vertex textures shared: yes
+17:16:53:  * Render to Vertex Buffer : no
+17:16:53:  * GL 1.5 without VBO workaround: no
+17:16:53:  * Frame Buffer objects: yes
+17:16:53:  * Frame Buffer objects (ARB extension): no
+17:16:53:  * Frame Buffer objects (ATI extension): no
+17:16:53:  * PBuffer support: no
+17:16:53:  * GL 1.5 without HW-occlusion workaround: no
+17:16:53: Registering ResourceManager for type Texture
+17:16:53: DefaultWorkQueue('Root') initialising on thread main.
+17:16:53: Particle Renderer Type 'billboard' registered
+17:16:53: SceneManagerFactory for type 'BspSceneManager' registered.
+17:16:53: Registering ResourceManager for type BspLevel
+17:16:53: SceneManagerFactory for type 'PCZSceneManager' registered.
+17:16:53: MovableObjectFactory for type 'PCZLight' registered.
+17:16:53: MovableObjectFactory for type 'Portal' registered.
+17:16:53: MovableObjectFactory for type 'AntiPortal' registered.
+17:16:53: PCZone Factory Type 'ZoneType_Octree' registered
+17:16:53: PCZone Factory Type 'ZoneType_Terrain' registered
+17:16:53: SceneManagerFactory for type 'OctreeSceneManager' registered.
+17:16:53: SceneManagerFactory for type 'TerrainSceneManager' registered.
+17:16:53: Parsing scripts for resource group Autodetect
+17:16:53: Finished parsing scripts for resource group Autodetect
+17:16:53: Parsing scripts for resource group General
+17:16:53: Parsing script StdQuad_vp.program
+17:16:53: Parsing script ambient.program
+17:16:53: Parsing script diffuse.program
+17:16:53: Parsing script shadow_caster.program
+17:16:53: Parsing script ssao.program
+17:16:53: Parsing script Mannequin-glsl.material
+17:16:53: GLSL compiling: GLSL/BumpMapVP
+17:16:53: Cannot compile GLSL high-level shader : GLSL/BumpMapVP WARNING: 0:35: 'mul' : implicit conversion is allowed from GLSL 1.20 
+ERROR: 0:35: 'mul' : no matching overloaded function found (using implicit conversion) 
+ERROR: 0:35: 'assign' :  cannot convert from 'const float' to 'varying 3-component vector of float'
+
+
+17:16:53: OGRE EXCEPTION(7:InternalErrorException): Cannot compile GLSL high-level shader : GLSL/BumpMapVP Cannot compile GLSL high-level shader : GLSL/BumpMapVP WARNING: 0:35: 'mul' : implicit conversion is allowed from GLSL 1.20 
+ERROR: 0:35: 'mul' : no matching overloaded function found (using implicit conversion) 
+ERROR: 0:35: 'assign' :  cannot convert from 'const float' to 'varying 3-component vector of float'
+
+ in GLSLProgram::compile at ..\..\..\ogre_src_v1-7-1\RenderSystems\GL\src\GLSL\src\OgreGLSLExtSupport.cpp (line 65)
+17:16:53: High-level program GLSL/BumpMapVP encountered an error during loading and is thus not supported.
+OGRE EXCEPTION(7:InternalErrorException): Cannot compile GLSL high-level shader : GLSL/BumpMapVP Cannot compile GLSL high-level shader : GLSL/BumpMapVP WARNING: 0:35: 'mul' : implicit conversion is allowed from GLSL 1.20 
+ERROR: 0:35: 'mul' : no matching overloaded function found (using implicit conversion) 
+ERROR: 0:35: 'assign' :  cannot convert from 'const float' to 'varying 3-component vector of float'
+
+ in GLSLProgram::compile at ..\..\..\ogre_src_v1-7-1\RenderSystems\GL\src\GLSL\src\OgreGLSLExtSupport.cpp (line 65)
+17:16:53: Compiler error: reference to a non existing object in Mannequin-glsl.material(327)
+17:16:53: Parsing script Mannequin.material
+17:16:53: Compiler error: reference to a non existing object in Mannequin.material(135)
+17:16:53: Compiler error: reference to a non existing object in Mannequin.material(222)
+17:16:53: Parsing script cable.material
+17:16:53: Parsing script cloud.material
+17:16:53: GLSL compiling: shader/cloudSFP
+17:16:53: GLSL compiled : shader/cloudSFPWARNING: 0:15: 'assign' : implict conversion between types allowed from GLSL 1.20 
+
+No errors.
+
+17:16:53: GLSL compiling: shader/cloudSVP
+17:16:53: GLSL compiled : shader/cloudSVPNo errors.
+
+17:16:53: GLSL compiling: shader/fluidSFP
+17:16:53: GLSL compiled : shader/fluidSFPNo errors.
+
+17:16:53: GLSL compiling: shader/fluidSVP
+17:16:53: GLSL compiled : shader/fluidSVPNo errors.
+
+17:16:53: Parsing script fluid.material
+17:16:53: GLSL compiling: fluid/fluidVS
+17:16:53: GLSL compiled : fluid/fluidVSNo errors.
+
+17:16:53: GLSL compiling: fluid/fluidFS
+17:16:53: GLSL compiled : fluid/fluidFSWARNING: 0:44: 'assign' : implict conversion between types allowed from GLSL 1.20 
+
+No errors.
+
+17:16:53: GLSL compiling: fluid/pinky
+17:16:53: GLSL compiled : fluid/pinkyWARNING: 0:18: 'assign' : implict conversion between types allowed from GLSL 1.20 
+
+No errors.
+
+17:16:53: GLSL compiling: fluid/fluidFirstFS
+17:16:53: GLSL compiled : fluid/fluidFirstFSNo errors.
+
+17:16:53: GLSL compiling: fluid/QuadVS
+17:16:53: GLSL compiled : fluid/QuadVSNo errors.
+
+17:16:53: GLSL compiling: fluid/compositor/fluid1
+17:16:53: GLSL compiled : fluid/compositor/fluid1WARNING: 0:36: 'assign' : implict conversion between types allowed from GLSL 1.20 
+
+No errors.
+
+17:16:53: Parsing script gui.material
+17:16:53: Parsing script sky.material
+17:16:53: Parsing script template.material
+17:16:53: Parsing script volumeLines.material
+17:16:53: Parsing script xde.material
+17:16:53: Compiler error: invalid parameters in xde.material(101): clockwise is not a valid ManualCullingMode
+17:16:53: Compiler error: invalid parameters in xde.material(165): clockwise is not a valid ManualCullingMode
+17:16:53: Parsing script TemplateCore.material
+17:16:53: Compiler error: unknown error in TemplateCore.material(401): token "ambient" is not recognized
+17:16:53: GLSL compiling: PlainColor-vert
+17:16:53: GLSL compiled : PlainColor-vertNo errors.
+
+17:16:53: GLSL compiling: PlainColor-frag
+17:16:53: GLSL compiled : PlainColor-fragNo errors.
+
+17:16:53: GLSL compiling: Distance-vert
+17:16:53: GLSL compiled : Distance-vertNo errors.
+
+17:16:53: GLSL compiling: Distance-frag
+17:16:53: GLSL compiled : Distance-fragWARNING: 0:13: 'assign' : implict conversion between types allowed from GLSL 1.20 
+WARNING: 0:13: 'assign' : implict conversion between types allowed from GLSL 1.20 
+WARNING: 0:13: 'assign' : implict conversion between types allowed from GLSL 1.20 
+
+No errors.
+
+17:16:53: Parsing script DepthShadowmap.material
+17:16:53: GLSL compiling: Ogre/DepthShadowmap/CasterVP_GLSL
+17:16:53: GLSL compiled : Ogre/DepthShadowmap/CasterVP_GLSLNo errors.
+
+17:16:53: GLSL compiling: Ogre/DepthShadowmap/CasterFP_GLSL
+17:16:53: GLSL compiled : Ogre/DepthShadowmap/CasterFP_GLSLNo errors.
+
+17:16:53: GLSL compiling: Ogre/DepthShadowmap/ReceiverVP_GLSL
+17:16:53: GLSL compiled : Ogre/DepthShadowmap/ReceiverVP_GLSLNo errors.
+
+17:16:53: GLSL compiling: Ogre/DepthShadowmap/ReceiverFP_GLSL
+17:16:53: GLSL compiled : Ogre/DepthShadowmap/ReceiverFP_GLSLNo errors.
+
+17:16:53: GLSL compiling: Ogre/DepthShadowmap/ReceiverFPPCF_GLSL
+17:16:53: GLSL compiled : Ogre/DepthShadowmap/ReceiverFPPCF_GLSLNo errors.
+
+17:16:53: GLSL compiling: Ogre/DepthShadowmap/NormalMapReceiverVP_GLSL
+17:16:53: GLSL compiled : Ogre/DepthShadowmap/NormalMapReceiverVP_GLSLNo errors.
+
+17:16:53: GLSL compiling: Ogre/DepthShadowmap/NormalMapReceiverFP_GLSL
+17:16:53: GLSL compiled : Ogre/DepthShadowmap/NormalMapReceiverFP_GLSLNo errors.
+
+17:16:53: GLSL compiling: Ogre/DepthShadowmap/NormalMapReceiverFPPCF_GLSL
+17:16:53: GLSL compiled : Ogre/DepthShadowmap/NormalMapReceiverFPPCF_GLSLNo errors.
+
+17:16:53: GLSL compiling: Ogre/BasicVertexPrograms/AmbientOneTextureGLSL
+17:16:53: GLSL compiled : Ogre/BasicVertexPrograms/AmbientOneTextureGLSLNo errors.
+
+17:16:53: Parsing script Shadowmap.material
+17:16:53: GLSL compiling: Ogre/Shadowmap/CasterVP
+17:16:53: GLSL compiled : Ogre/Shadowmap/CasterVPNo errors.
+
+17:16:53: GLSL compiling: Ogre/Shadowmap/CasterFP
+17:16:53: GLSL compiled : Ogre/Shadowmap/CasterFPNo errors.
+
+17:16:53: GLSL compiling: Ogre/Shadowmap/ReceiverVP
+17:16:53: GLSL compiled : Ogre/Shadowmap/ReceiverVPNo errors.
+
+17:16:53: GLSL compiling: Ogre/Shadowmap/ReceiverFP
+17:16:53: GLSL compiled : Ogre/Shadowmap/ReceiverFPNo errors.
+
+17:16:53: GLSL compiling: Ogre/Shadowmap/ReceiverFPPCF
+17:16:53: GLSL compiled : Ogre/Shadowmap/ReceiverFPPCFNo errors.
+
+17:16:53: GLSL compiling: Ogre/Shadowmap/NormalMapReceiverVP
+17:16:53: GLSL compiled : Ogre/Shadowmap/NormalMapReceiverVPNo errors.
+
+17:16:53: GLSL compiling: Ogre/Shadowmap/NormalMapReceiverFP
+17:16:53: GLSL compiled : Ogre/Shadowmap/NormalMapReceiverFPNo errors.
+
+17:16:53: GLSL compiling: Ogre/Shadowmap/NormalMapReceiverFPPCF
+17:16:53: GLSL compiled : Ogre/Shadowmap/NormalMapReceiverFPPCFNo errors.
+
+17:16:53: GLSL compiling: Ogre/BasicVertexPrograms/AmbientOneTextureGLSL
+17:16:53: GLSL compiled : Ogre/BasicVertexPrograms/AmbientOneTextureGLSLNo errors.
+
+17:16:53: Parsing script colours.material
+17:16:53: Parsing script diffuse.material
+17:16:53: Parsing script metal.material
+17:16:53: Parsing script shadow_caster.material
+17:16:53: Parsing script ssao.material
+17:16:53: Parsing script ssao.compositor
+17:16:53: Parsing script Template.fontdef
+17:16:53: Parsing script TemplateDebugPanel.overlay
+17:16:53: Texture: Template_Center.png: Loading 1 faces(PF_A8R8G8B8,256x128x1) with 5 generated mipmaps from Image. Internal format is PF_A8R8G8B8,256x128x1.
+17:16:53: Texture: Template_Border.png: Loading 1 faces(PF_A8R8G8B8,256x256x1) with 5 generated mipmaps from Image. Internal format is PF_A8R8G8B8,256x256x1.
+17:16:53: Texture: Template_Border_Shadow.png: Loading 1 faces(PF_A8R8G8B8,256x256x1) with 5 generated mipmaps from Image. Internal format is PF_A8R8G8B8,256x256x1.
+17:16:53: Texture: Template_Border_Break.png: Loading 1 faces(PF_A8R8G8B8,32x32x1) with 5 generated mipmaps from Image. Internal format is PF_A8R8G8B8,32x32x1.
+17:16:53: Bad overlay attribute line: 'top -0.25' for overlay Core/LogOverlay
+17:16:53: Texture: wheel.png: Loading 1 faces(PF_A8R8G8B8,300x300x1) with 5 generated mipmaps from Image. Internal format is PF_A8R8G8B8,300x300x1.
+17:16:53: Finished parsing scripts for resource group General
+17:16:53: Parsing scripts for resource group Internal
+17:16:53: Finished parsing scripts for resource group Internal
+17:16:53: Texture: load.png: Loading 1 faces(PF_A8R8G8B8,800x600x1) with 5 generated mipmaps from Image. Internal format is PF_A8R8G8B8,800x600x1.
+17:16:53: Texture: knob_empty.png: Loading 1 faces(PF_A8R8G8B8,250x250x1) with 5 generated mipmaps from Image. Internal format is PF_A8R8G8B8,250x250x1.
+17:16:53: Texture: knob_full.png: Loading 1 faces(PF_A8R8G8B8,250x250x1) with 5 generated mipmaps from Image. Internal format is PF_A8R8G8B8,250x250x1.
+17:16:53: Texture: cursor.png: Loading 1 faces(PF_A8R8G8B8,32x32x1) with 5 generated mipmaps from Image. Internal format is PF_A8R8G8B8,32x32x1.
+17:16:53: Texture: cursor2.png: Loading 1 faces(PF_A8R8G8B8,64x64x1) with 5 generated mipmaps from Image. Internal format is PF_A8R8G8B8,64x64x1.
+17:16:53: Texture: floor2_black.png: Loading 1 faces(PF_A8R8G8B8,512x512x1) with 5 generated mipmaps from Image. Internal format is PF_A8R8G8B8,512x512x1.
+17:16:53: Creating resource group mainSceneSceneMgr_group
+17:16:53: Initialising resource group mainSceneSceneMgr_group
+17:16:53: Parsing scripts for resource group mainSceneSceneMgr_group
+17:16:53: Finished parsing scripts for resource group mainSceneSceneMgr_group
+17:16:53: Mesh: Loading frame.mesh.
+17:16:53: WARNING: frame.mesh is an older format ([MeshSerializer_v1.40]); you should upgrade it as soon as possible using the OgreMeshUpgrade tool.
+17:16:53: Texture: axes.png: Loading 1 faces(PF_A8R8G8B8,256x256x1) with 5 generated mipmaps from Image. Internal format is PF_A8R8G8B8,256x256x1.
+17:16:53: Creating resource group CustomMaterials
+17:16:53: Initialising resource group CustomMaterials
+17:16:53: Parsing scripts for resource group CustomMaterials
+17:16:53: Finished parsing scripts for resource group CustomMaterials
+17:17:44: Mesh: Loading axes.mesh.
+17:17:44: WARNING: axes.mesh is an older format ([MeshSerializer_v1.30]); you should upgrade it as soon as possible using the OgreMeshUpgrade tool.
+17:17:45: Font DejaVuSansMonousing texture size 512x512
+17:17:45: Info: Freetype returned null for character 160 in font DejaVuSansMono
+17:17:45: Texture: DejaVuSansMonoTexture: Loading 1 faces(PF_BYTE_LA,512x512x1) with 0 generated mipmaps from Image. Internal format is PF_BYTE_LA,512x512x1.
