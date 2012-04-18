@@ -1,0 +1,1 @@
+sphinx-build.bat -b html  source build/html
