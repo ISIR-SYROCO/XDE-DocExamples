@@ -8,6 +8,8 @@ deploy.loadTypekitsAndPlugins()
 import numpy as np
 import lgsm
 
+import os
+import inspect
 
 ##### Create physic and graphic agents
 import agents.physic.core
@@ -52,7 +54,8 @@ import desc.robot as myDescRobot
 import XDEiCub
 
 def add_iCub():
-    world = myDescScene.parseColladaFile("iCub_meshes.dae")
+    current_path = os.path.dirname(os.path.abspath(inspect.getfile( inspect.currentframe())))
+    world = myDescScene.parseColladaFile(current_path+"/iCub_meshes.dae")
 
     bodies_data = XDEiCub.get_bodies_data()
     meshes_data = XDEiCub.get_meshes_data()

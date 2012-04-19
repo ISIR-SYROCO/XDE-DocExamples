@@ -8,6 +8,10 @@ import os
 import inspect
 cpath = os.path.dirname(os.path.abspath(inspect.getfile( inspect.currentframe()))) + "/"
 sys.path.append(cpath)
+cpath = os.path.dirname(os.path.abspath(inspect.getfile( inspect.currentframe()))) + "/../common"
+sys.path.append(cpath)
+
+print sys.path
 
 import common
 
