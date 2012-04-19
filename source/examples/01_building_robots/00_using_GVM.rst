@@ -3,7 +3,9 @@ Building a robot from GVM module
 ================================
 
 .. note::
-   Get source of this example  :download:`here <00_using_GVM/main.py>`.
+   Get source of this example:
+   
+   * :download:`main.py <00_using_GVM/main.py>`.
 
 **Goal**: This example shows a *low-level* method to create a pendulum using the GVM module.
 It also shows how to connect physic and graphic agents with markers on bodies.

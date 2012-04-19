@@ -3,7 +3,9 @@ Void script
 ===========
 
 .. note::
-   Get source of this example  :download:`here <00_void/main.py>`.
+   Get source of this example:
+   
+   * :download:`main.py <00_void/main.py>`
 
 **Goal**: The following code block shows how to load XDE libraries and
 how to open an interactive shell at the end of the script, to edit scene

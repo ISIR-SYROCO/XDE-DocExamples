@@ -3,7 +3,10 @@ Create a physical agent
 =======================
 
 .. note::
-   Get sources of this example  :download:`here <02_graphic_agent/main_orocos.py>` & :download:`here <02_graphic_agent/main_simple.py>`
+   Get sources of this example:
+   
+   * :download:`main_orocos.py <02_graphic_agent/main_orocos.py>`
+   * :download:`here <02_graphic_agent/main_simple.py>`
 
 **Goal**: This example shows how to instantiate a graphic agent, and what
 are these parameters. There are many ways to create and configure this agent,
