@@ -2,15 +2,16 @@
 Create a physical agent
 =======================
 
-.. note::
-   Get sources of this example:
+.. important::
+   This example shows how to **instantiate a graphic agent**, and what are these parameters.
+   There are many ways to create and configure this agent, as explain in the following sections.
+
+   source files:
    
    * :download:`main_orocos.py <02_graphic_agent/main_orocos.py>`
-   * :download:`here <02_graphic_agent/main_simple.py>`
+   * :download:`main_simple.py <02_graphic_agent/main_simple.py>`
 
-**Goal**: This example shows how to instantiate a graphic agent, and what
-are these parameters. There are many ways to create and configure this agent,
-as explain in the following sections.
+
 
 
 The orocos task
@@ -19,8 +20,7 @@ The orocos task
 Create
 ~~~~~~
 
-The `low-level` technique is to call
-the method :py:meth:`deploy.deployer.rtt.Task`
+The *low-level* technique is to call the method :py:meth:`deploy.deployer.rtt.Task`
 
 .. literalinclude:: 02_graphic_agent/main_orocos.py
    :start-after: ##### Create graphic agent: orocos task
@@ -60,6 +60,7 @@ The viewer is configured as follows
    :end-before: ##### Run agent
 
 
+
 Start & Stop
 ~~~~~~~~~~~~
 
@@ -72,7 +73,7 @@ The agent starts and stops when one calls these functions::
 
 .. warning::
    The call :py:meth:`graph.s.stop` does not stop the viewer window.
-   For know, I don't know how to close it and how to have many viewers at the same time.
+   For now, I don't know how to close it and how to have many viewers at the same time.
 
 
 
@@ -81,7 +82,7 @@ The agents module
 
 The previous method is a little tricky.
 The other way is to use the module :py:mod:`agents.graphic.simple`.
-This creates a graphic agent and a viewer by setting few  parameters.
+This creates a graphical agent and a viewer by setting few parameters.
 
 Create
 ~~~~~~

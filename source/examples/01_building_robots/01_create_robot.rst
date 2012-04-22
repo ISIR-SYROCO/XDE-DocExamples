@@ -2,12 +2,13 @@
 Create a robot
 ==============
 
-.. note::
-   Get source of this example:
+.. important::
+   This example shows how to create a **robot** or a **mechanism**.
+
+   Source files:
    
    * :download:`main.py <01_create_robot_with_GVM/main.py>`.
 
-**Goal**: This example shows 
 
 
 .. warning::

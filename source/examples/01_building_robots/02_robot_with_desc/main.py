@@ -29,7 +29,7 @@ graph, gInterface = common.get_graphic_agent()
 #
 #-------------------------------------------------------------------------------
 
-##### Create a description of the kinematic tree
+##### Create the kinematic tree
 
 # Each node is a segment.
 #
@@ -56,7 +56,8 @@ kin_tree = (body[0], mass, lgsm.Displacement(), [], [
             )])
 
 
-##### Create a description of the kinematic tree
+
+##### Create a world with description of the kinematic tree
 
 import desc.scene
 import desc.robot

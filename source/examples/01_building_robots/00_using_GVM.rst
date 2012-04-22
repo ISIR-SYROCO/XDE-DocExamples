@@ -2,21 +2,23 @@
 Building a robot from GVM module
 ================================
 
-.. note::
-   Get source of this example:
+.. important::
+   This example shows a *low-level* method to **create a pendulum** using the GVM module.
+   It also shows how to connect physic and graphic agents with markers on bodies.
+   For now, we do not talk about *robot* or *mechanism*, we simple create joints and bodies.
+
+   Source files:
    
    * :download:`main.py <00_using_GVM/main.py>`.
 
-**Goal**: This example shows a *low-level* method to create a pendulum using the GVM module.
-It also shows how to connect physic and graphic agents with markers on bodies.
-For now, we do not talk about *robot* or *mechanism*, we simple create joints and bodies.
+
 
 
 Create rigid bodies and configure
 ---------------------------------
 
 Roughly, a rigid body is defined by a name and a mass matrix.
-The following snippet of code present how to create many bodies with a for loop.
+The following snippet of code present how to create many bodies with a ``for`` loop.
 
 
 .. literalinclude:: 00_using_GVM/main.py
