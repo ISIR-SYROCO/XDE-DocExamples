@@ -105,18 +105,18 @@ def get_meshes_data():
                       ('neck_2_mesh', lgsm.Displacement([0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0])),
                          ],
             'r_forearm': [
-                      ('r_forearm_mesh', lgsm.Displacement([0.0, 0.0, 0.074, 0.5, -0.5, -0.5, -0.5])),
+                      ('r_forearm_mesh', lgsm.Displacement([0.0, 0.0, 0.074, 0.7071067812, -0.7071067812, 0.0, 0.0])),
                       ('r_forearm_cyl_mesh', lgsm.Displacement([0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0])),
                          ],
             'head': [
-                      ('head_mesh', lgsm.Displacement([0.0, 0.0, -0.1375, 1.0, 0.0, 0.0, 0.0])),
+                      ('head_mesh', lgsm.Displacement([0.0, 0.0, -0.1375, 0.7071067812, 0.0, 0.0, 0.7071067812])),
                       ('head_sphere_mesh', lgsm.Displacement([0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0])),
                          ],
             'neck_1': [
                       ('neck_1_mesh', lgsm.Displacement([0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0])),
                          ],
             'l_shank': [
-                      ('l_lowerleg_mesh', lgsm.Displacement([0.0, 0.1065, 0.0, 0.5, -0.5, 0.5, 0.5])),
+                      ('l_lowerleg_mesh', lgsm.Displacement([0.0, 0.1065, 0.0, 0.0, 0.0, 0.7071067812, 0.7071067812])),
                       ('l_shank_cyl_mesh', lgsm.Displacement([0.0, 0.0, 0.0, 0.7071067812, 0.7071067812, 0.0, 0.0])),
                          ],
             'l_hip_1': [
@@ -132,18 +132,18 @@ def get_meshes_data():
                       ('l_hip_2_mesh', lgsm.Displacement([0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0])),
                          ],
             'l_arm': [
-                      ('l_upperarm_mesh', lgsm.Displacement([0.0, 0.01, 0.062, 0.7071067812, 0.7071067812, 0.0, 0.0])),
+                      ('l_upperarm_mesh', lgsm.Displacement([0.0, 0.01, 0.062, 0.5, -0.5, 0.5, -0.5])),
                       ('l_arm_cyl_mesh', lgsm.Displacement([0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0])),
                          ],
             'r_ankle_1': [
                       ('r_ankle_1_mesh', lgsm.Displacement([0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0])),
                          ],
             'r_arm': [
-                      ('r_upperarm_mesh', lgsm.Displacement([0.0, 0.01, -0.062, 0.7071067812, 0.7071067812, 0.0, 0.0])),
+                      ('r_upperarm_mesh', lgsm.Displacement([0.0, 0.01, -0.062, 0.5, -0.5, 0.5, -0.5])),
                       ('r_arm_cyl_mesh', lgsm.Displacement([0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0])),
                          ],
             'l_thigh': [
-                      ('l_upperleg_mesh', lgsm.Displacement([0.0, 0.1001968774, 0.0, -0.5, 0.5, 0.5, 0.5])),
+                      ('l_upperleg_mesh', lgsm.Displacement([0.0, 0.1001968774, 0.0, 0.7071067812, -0.7071067812, -0.0, -0.0])),
                       ('l_thigh_cyl1_mesh', lgsm.Displacement([0.0, 0.0381968774, 0.0, -0.5, 0.5, 0.5, 0.5])),
                       ('l_thigh_cyl2_mesh', lgsm.Displacement([0.0, -0.0738031226, 0.0, 0.7071067812, -0.0, -0.0, -0.7071067812])),
                          ],
@@ -154,11 +154,11 @@ def get_meshes_data():
                       ('l_ankle_1_mesh', lgsm.Displacement([0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0])),
                          ],
             'l_foot': [
-                      ('l_foot_mesh', lgsm.Displacement([0.0, -0.0389735499, -0.0427929897, -0.0, 0.0, -0.0773610079, 0.9970031467])),
+                      ('l_foot_mesh', lgsm.Displacement([0.0, -0.0389735499, -0.0427929897, 0.7049876859, 0.0547024933, 0.0547024933, -0.7049876859])),
                       ('l_foot_cyl_mesh', lgsm.Displacement([0.0, -0.0033068434, 0.0042722421, 0.5371820773, -0.4598210694, -0.4598210694, -0.5371820773])),
                          ],
             'r_shank': [
-                      ('r_lowerleg_mesh', lgsm.Displacement([0.0, 0.1065, 0.0, 0.5, -0.5, 0.5, 0.5])),
+                      ('r_lowerleg_mesh', lgsm.Displacement([0.0, 0.1065, 0.0, 0.0, 0.0, 0.7071067812, 0.7071067812])),
                       ('r_shank_cyl_mesh', lgsm.Displacement([0.0, 0.0, 0.0, 0.7071067812, 0.7071067812, 0.0, 0.0])),
                          ],
             'waist': [
@@ -168,7 +168,7 @@ def get_meshes_data():
                       ('l_wrist_1_mesh', lgsm.Displacement([0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0])),
                          ],
             'r_foot': [
-                      ('r_foot_mesh', lgsm.Displacement([0.0, 0.0389735499, -0.0427929897, 0.9970031467, -0.0773610079, -0.0, 0.0])),
+                      ('r_foot_mesh', lgsm.Displacement([0.0, 0.0389735499, -0.0427929897, 0.7049876859, -0.0547024933, 0.0547024933, 0.7049876859])),
                       ('r_foot_cyl_mesh', lgsm.Displacement([0.0, 0.0033068434, 0.0042722421, -0.4598210694, 0.5371820773, 0.5371820773, 0.4598210694])),
                          ],
             'l_hand': [
@@ -181,7 +181,7 @@ def get_meshes_data():
                       ('r_hip_2_mesh', lgsm.Displacement([0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0])),
                          ],
             'chest': [
-                      ('torso_mesh', lgsm.Displacement([0.024, -0.0345517963, 0.0, 0.5, 0.5, 0.5, -0.5])),
+                      ('torso_mesh', lgsm.Displacement([0.024, -0.0345517963, 0.0, 0.7071067812, 0.7071067812, 0.0, -0.0])),
                       ('chest_cylinder_mesh', lgsm.Displacement([-0.0, 0.0647482037, 0.0, -0.5, 0.5, 0.5, 0.5])),
                          ],
             'r_wrist_1': [
@@ -194,11 +194,11 @@ def get_meshes_data():
                       ('l_shoulder_1_mesh', lgsm.Displacement([0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0])),
                          ],
             'l_forearm': [
-                      ('l_forearm_mesh', lgsm.Displacement([0.0, 0.0, -0.074, 0.5, 0.5, -0.5, 0.5])),
+                      ('l_forearm_mesh', lgsm.Displacement([0.0, 0.0, -0.074, 0.0, -0.0, -0.7071067812, 0.7071067812])),
                       ('l_forearm_cyl_mesh', lgsm.Displacement([0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0])),
                          ],
             'r_thigh': [
-                      ('r_upperleg_mesh', lgsm.Displacement([0.0, -0.1001968774, 0.0, 0.5, 0.5, 0.5, -0.5])),
+                      ('r_upperleg_mesh', lgsm.Displacement([0.0, -0.1001968774, 0.0, 0.7071067812, 0.7071067812, -0.0, -0.0])),
                       ('r_thigh_cyl1_mesh', lgsm.Displacement([0.0, -0.0381968774, 0.0, -0.5, 0.5, 0.5, 0.5])),
                       ('r_thigh_cyl2_mesh', lgsm.Displacement([0.0, 0.0738031226, 0.0, 0.7071067812, -0.0, -0.0, -0.7071067812])),
                          ],
@@ -211,7 +211,7 @@ def get_meshes_data():
                       ('r_shoulder_2_mesh', lgsm.Displacement([0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0])),
                          ],
             'lap_belt_1': [
-                      ('pelvis_mesh', lgsm.Displacement([0.0084852814, 0.0895197185, 0.0, -0.2705980501, 0.6532814824, 0.2705980501, 0.6532814824])),
+                      ('pelvis_mesh', lgsm.Displacement([0.0084852814, 0.0895197185, 0.0, 0.6532814824, -0.6532814824, 0.2705980501, -0.2705980501])),
                          ],
             }
 

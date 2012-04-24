@@ -130,21 +130,21 @@ def get_meshes_data():
 
 def get_meshes_positions():
     return {
-        "head_mesh"      :     transl(0,0,-0.055),
-        "torso_mesh"     : dot(transl(0,0.024,-0.144), roty(pi)),
-        "pelvis_mesh"    : dot(transl(0.031,0.04,0), rotzyx(pi, -pi/2., 0)),
+        "head_mesh"      : dot(transl(0,0,-0.055), rotzyx(pi/2., 0, 0)), 
+        "torso_mesh"     : dot(transl(0,0.024,-0.144), rotzyx(-pi/2., pi, 0)),
+        "pelvis_mesh"    : dot(transl(0.031,0.04,0), rotzyx(pi/2.,pi,pi/2.)),
 
-        "l_upperleg_mesh":     transl(0,0,-.05),
-        "r_upperleg_mesh": dot(transl(0,0, .05), roty(pi)),
-        "l_lowerleg_mesh": rotzyx(0,pi/2.,-pi/2.),
-        "r_lowerleg_mesh": rotzyx(0,pi/2.,-pi/2.),
-        "l_foot_mesh"    : dot(transl(-0.041,0,-0.03), rotzyx(-pi/2., 0,-pi/2.)),
-        "r_foot_mesh"    : dot(transl(-0.041,0, 0.03), rotzyx( pi/2., 0, pi/2.)),
+        "l_upperleg_mesh": dot(transl(0,0,-.05), rotzyx( pi/2., 0, 0)),
+        "r_upperleg_mesh": dot(transl(0,0, .05), rotzyx(-pi/2., pi, 0)),
+        "l_lowerleg_mesh": rotzyx(pi,0, pi/2.),
+        "r_lowerleg_mesh": rotzyx(pi,0, pi/2.),
+        "l_foot_mesh"    : dot(transl(-0.041,0,-0.03), rotzyx(0,  pi/2.,0)),
+        "r_foot_mesh"    : dot(transl(-0.041,0, 0.03), rotzyx(pi,-pi/2.,0)),
 
-        "l_upperarm_mesh": dot(transl(0,0.01, 0.14), rotx(pi/2.)),
-        "r_upperarm_mesh": dot(transl(0,0.01,-0.14), rotx(pi/2.)),
-        "l_forearm_mesh" : dot(transl(0,0,-0.004), rotzyx( pi/2.,-pi/2.,0)),
-        "r_forearm_mesh" : dot(transl(0,0, 0.004), rotzyx(-pi/2.,-pi/2.,0)),
+        "l_upperarm_mesh": dot(transl(0,0.01, 0.14), rotzyx(-pi/2.,0,-pi/2.)),
+        "r_upperarm_mesh": dot(transl(0,0.01,-0.14), rotzyx(-pi/2.,0,-pi/2.)),
+        "l_forearm_mesh" : dot(transl(0,0,-0.004), rotzyx(pi,0,-pi/2.)),
+        "r_forearm_mesh" : dot(transl(0,0, 0.004), rotzyx(0,0,-pi/2.)),
         
         ## simple meshes
         "waist_mesh"     : transl(.006, 0,-.1),
@@ -299,5 +299,9 @@ def get_kinematic_tree(joint_damping=1.):
 
 #####
 f= open("XDEiCub.py", "w")
+f.write(modfile)
+f.close()
+
+f= open("../XDEiCub.py", "w")
 f.write(modfile)
 f.close()

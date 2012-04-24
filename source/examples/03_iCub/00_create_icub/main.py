@@ -11,8 +11,6 @@ sys.path.append(cpath)
 cpath = os.path.dirname(os.path.abspath(inspect.getfile( inspect.currentframe()))) + "/../common"
 sys.path.append(cpath)
 
-print sys.path
-
 import common
 
 import lgsm
@@ -33,7 +31,9 @@ graph, gInterface = common.get_graphic_agent()
 #
 #-------------------------------------------------------------------------------
 
-world = common.add_iCub()
+import iCubcommon
+
+world = iCubcommon.add_iCub(H_init=[0,0,0,1,0,0,0], fixed_base=True)
 
 
 ##### Deserialize world: register world description in phy & graph agents
@@ -41,16 +41,18 @@ import agents.graphic.builder
 import agents.physic.builder
 
 print "deserializeWorld..."
+print "graphic..."
 agents.graphic.builder.deserializeWorld(graph, gInterface, world)
+print "and physic..."
 agents.physic.builder.deserializeWorld(phy, ms, lmd, world)
-print "... done."
+print "done."
 
 
-phy.s.GVM.Robot("iCub").enableGravity(True)
 
 
 ##### Connect physic and graphic agents to see bodies with markers
 ocb = phy.s.Connectors.OConnectorBodyStateList.new("ocb", "body_state")
+
 graph.s.Connectors.IConnectorFrame.new("icf", "framePosition", "mainScene")
 graph.getPort("framePosition").connectTo(phy.getPort("body_state_H"))
 
@@ -59,11 +61,6 @@ for n in phy.s.GVM.Scene("main").getBodyNames():
     if n != "groundRigidBody":
         ocb.addBody(n)
         gInterface.MarkersInterface.addMarker(n, False)
-
-graph.s.Connectors.IConnectorBody.new("icb", "body_state_H", "mainScene")
-
-graph.getPort("body_state_H").connectTo(phy.getPort("body_state_H"))
-
 
 
 #-------------------------------------------------------------------------------
@@ -75,6 +72,9 @@ graph.getPort("body_state_H").connectTo(phy.getPort("body_state_H"))
 phy.s.start()
 graph.s.start()
 
+icub = phy.s.GVM.Robot('iCub')
+icub.enableGravity(False)
+print "To enable gravity, type: icub.enableGravity(True)"
 
 ##### Interactive shell
 import dsimi.interactive
