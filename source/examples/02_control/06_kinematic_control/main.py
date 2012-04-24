@@ -71,12 +71,14 @@ class KinematicController(dsimi.rtt.Task):
         model = self.model
         model.setJointPositions(q)
         model.setJointVelocities(qdot)
-
+        
         # define output vectors
         q_des_out = q
-        qdot_des_out = lgsm.vector([.1] * (model.nbInternalDofs()+1))
+        qdot_des_out = lgsm.vector([.1] * (model.nbInternalDofs()))
         kp_des_out = lgsm.vector([self.kp_des] * model.nbInternalDofs())
         kd_des_out = lgsm.vector([self.kd_des] * model.nbInternalDofs())
+        
+        
         
         # send output vectors
         self.kp_des_out.write(kp_des_out)
@@ -149,7 +151,7 @@ clock.s.setPeriod(time_step) #clock period == phy period
 phy.addCreateInputPort("clock_trigger", "double")
 
 icps = phy.s.Connectors.IConnectorSynchro.new("icps")
-icps.addEvent("p1_q_des")
+icps.addEvent("p1_qdot_des")
 icps.addEvent("clock_trigger")
 
 clock.getPort("ticks").connectTo(phy.getPort("clock_trigger"))
@@ -182,7 +184,11 @@ graph.s.start()
 controller.s.start()
 clock.s.start()
 
+
 phy.s.agent.triggerUpdate()
+
+p1 = phy.s.GVM.Robot("p1")
+p1.enableAllJointPDCouplings(True)
 
 ##### Interactive shell
 import dsimi.interactive
