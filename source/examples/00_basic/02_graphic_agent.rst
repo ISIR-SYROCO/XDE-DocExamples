@@ -1,6 +1,6 @@
 
-Create a physical agent
-=======================
+Create a graphic agent
+======================
 
 .. important::
    This example shows how to **instantiate a graphic agent**, and what are these parameters.
