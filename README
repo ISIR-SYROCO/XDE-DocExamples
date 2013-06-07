@@ -15,3 +15,4 @@ Sync built pages with github website:
  git push origin gh-pages
  git checkout master
 
+See http://xde-isir.github.io/XDE-DocExamples/
