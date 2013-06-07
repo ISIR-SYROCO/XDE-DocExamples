@@ -1,0 +1,204 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Create robot with desc module &mdash; XDE examples v0.1 documentation</title>
+    <link rel="stylesheet" href="../../_static/josini.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="XDE examples v0.1 documentation" href="../../index.html" />
+    <link rel="up" title="Building robots" href="../01_building_robots.html" />
+    <link rel="next" title="Control robots" href="../02_control.html" />
+    <link rel="prev" title="Create a robot" href="01_create_robot.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../02_control.html" title="Control robots"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="01_create_robot.html" title="Create a robot"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">XDE examples v0.1 documentation</a> &raquo;</li>
+          <li><a href="../01_building_robots.html" accesskey="U">Building robots</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="create-robot-with-desc-module">
+<h1>Create robot with desc module<a class="headerlink" href="#create-robot-with-desc-module" title="Permalink to this headline">¶</a></h1>
+<div class="admonition important">
+<p class="first admonition-title">Important</p>
+<p>This example shows how to create a <strong>robot</strong> with the module <tt class="xref py py-mod docutils literal"><span class="pre">desc</span></tt>.</p>
+<p>Source files:</p>
+<ul class="last simple">
+<li><a class="reference download internal" href="../../_downloads/main3.py"><tt class="xref download docutils literal"><span class="pre">main.py</span></tt></a>.</li>
+<li><a class="reference download internal" href="../../_downloads/common.py"><tt class="xref download docutils literal"><span class="pre">common.py</span></tt></a>.</li>
+</ul>
+</div>
+<div class="section" id="kinematic-tree">
+<h2>Kinematic tree<a class="headerlink" href="#kinematic-tree" title="Permalink to this headline">¶</a></h2>
+<p>The description of the robot is done through a tree-structure made of python tuples (or lists).
+Each tuple represents a node which defines each segment of the robot.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># Each node is a segment.</span>
+<span class="c">#</span>
+<span class="c"># A node is a tuple (segment_name, segment_mass, H_child_parent, list_of_dofs, list_of_children).</span>
+<span class="c">#</span>
+<span class="c"># each dof being a tuple (dof_type, center_in_parent, axis_in_parent, damping, qmin, qmax, qref)</span>
+<span class="c"># list_of_dofs is a list of degrees of freedom,</span>
+<span class="c"># dof_type is either &#39;hinge&#39; or &#39;prismatic&#39;. Empty list of dofs means fixed joint.</span>
+<span class="c">#</span>
+<span class="c"># The last arguments &quot;list_of_children&quot; is a list of nodes.</span>
+
+
+<span class="n">body</span>  <span class="o">=</span> <span class="p">[</span><span class="s">&quot;b_root&quot;</span><span class="p">,</span> <span class="s">&quot;b_1&quot;</span><span class="p">,</span> <span class="s">&quot;b_2&quot;</span><span class="p">,</span> <span class="s">&quot;b_3&quot;</span><span class="p">]</span>
+<span class="n">joint</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;j_root&quot;</span><span class="p">,</span> <span class="s">&quot;j_1&quot;</span><span class="p">,</span> <span class="s">&quot;j_2&quot;</span><span class="p">,</span> <span class="s">&quot;j_3&quot;</span><span class="p">]</span>
+<span class="n">mass</span> <span class="o">=</span> <span class="mi">1</span> <span class="c">#1kg</span>
+<span class="n">damp</span> <span class="o">=</span> <span class="mi">2</span>
+
+<span class="n">kin_tree</span> <span class="o">=</span> <span class="p">(</span><span class="n">body</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mass</span><span class="p">,</span> <span class="n">lgsm</span><span class="o">.</span><span class="n">Displacement</span><span class="p">(),</span> <span class="p">[],</span> <span class="p">[</span>
+              <span class="p">(</span><span class="n">body</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">mass</span><span class="p">,</span> <span class="n">lgsm</span><span class="o">.</span><span class="n">Displacementd</span><span class="p">(</span><span class="o">.</span><span class="mi">5</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="p">[(</span><span class="s">&#39;hinge&#39;</span><span class="p">,[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">damp</span><span class="p">,</span> <span class="o">-</span><span class="mf">3.14</span><span class="p">,</span> <span class="mf">3.14</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">)],</span> <span class="p">[</span>
+                <span class="p">(</span><span class="n">body</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">mass</span><span class="p">,</span> <span class="n">lgsm</span><span class="o">.</span><span class="n">Displacementd</span><span class="p">(</span><span class="o">.</span><span class="mi">5</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="p">[(</span><span class="s">&#39;hinge&#39;</span><span class="p">,[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">damp</span><span class="p">,</span> <span class="o">-</span><span class="mf">3.14</span><span class="p">,</span> <span class="mf">3.14</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">)],</span> <span class="p">[</span>
+                  <span class="p">(</span><span class="n">body</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">mass</span><span class="p">,</span> <span class="n">lgsm</span><span class="o">.</span><span class="n">Displacementd</span><span class="p">(</span><span class="o">.</span><span class="mi">5</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="p">[(</span><span class="s">&#39;hinge&#39;</span><span class="p">,[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">damp</span><span class="p">,</span> <span class="o">-</span><span class="mf">3.14</span><span class="p">,</span> <span class="mf">3.14</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">)],</span> <span class="p">[]</span>
+                <span class="p">)]</span>
+              <span class="p">)]</span>
+            <span class="p">)])</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="robot-description">
+<h2>Robot description<a class="headerlink" href="#robot-description" title="Permalink to this headline">¶</a></h2>
+<p>When the kinematic tree is set, it has to be <em>registered</em> in a <strong>world</strong>.
+This world is composed of a physical scene (where the kinematic tree is <em>registered</em>),
+but it also contains a graphical scene and a collision scene.</p>
+<p>The following methods create a named mechanism
+whose information about the kinematic and dynamic models can be obtain later,
+for instance Jacobian matrices or generalized coordinates and velocity.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">desc.scene</span>
+<span class="kn">import</span> <span class="nn">desc.robot</span>
+
+<span class="n">world</span> <span class="o">=</span> <span class="n">desc</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">createWorld</span><span class="p">()</span>
+
+<span class="n">desc</span><span class="o">.</span><span class="n">robot</span><span class="o">.</span><span class="n">addKinematicTree</span><span class="p">(</span><span class="n">world</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">physical_scene</span><span class="p">,</span>
+                            <span class="n">parent_node</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                            <span class="n">tree</span><span class="o">=</span><span class="n">kin_tree</span><span class="p">,</span>
+                            <span class="n">fixed_base</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                            <span class="n">H_init</span><span class="o">=</span><span class="n">lgsm</span><span class="o">.</span><span class="n">Displacement</span><span class="p">())</span>
+
+
+<span class="n">desc</span><span class="o">.</span><span class="n">physic</span><span class="o">.</span><span class="n">addMechanism</span><span class="p">(</span><span class="n">world</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">physical_scene</span><span class="p">,</span>
+                         <span class="n">name</span><span class="o">=</span><span class="s">&quot;pendulum&quot;</span><span class="p">,</span>
+                         <span class="n">root_node</span><span class="o">=</span><span class="s">&quot;b_root&quot;</span><span class="p">,</span>
+                         <span class="n">trim_nodes</span><span class="o">=</span><span class="p">[],</span>
+                         <span class="n">bodies</span><span class="o">=</span><span class="n">body</span><span class="p">,</span>
+                         <span class="n">segments</span><span class="o">=</span><span class="n">body</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="deserialization">
+<h2>Deserialization<a class="headerlink" href="#deserialization" title="Permalink to this headline">¶</a></h2>
+<p>when the world building is complete, it has to be converted into elements in the GVM scene.
+This is done with the <tt class="xref py py-meth docutils literal"><span class="pre">agents.physic.builder.deserializeWorld()</span></tt> method.</p>
+<p>Note that the same goes for the graphical agent,
+to convert elements that are registered in the graphical scene of the world.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">agents.graphic.builder</span>
+<span class="kn">import</span> <span class="nn">agents.physic.builder</span>
+
+<span class="n">agents</span><span class="o">.</span><span class="n">graphic</span><span class="o">.</span><span class="n">builder</span><span class="o">.</span><span class="n">deserializeWorld</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">gInterface</span><span class="p">,</span> <span class="n">world</span><span class="p">)</span>
+<span class="n">agents</span><span class="o">.</span><span class="n">physic</span><span class="o">.</span><span class="n">builder</span><span class="o">.</span><span class="n">deserializeWorld</span><span class="p">(</span><span class="n">phy</span><span class="p">,</span> <span class="n">ms</span><span class="p">,</span> <span class="n">lmd</span><span class="p">,</span> <span class="n">world</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Create robot with desc module</a><ul>
+<li><a class="reference internal" href="#kinematic-tree">Kinematic tree</a></li>
+<li><a class="reference internal" href="#robot-description">Robot description</a></li>
+<li><a class="reference internal" href="#deserialization">Deserialization</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="01_create_robot.html"
+                        title="previous chapter">Create a robot</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../02_control.html"
+                        title="next chapter">Control robots</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/examples/01_building_robots/02_robot_with_desc.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../02_control.html" title="Control robots"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="01_create_robot.html" title="Create a robot"
+             >previous</a> |</li>
+        <li><a href="../../index.html">XDE examples v0.1 documentation</a> &raquo;</li>
+          <li><a href="../01_building_robots.html" >Building robots</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Joseph Salini, Sovannara Hak.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+  </body>
+</html>

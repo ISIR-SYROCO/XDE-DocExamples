@@ -1,0 +1,7 @@
+
+@import url("default.css");
+
+div.important {
+    background-color: #e4ffe4;
+    border: 1px solid #6f6;
+}

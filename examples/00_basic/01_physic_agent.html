@@ -1,0 +1,199 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Create a physical agent &mdash; XDE examples v0.1 documentation</title>
+    <link rel="stylesheet" href="../../_static/josini.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="XDE examples v0.1 documentation" href="../../index.html" />
+    <link rel="up" title="Basic Examples" href="../00_basic.html" />
+    <link rel="next" title="Create a graphic agent" href="02_graphic_agent.html" />
+    <link rel="prev" title="Void script" href="00_void.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="02_graphic_agent.html" title="Create a graphic agent"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="00_void.html" title="Void script"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">XDE examples v0.1 documentation</a> &raquo;</li>
+          <li><a href="../00_basic.html" accesskey="U">Basic Examples</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="create-a-physical-agent">
+<h1>Create a physical agent<a class="headerlink" href="#create-a-physical-agent" title="Permalink to this headline">¶</a></h1>
+<div class="admonition important">
+<p class="first admonition-title">Important</p>
+<p>This example shows how to <strong>instantiate a physic agent</strong>, and what are these parameters.
+There are many ways to create and configure this agent, as explain in the following sections.</p>
+<p>Source files:</p>
+<ul class="last simple">
+<li><a class="reference download internal" href="../../_downloads/main_orocos.py"><tt class="xref download docutils literal"><span class="pre">main_orocos.py</span></tt></a></li>
+<li><a class="reference download internal" href="../../_downloads/main_simple.py"><tt class="xref download docutils literal"><span class="pre">main_simple.py</span></tt></a>.</li>
+</ul>
+</div>
+<div class="section" id="the-orocos-task">
+<h2>The orocos task<a class="headerlink" href="#the-orocos-task" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="create">
+<h3>Create<a class="headerlink" href="#create" title="Permalink to this headline">¶</a></h3>
+<p>The <em>low-level</em> technique is to call the method <tt class="xref py py-meth docutils literal"><span class="pre">deploy.deployer.rtt.Task()</span></tt></p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">dsimi.rtt</span>
+<span class="kn">import</span> <span class="nn">deploy.deployer</span> <span class="kn">as</span> <span class="nn">ddeployer</span>
+
+<span class="n">phy</span> <span class="o">=</span> <span class="n">dsimi</span><span class="o">.</span><span class="n">rtt</span><span class="o">.</span><span class="n">Task</span><span class="p">(</span><span class="n">ddeployer</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s">&quot;physic&quot;</span><span class="p">,</span> <span class="s">&quot;dsimi::physics::PhysicAgent&quot;</span><span class="p">,</span> <span class="s">&quot;dsimi-agt-physics&quot;</span><span class="p">),</span>
+                     <span class="n">binding_class</span><span class="o">=</span><span class="n">dsimi</span><span class="o">.</span><span class="n">rtt</span><span class="o">.</span><span class="n">ObjectStringBinding</span><span class="p">,</span>
+                     <span class="n">static_classes</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;agent&#39;</span><span class="p">,</span> <span class="s">&#39;Connectors&#39;</span><span class="p">])</span>
+
+
+<span class="n">main_scene</span> <span class="o">=</span> <span class="n">phy</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">GVM</span><span class="o">.</span><span class="n">Scene</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s">&quot;main_scene&quot;</span><span class="p">)</span>            <span class="c"># create a physical scene</span>
+<span class="n">lmd</span>        <span class="o">=</span> <span class="n">phy</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">XCD</span><span class="o">.</span><span class="n">Scene</span><span class="o">.</span><span class="n">new_LMD</span><span class="p">(</span><span class="s">&quot;lmd&quot;</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mi">3</span><span class="o">*</span><span class="mf">3.14</span><span class="p">)</span> <span class="c"># create a collision scene using</span>
+                                                          <span class="c"># the Local Minimum Distance algorithm</span>
+</pre></div>
+</div>
+<p>The physic agent gives access to many services, for example it can create
+the <strong>physical scene</strong> by calling <tt class="xref py py-meth docutils literal"><span class="pre">phy.s.GVM.Scene.new()</span></tt>.
+This scene roughly contains the links and bodies.</p>
+<p>It also gives access to the creation of a <strong>collision scene</strong>, by calling
+<a class="reference internal" href="../../api.html#phy.s.XCD.Scene.new_LMD" title="phy.s.XCD.Scene.new_LMD"><tt class="xref py py-meth docutils literal"><span class="pre">phy.s.XCD.Scene.new_LMD()</span></tt></a>.</p>
+</div>
+<div class="section" id="configure">
+<h3>Configure<a class="headerlink" href="#configure" title="Permalink to this headline">¶</a></h3>
+<p>The scenes (physical and collision) have to be configured and linked together to work properly.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">period</span> <span class="o">=</span> <span class="mf">0.01</span>
+<span class="n">main_scene</span><span class="o">.</span><span class="n">setIntegratorFlags</span><span class="p">(</span><span class="mi">17</span><span class="p">)</span>     <span class="c"># 17 = 1 + 16 : dynamic + gauss seidel solver</span>
+<span class="n">main_scene</span><span class="o">.</span><span class="n">setUcRelaxationFactor</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span> <span class="c"># relaxation factor</span>
+<span class="n">main_scene</span><span class="o">.</span><span class="n">setFdvrFactor</span><span class="p">(</span><span class="mf">0.2</span><span class="p">)</span>         <span class="c">#</span>
+
+<span class="n">main_scene</span><span class="o">.</span><span class="n">setGeometricalScene</span><span class="p">(</span><span class="n">lmd</span><span class="p">)</span>   <span class="c"># link collision and physic scene</span>
+<span class="n">main_scene</span><span class="o">.</span><span class="n">setTimeStep</span><span class="p">(</span><span class="n">period</span><span class="p">)</span>        <span class="c"># set the integrator step (must be set after the previous function call)</span>
+<span class="n">phy</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">setPeriod</span><span class="p">(</span><span class="n">period</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="start-stop">
+<h3>Start &amp; Stop<a class="headerlink" href="#start-stop" title="Permalink to this headline">¶</a></h3>
+<p>The physical agent starts and stops when these functions are called:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">phy</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+<span class="n">phy</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="the-agents-module">
+<h2>The agents module<a class="headerlink" href="#the-agents-module" title="Permalink to this headline">¶</a></h2>
+<p>The other way is to use the module <tt class="xref py py-mod docutils literal"><span class="pre">agents.physic.simple</span></tt></p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">agents.physic.core</span> <span class="kn">as</span> <span class="nn">core</span>
+
+<span class="n">period</span> <span class="o">=</span> <span class="mf">0.01</span>
+<span class="n">phy</span>         <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">createAgent</span><span class="p">(</span><span class="s">&quot;physic&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">main_scene</span>  <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">createGVMScene</span><span class="p">(</span><span class="n">phy</span><span class="p">,</span> <span class="s">&quot;main_scene&quot;</span><span class="p">,</span> <span class="n">time_step</span><span class="o">=</span><span class="n">period</span><span class="p">)</span>
+<span class="n">lmd</span>         <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">createXCDScene</span><span class="p">(</span><span class="n">phy</span><span class="p">,</span> <span class="s">&quot;xcd&quot;</span><span class="p">,</span> <span class="s">&quot;LMD&quot;</span><span class="p">,</span> <span class="n">lmd_max</span><span class="o">=</span><span class="mi">3</span><span class="o">*</span><span class="mf">3.14</span><span class="p">)</span>
+
+<span class="n">main_scene</span><span class="o">.</span><span class="n">setGeometricalScene</span><span class="p">(</span><span class="n">lmd</span><span class="p">)</span>
+<span class="n">phy</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">setPeriod</span><span class="p">(</span><span class="n">period</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Create a physical agent</a><ul>
+<li><a class="reference internal" href="#the-orocos-task">The orocos task</a><ul>
+<li><a class="reference internal" href="#create">Create</a></li>
+<li><a class="reference internal" href="#configure">Configure</a></li>
+<li><a class="reference internal" href="#start-stop">Start &amp; Stop</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#the-agents-module">The agents module</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="00_void.html"
+                        title="previous chapter">Void script</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="02_graphic_agent.html"
+                        title="next chapter">Create a graphic agent</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/examples/00_basic/01_physic_agent.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="02_graphic_agent.html" title="Create a graphic agent"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="00_void.html" title="Void script"
+             >previous</a> |</li>
+        <li><a href="../../index.html">XDE examples v0.1 documentation</a> &raquo;</li>
+          <li><a href="../00_basic.html" >Basic Examples</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Joseph Salini, Sovannara Hak.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+  </body>
+</html>
