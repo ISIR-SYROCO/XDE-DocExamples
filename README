@@ -1,0 +1,17 @@
+XDE-DocExamples:
+================
+
+Sphinx documentation describing typical examples of XDE
+
+Build html pages:
+-----------------
+
+ make html
+
+Sync built pages with github website:
+-------------------------------------
+
+ make gh-pages
+ git push origin gh-pages
+ git checkout master
+
