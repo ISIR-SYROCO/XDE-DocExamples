@@ -13,6 +13,7 @@ PAPEROPT_letter = -D latex_paper_size=letter
 ALLSPHINXOPTS   = -d $(BUILDDIR)/doctrees $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) source
 # the i18n builder cannot share the environment and doctrees with the others
 I18NSPHINXOPTS  = $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) source
+GH_PAGES_SOURCES = source Makefile
 
 .PHONY: help clean html dirhtml singlehtml pickle json htmlhelp qthelp devhelp epub latex latexpdf text man changes linkcheck doctest gettext
 
@@ -151,3 +152,18 @@ doctest:
 	$(SPHINXBUILD) -b doctest $(ALLSPHINXOPTS) $(BUILDDIR)/doctest
 	@echo "Testing of doctests in the sources finished, look at the " \
 	      "results in $(BUILDDIR)/doctest/output.txt."
+
+gh-pages:
+	git checkout gh-pages
+	rm -rf build
+	git checkout master $(GH_PAGES_SOURCES)
+	git reset HEAD
+	make html
+	mv -fv build/html/* ./
+	rm -rf $(GH_PAGES_SOURCES) build
+	git add -A
+	git commit -m -e "Generated gh-pages for `git log master -1 --pretty=short --abbrev-commit`"
+	@echo "Changes commited, you can now do "
+	@echo
+	@echo "git push origin gh-pages"
+	@echo "git checkout master"
