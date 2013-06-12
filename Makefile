@@ -162,7 +162,7 @@ gh-pages:
 	mv -fv build/html/* ./
 	rm -rf $(GH_PAGES_SOURCES) build
 	git add -A
-	git commit -m -e "Generated gh-pages for `git log master -1 --pretty=short --abbrev-commit`"
+	git commit -e -m "Generated gh-pages for `git log master -1 --pretty=short --abbrev-commit`"
 	@echo "Changes commited, you can now do "
 	@echo
 	@echo "git push origin gh-pages"
