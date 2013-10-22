@@ -20,7 +20,8 @@ Load XDE libraries
 ------------------
 
 At the very beginning of any script, we need to import the XDE ``loader``
-in order to be able to load XDE libraries. This is done as follows
+in order to be able to load XDE libraries. Then we need to load Orocos plugins and typekits specific to XDE.
+This is done as follows
 
 .. literalinclude:: 00_void/main.py
    :start-after: ##### Preambule
