@@ -8,8 +8,8 @@ Create a physical agent
 
    Source files:
    
-   * :download:`main_orocos.py <01_physic_agent/main_orocos.py>`
-   * :download:`main_simple.py <01_physic_agent/main_simple.py>`.
+   * :download:`main_orocos.py <02_physic_agent/main_orocos.py>`
+   * :download:`main_simple.py <02_physic_agent/main_simple.py>`.
 
 
 
@@ -22,7 +22,7 @@ Create
 
 The *low-level* technique is to call the method :py:meth:`deploy.deployer.rtt.Task`
 
-.. literalinclude:: 01_physic_agent/main_orocos.py
+.. literalinclude:: 02_physic_agent/main_orocos.py
    :start-after: ##### Create physic agent: orocos task
    :end-before: ##### Configure main scene
 
@@ -41,7 +41,7 @@ Configure
 
 The scenes (physical and collision) have to be configured and linked together to work properly.
 
-.. literalinclude:: 01_physic_agent/main_orocos.py
+.. literalinclude:: 02_physic_agent/main_orocos.py
    :start-after: ##### Configure main scene
    :end-before: ##### Run agent
 
@@ -63,7 +63,7 @@ The agents module
 
 The other way is to use the module :py:mod:`agents.physic.simple`
 
-.. literalinclude:: 01_physic_agent/main_simple.py
+.. literalinclude:: 02_physic_agent/main_simple.py
    :start-after: ##### Create physic agent: agent module
    :end-before: ##### Run agent
 

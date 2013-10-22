@@ -8,8 +8,8 @@ Create a graphic agent
 
    source files:
    
-   * :download:`main_orocos.py <02_graphic_agent/main_orocos.py>`
-   * :download:`main_simple.py <02_graphic_agent/main_simple.py>`
+   * :download:`main_orocos.py <03_graphic_agent/main_orocos.py>`
+   * :download:`main_simple.py <03_graphic_agent/main_simple.py>`
 
 
 
@@ -22,7 +22,7 @@ Create
 
 The *low-level* technique is to call the method :py:meth:`deploy.deployer.rtt.Task`
 
-.. literalinclude:: 02_graphic_agent/main_orocos.py
+.. literalinclude:: 03_graphic_agent/main_orocos.py
    :start-after: ##### Create graphic agent: orocos task
    :end-before: ##### Configure graphic agent
 
@@ -34,7 +34,7 @@ Configure
 
 The viewer has to load plugins and Ogre resources.
 
-.. literalinclude:: 02_graphic_agent/main_orocos.py
+.. literalinclude:: 03_graphic_agent/main_orocos.py
    :start-after: ##### Configure graphic agent
    :end-before: ##### Open viewer
 
@@ -44,7 +44,7 @@ Open viewer
 
 The viewer is initialize as follows
 
-.. literalinclude:: 02_graphic_agent/main_orocos.py
+.. literalinclude:: 03_graphic_agent/main_orocos.py
    :start-after: ##### Open viewer
    :end-before: ##### Configure viewer
 
@@ -55,7 +55,7 @@ Configure viewer
 
 The viewer is configured as follows
 
-.. literalinclude:: 02_graphic_agent/main_orocos.py
+.. literalinclude:: 03_graphic_agent/main_orocos.py
    :start-after: ##### Configure viewer
    :end-before: ##### Run agent
 
@@ -89,7 +89,7 @@ Create
 
 The creation of the graphic agent is done as follows
 
-.. literalinclude:: 02_graphic_agent/main_simple.py
+.. literalinclude:: 03_graphic_agent/main_simple.py
    :start-after: ##### Create graphic agent: agent module
    :end-before: ##### Open viewer
 
@@ -99,7 +99,7 @@ Open viewer
 
 The viewer is initialize as follows
 
-.. literalinclude:: 02_graphic_agent/main_simple.py
+.. literalinclude:: 03_graphic_agent/main_simple.py
    :start-after: ##### Open viewer
    :end-before: ##### Configure viewer
 
@@ -109,7 +109,7 @@ Configure viewer
 
 The viewer is configured as follows
 
-.. literalinclude:: 02_graphic_agent/main_simple.py
+.. literalinclude:: 03_graphic_agent/main_simple.py
    :start-after: ##### Configure viewer
    :end-before: ##### Run agent
 
