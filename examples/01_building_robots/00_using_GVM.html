@@ -1,0 +1,211 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Building a robot from GVM module &mdash; XDE examples v0.1 documentation</title>
+    <link rel="stylesheet" href="../../_static/josini.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="XDE examples v0.1 documentation" href="../../index.html" />
+    <link rel="up" title="Building robots" href="../01_building_robots.html" />
+    <link rel="next" title="Create a robot" href="01_create_robot.html" />
+    <link rel="prev" title="Building robots" href="../01_building_robots.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="01_create_robot.html" title="Create a robot"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../01_building_robots.html" title="Building robots"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">XDE examples v0.1 documentation</a> &raquo;</li>
+          <li><a href="../01_building_robots.html" accesskey="U">Building robots</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="building-a-robot-from-gvm-module">
+<h1>Building a robot from GVM module<a class="headerlink" href="#building-a-robot-from-gvm-module" title="Permalink to this headline">¶</a></h1>
+<div class="admonition important">
+<p class="first admonition-title">Important</p>
+<p>This example shows a <em>low-level</em> method to <strong>create a pendulum</strong> using the GVM module.
+It also shows how to connect physic and graphic agents with markers on bodies.
+For now, we do not talk about <em>robot</em> or <em>mechanism</em>, we simple create joints and bodies.</p>
+<p>Source files:</p>
+<ul class="last simple">
+<li><a class="reference download internal" href="../../_downloads/main1.py"><tt class="xref download docutils literal"><span class="pre">main.py</span></tt></a>.</li>
+</ul>
+</div>
+<div class="section" id="create-rigid-bodies-and-configure">
+<h2>Create rigid bodies and configure<a class="headerlink" href="#create-rigid-bodies-and-configure" title="Permalink to this headline">¶</a></h2>
+<p>Roughly, a rigid body is defined by a name and a mass matrix.
+The following snippet of code present how to create many bodies with a <tt class="docutils literal"><span class="pre">for</span></tt> loop.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">bodies_name</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;b_root&quot;</span><span class="p">,</span> <span class="s">&quot;b_1&quot;</span><span class="p">,</span> <span class="s">&quot;b_2&quot;</span><span class="p">,</span> <span class="s">&quot;b_3&quot;</span><span class="p">]</span>
+
+<span class="n">bodies</span> <span class="o">=</span> <span class="p">[]</span> <span class="c"># lists of body and joint instances</span>
+
+<span class="k">for</span> <span class="n">b_name</span> <span class="ow">in</span> <span class="n">bodies_name</span><span class="p">:</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">phy</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">GVM</span><span class="o">.</span><span class="n">RigidBody</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">b_name</span><span class="p">)</span>
+    <span class="n">b</span><span class="o">.</span><span class="n">setMass</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="c"># 1kg</span>
+    <span class="n">b</span><span class="o">.</span><span class="n">setCenterOfGravity</span><span class="p">(</span><span class="n">lgsm</span><span class="o">.</span><span class="n">zero</span><span class="p">())</span>               <span class="c"># in body frame</span>
+    <span class="n">b</span><span class="o">.</span><span class="n">setPrincipalMomentsOfInertia</span><span class="p">(</span><span class="n">lgsm</span><span class="o">.</span><span class="n">one</span><span class="p">())</span>      <span class="c"># inertia moments</span>
+    <span class="n">b</span><span class="o">.</span><span class="n">setPrincipalInertiaFrame</span><span class="p">(</span><span class="n">lgsm</span><span class="o">.</span><span class="n">Displacement</span><span class="p">())</span> <span class="c"># inertia frame</span>
+    <span class="n">bodies</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>All body instances are saved in the <tt class="docutils literal"><span class="pre">bodies</span></tt> list.
+We recall that an other way to get back any body instance by its name is to use the follwoing method:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">the_body</span> <span class="o">=</span> <span class="n">phy</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">GVM</span><span class="o">.</span><span class="n">RigidBody</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s">&quot;the name of the body&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="create-joints-and-configure">
+<h2>Create joints and configure<a class="headerlink" href="#create-joints-and-configure" title="Permalink to this headline">¶</a></h2>
+<p>A joint links two bodies in a kinematic tree.
+There are many different joints in the GVM module, here it shows how to create a configure hinge joints.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">joints_name</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;j_root&quot;</span><span class="p">,</span> <span class="s">&quot;j_1&quot;</span><span class="p">,</span> <span class="s">&quot;j_2&quot;</span><span class="p">,</span> <span class="s">&quot;j_3&quot;</span><span class="p">]</span>
+
+<span class="n">joints</span> <span class="o">=</span> <span class="p">[]</span> <span class="c"># ists of joint instances</span>
+
+<span class="n">joints</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">phy</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">GVM</span><span class="o">.</span><span class="n">FixedJoint</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">joints_name</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+<span class="n">joints</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">configure</span><span class="p">(</span><span class="n">lgsm</span><span class="o">.</span><span class="n">Displacement</span><span class="p">())</span>     <span class="c"># Set position of fixed joint</span>
+
+<span class="k">for</span> <span class="n">j_name</span> <span class="ow">in</span> <span class="n">joints_name</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+    <span class="n">j</span> <span class="o">=</span> <span class="n">phy</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">GVM</span><span class="o">.</span><span class="n">HingeJoint</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">j_name</span><span class="p">)</span>
+    <span class="n">j</span><span class="o">.</span><span class="n">configure</span><span class="p">(</span><span class="n">lgsm</span><span class="o">.</span><span class="n">Displacement</span><span class="p">(</span><span class="n">lgsm</span><span class="o">.</span><span class="n">vector</span><span class="p">(</span><span class="o">.</span><span class="mi">5</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)),</span> <span class="c"># Displacement from parent body to child body</span>
+                <span class="n">lgsm</span><span class="o">.</span><span class="n">vector</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span>                     <span class="c"># Hinge center position in parent frame</span>
+                <span class="n">lgsm</span><span class="o">.</span><span class="n">vector</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span>                     <span class="c"># Hinge axis in parent frame</span>
+                <span class="mf">0.2</span><span class="p">)</span>                                    <span class="c"># Hinge angular offset</span>
+    <span class="n">j</span><span class="o">.</span><span class="n">setJointDampingCoeff</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="c"># add some damping</span>
+    <span class="n">j</span><span class="o">.</span><span class="n">enableJointDamping</span><span class="p">()</span>
+    <span class="n">joints</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">j</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="connect-bodies-with-joints">
+<h2>Connect bodies with joints<a class="headerlink" href="#connect-bodies-with-joints" title="Permalink to this headline">¶</a></h2>
+<p>The GVM module creates the physical elements, but they have to be linked in the <strong>main scene</strong> to create the kinematic tree.
+The connection are made with the methods <tt class="docutils literal"><span class="pre">addRigidBodyToGround</span></tt> and <tt class="docutils literal"><span class="pre">addRigidBody</span></tt>.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">ms</span><span class="o">.</span><span class="n">addRigidBodyToGround</span><span class="p">(</span><span class="n">bodies</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">joints</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">bodies</span><span class="p">)):</span>
+    <span class="n">ms</span><span class="o">.</span><span class="n">addRigidBody</span><span class="p">(</span><span class="n">bodies</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">bodies</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">joints</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="add-markers-to-bodies-in-graphic-interface">
+<h2>Add markers to bodies in graphic interface<a class="headerlink" href="#add-markers-to-bodies-in-graphic-interface" title="Permalink to this headline">¶</a></h2>
+<p>The previous steps has shown the building of the pendulum in the physic scene, and this can be sufficient in some cases.
+However, the graphical scene has no information about evolutions in the physic scene, so we cannot display the body position during time.</p>
+<p>To do this, we use <strong>connectors</strong> to create a pipe between the scenes.
+The physic scene has an outupt connector to send data about bodies positions, and the graphic scene has an input connector to receive data about bodies positions.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># Create output connector from physical scene</span>
+<span class="n">ocb</span> <span class="o">=</span> <span class="n">phy</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">Connectors</span><span class="o">.</span><span class="n">OConnectorBodyStateList</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s">&quot;ocb&quot;</span><span class="p">,</span> <span class="s">&quot;bodyPosition&quot;</span><span class="p">)</span>
+
+<span class="c"># Create input connector from graphical scene</span>
+<span class="n">graph</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">Connectors</span><span class="o">.</span><span class="n">IConnectorFrame</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s">&quot;icf&quot;</span><span class="p">,</span> <span class="s">&quot;framePosition&quot;</span><span class="p">,</span> <span class="s">&quot;mainScene&quot;</span><span class="p">)</span>
+
+<span class="c"># Connect the two</span>
+<span class="n">graph</span><span class="o">.</span><span class="n">getPort</span><span class="p">(</span><span class="s">&quot;framePosition&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">connectTo</span><span class="p">(</span><span class="n">phy</span><span class="o">.</span><span class="n">getPort</span><span class="p">(</span><span class="s">&quot;bodyPosition_H&quot;</span><span class="p">))</span>
+
+<span class="c"># add markers on bodies</span>
+<span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">phy</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">GVM</span><span class="o">.</span><span class="n">Scene</span><span class="p">(</span><span class="s">&quot;main&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">getBodyNames</span><span class="p">():</span>
+    <span class="n">ocb</span><span class="o">.</span><span class="n">addBody</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+    <span class="n">gInterface</span><span class="o">.</span><span class="n">MarkersInterface</span><span class="o">.</span><span class="n">addMarker</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Building a robot from GVM module</a><ul>
+<li><a class="reference internal" href="#create-rigid-bodies-and-configure">Create rigid bodies and configure</a></li>
+<li><a class="reference internal" href="#create-joints-and-configure">Create joints and configure</a></li>
+<li><a class="reference internal" href="#connect-bodies-with-joints">Connect bodies with joints</a></li>
+<li><a class="reference internal" href="#add-markers-to-bodies-in-graphic-interface">Add markers to bodies in graphic interface</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../01_building_robots.html"
+                        title="previous chapter">Building robots</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="01_create_robot.html"
+                        title="next chapter">Create a robot</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/examples/01_building_robots/00_using_GVM.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="01_create_robot.html" title="Create a robot"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../01_building_robots.html" title="Building robots"
+             >previous</a> |</li>
+        <li><a href="../../index.html">XDE examples v0.1 documentation</a> &raquo;</li>
+          <li><a href="../01_building_robots.html" >Building robots</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Joseph Salini, Sovannara Hak.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+  </body>
+</html>
