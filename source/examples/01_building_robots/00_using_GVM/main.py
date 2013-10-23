@@ -68,9 +68,11 @@ joints[0].configure(lgsm.Displacement())     # Set position of fixed joint
 
 for j_name in joints_name[1:]:
     j = phy.s.GVM.HingeJoint.new(j_name)
-    j.configure(lgsm.Displacement(lgsm.vector(.5,0,0)), # Displacement from parent body to child body
-                lgsm.vector(0,0,0),                     # Hinge center position in parent frame
-                lgsm.vector(0,1,0),                     # Hinge axis in parent frame
+    T_pc = lgsm.Displacement()
+    T_pc.setTranslation(lgsm.vector(.5,0,0))
+    j.configure(T_pc,                 # Displacement from parent body to child body
+                lgsm.vector(0,0,0),   # Hinge center position in parent frame
+                lgsm.vector(0,1,0),   # Hinge axis in parent frame
                 0.2)                                    # Hinge angular offset
     j.setJointDampingCoeff(2) # add some damping
     j.enableJointDamping()
@@ -113,8 +115,8 @@ graph.s.start()
 
 
 ##### Interactive shell
-import dsimi.interactive
-shell = dsimi.interactive.shell()
+import xdefw.interactive
+shell = xdefw.interactive.shell_console()
 shell()
 
 
