@@ -14,7 +14,7 @@ deploy.loadTypekitsAndPlugins()
 import xdefw.rtt
 import deploy.deployer as ddeployer
 
-phy = xdefw.rtt.Task(ddeployer.load("physic", "dsimi::physics::PhysicAgent", "dsimi-agt-physics"),
+phy = xdefw.rtt.Task(ddeployer.load("physic", "xdefw::physics::PhysicAgent", "xdefw-agt-physics"),
                      binding_class=xdefw.rtt.ObjectStringBinding,
                      static_classes=['agent', 'Connectors'])
 
