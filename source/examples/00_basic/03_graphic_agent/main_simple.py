@@ -37,8 +37,8 @@ graph.s.start()
 
 
 ##### Interactive shell
-import dsimi.interactive
-shell = dsimi.interactive.shell()
+import xdefw.interactive
+shell = xdefw.interactive.shell_console()
 shell()
 
 
