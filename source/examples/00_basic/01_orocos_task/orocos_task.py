@@ -1,4 +1,5 @@
 ##### Import modules
+import loader
 import rtt_interface
 import xdefw.rtt
 
