@@ -13,11 +13,11 @@ import time
 #-------------------------------------------------------------------------------
 
 ##### Create graphic agent: orocos task
-import dsimi.rtt
+import xdefw.rtt
 import deploy.deployer as ddeployer
 
-graph = dsimi.rtt.Task(ddeployer.load("graphic", "dsimi::graphics::GraphicAgent", "dsimi-agt-graphics"),
-                       binding_class=dsimi.rtt.ObjectStringBinding, 
+graph = xdefw.rtt.Task(ddeployer.load("graphic", "dsimi::graphics::GraphicAgent", "dsimi-agt-graphics"),
+                       binding_class=xdefw.rtt.ObjectStringBinding, 
                        static_classes=['Viewer', 'Dio', 'agent', 'Connectors'])
 
 
@@ -74,8 +74,8 @@ graph.s.start()
 
 
 ##### Interactive shell
-import dsimi.interactive
-shell = dsimi.interactive.shell()
+import xdefw.interactive
+shell = xdefw.interactive.shell_console()
 shell()
 
 
