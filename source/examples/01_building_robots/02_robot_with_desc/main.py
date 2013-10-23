@@ -58,28 +58,43 @@ kin_tree = (body[0], mass, lgsm.Displacement(), [], [
 
 
 ##### Create a world with description of the kinematic tree
+import desc.physic
+import desc.graphic
 
-import desc.scene
-import desc.robot
+# We create the structure that will contain the description of our robot.
+import xde.desc.app.concepts_pb2 as concepts_pb2
+robot_data = concepts_pb2.RobotData()
 
-world = desc.scene.createWorld()
-
-desc.robot.addKinematicTree(world.scene.physical_scene,
-                            parent_node=None,
+desc.physic.fillKinematicTree(robot_data.physical_robot.multi_body_model.kinematic_tree,
                             tree=kin_tree,
                             fixed_base=True,
                             H_init=lgsm.Displacement())
 
 
-desc.physic.addMechanism(world.scene.physical_scene,
+desc.physic.fillMechanism(robot_data.physical_robot.multi_body_model.mechanism,
                          name="pendulum",
                          root_node="b_root",
                          trim_nodes=[],
                          bodies=body,
                          segments=body)
 
+## We fill the graphical description of the robot.
+desc.graphic.fillGraphicalNode(robot_data.graphical_robot.graphical_tree, "robot.root", position=lgsm.Displacement(), scale=[1,1,1])
 
-##### Deserialize world: register world description in phy & graph agents
+## We write the description of the robot in a binary file
+import desc_core
+with open(cpath + "/pendulum.desc", "wb") as f:
+  f.write(desc_core.Serialize(robot_data))
+
+##### Fill and deserialize world: register world description in phy & graph agents
+import desc.scene
+world = desc.scene.createWorld()
+
+import concepts.robot
+robot_importer = concepts.robot.RobotImporter("robot_factory", cpath + "/pendulum.desc")
+robot_importer.fillLibrary(world)
+robot_importer.addInstance(world, "pendulum")
+
 import agents.graphic.builder
 import agents.physic.builder
 
@@ -110,8 +125,8 @@ graph.s.start()
 
 
 ##### Interactive shell
-import dsimi.interactive
-shell = dsimi.interactive.shell()
+import xdefw.interactive
+shell = xdefw.interactive.shell_console()
 shell()
 
 
