@@ -32,3 +32,5 @@ Then, you have to implement the different hooks that will define the behavior of
 .. literalinclude:: 01_orocos_task/orocos_task.py
    :start-after: ##### Implement hooks
 
+The operations of the orocos task can be accessed in Python in the field ``s``.
+For example ``task.s.getPeriod()``
