@@ -11,11 +11,11 @@ deploy.loadTypekitsAndPlugins()
 #-------------------------------------------------------------------------------
 
 ##### Create physic agent: orocos task
-import dsimi.rtt
+import xdefw.rtt
 import deploy.deployer as ddeployer
 
-phy = dsimi.rtt.Task(ddeployer.load("physic", "dsimi::physics::PhysicAgent", "dsimi-agt-physics"),
-                     binding_class=dsimi.rtt.ObjectStringBinding,
+phy = xdefw.rtt.Task(ddeployer.load("physic", "dsimi::physics::PhysicAgent", "dsimi-agt-physics"),
+                     binding_class=xdefw.rtt.ObjectStringBinding,
                      static_classes=['agent', 'Connectors'])
 
 
@@ -39,8 +39,8 @@ phy.s.start()
 
 
 ##### Interactive shell
-import dsimi.interactive
-shell = dsimi.interactive.shell()
+import xdefw.interactive
+shell = xdefw.interactive.shell_console()
 shell()
 
 
