@@ -9,7 +9,7 @@ deploy.loadTypekitsAndPlugins()
 
 ##### Interactive shell
 import xdefw.interactive
-shell = xdefw.interactive_console.shell()
+shell = xdefw.interactive.shell_console()
 shell()
 
 print "end of XDE script"
