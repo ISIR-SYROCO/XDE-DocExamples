@@ -1,18 +1,32 @@
-
-
 ##### Preambule
 import loader
 import deploy
 deploy.loadTypekitsAndPlugins()
 
-import numpy as np
 import lgsm
+
+import os, sys
+import inspect
+cpath = os.path.dirname(os.path.abspath(inspect.getfile( inspect.currentframe()))) + "/"
+sys.path.append(cpath)
 
 
 ##### Create physic and graphic agents + pendulum robot
 import agents.physic.core
 import agents.graphic.simple
 import agents.graphic.proto
+
+import desc.scene
+
+import desc.physic
+import desc.graphic
+
+import desc.scene
+import desc_core
+import concepts.robot
+import concepts.simple.robot
+
+import xde.desc.app.concepts_pb2 as concepts_pb2
 
 # Physic
 def get_physic_agent(time_step):
@@ -38,21 +52,14 @@ def get_graphic_agent():
     return graph, gInterface
 
 
-import desc.scene
-import desc.robot
-
-
 # Robot
 def create_pendulum(world, p_name="pendulum", p_init=None):
-
-    body  = [p_name+"_"+n for n in ["b_root", "b_1", "b_2", "b_3"]]
+    body  = [p_name+".b_root", p_name+".b_1", p_name+".b_2", p_name+".b_3"]
+    joint = [p_name+".j_root", p_name+".j_1", p_name+".j_2", p_name+".j_3"]
     mass = 1 #1kg
     damp = 2
 
-    if p_init is None:
-        p_init = lgsm.Displacement()
-
-    kin_tree = (body[0], mass, p_init, [], [
+    kin_tree = (body[0], mass, lgsm.Displacement(), [], [
                   (body[1], mass, lgsm.Displacementd(.5,0,0,1,0,0,0), [('hinge',[0,0,0],[0,1,0], damp, -3.14, 3.14, 0.2)], [
                     (body[2], mass, lgsm.Displacementd(.5,0,0,1,0,0,0), [('hinge',[0,0,0],[0,1,0], damp, -3.14, 3.14, 0.2)], [
                       (body[3], mass, lgsm.Displacementd(.5,0,0,1,0,0,0), [('hinge',[0,0,0],[0,1,0], damp, -3.14, 3.14, 0.2)], []
@@ -61,24 +68,33 @@ def create_pendulum(world, p_name="pendulum", p_init=None):
                 )])
 
 
-    # Create a description of the kinematic tree
-    desc.robot.addKinematicTree(world.scene.physical_scene,
-                                parent_node=None,
+    ##### Create a world with description of the kinematic tree
+
+    # We create the structure that will contain the description of our robot.
+    robot_data = concepts_pb2.RobotData()
+
+    desc.physic.fillKinematicTree(robot_data.physical_robot.multi_body_model.kinematic_tree,
                                 tree=kin_tree,
                                 fixed_base=True,
                                 H_init=lgsm.Displacement())
 
-    desc.physic.addMechanism(world.scene.physical_scene,
+
+    desc.physic.fillMechanism(robot_data.physical_robot.multi_body_model.mechanism,
                              name=p_name,
                              root_node=body[0],
                              trim_nodes=[],
                              bodies=body,
-                             segments=body)
+                             segments=joint)
 
+    ## We fill the graphical description of the robot.
+    desc.graphic.fillGraphicalNode(robot_data.graphical_robot.graphical_tree, p_name+".root", position=lgsm.Displacement(), scale=[1,1,1])
 
+    ## We write the description of the robot in a binary file
+    with open(cpath + "/"+p_name+".desc", "wb") as f:
+      f.write(desc_core.Serialize(robot_data))
 
+    ##### Fill and deserialize world: register world description in phy & graph agents
 
-
-
-
-
+    robot_importer = concepts.robot.RobotImporter("robot_factory", cpath +"/"+p_name+".desc")
+    robot_importer.fillLibrary(world)
+    robot_importer.addInstance(world, p_name) 

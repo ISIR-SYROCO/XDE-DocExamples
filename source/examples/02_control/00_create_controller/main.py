@@ -20,7 +20,6 @@ phy, ms, lmd = common.get_physic_agent(time_step)
 graph, gInterface = common.get_graphic_agent()
 
 
-
 #-------------------------------------------------------------------------------
 #
 # Create a new Task. This will be the controller.
@@ -28,13 +27,13 @@ graph, gInterface = common.get_graphic_agent()
 #-------------------------------------------------------------------------------
 
 import rtt_interface
-import dsimi.rtt
+import xdefw.rtt
 
-class RxController(dsimi.rtt.Task):
+class RxController(xdefw.rtt.Task):
 
     def __init__(self, Task_name):
         task = rtt_interface.PyTaskFactory.CreateTask(Task_name)
-        dsimi.rtt.Task.__init__(self, task)
+        xdefw.rtt.Task.__init__(self, task)
 
     def startHook(self):
         pass
@@ -49,8 +48,6 @@ class RxController(dsimi.rtt.Task):
         print "IN doUpdate"
 
 
-
-
 #-------------------------------------------------------------------------------
 #
 # Create the robot with the desc module.
@@ -63,6 +60,7 @@ world = desc.scene.createWorld()
 
 # add some pendulums
 common.create_pendulum(world, "p1", lgsm.Displacement())
+
 common.create_pendulum(world, "p2", lgsm.Displacement(0,.5,0,1,0,0,0))
 common.create_pendulum(world, "p3", lgsm.Displacement(0,1.,0,1,0,0,0))
 
@@ -73,10 +71,8 @@ import agents.physic.builder
 agents.graphic.builder.deserializeWorld(graph, gInterface, world)
 agents.physic.builder.deserializeWorld(phy, ms, lmd, world)
 
-
 controller = RxController("RxController")
 controller.s.setPeriod(1.)
-
 
 ##### Connect physic and graphic agents to see bodies with markers
 ocb = phy.s.Connectors.OConnectorBodyStateList.new("ocb", "bodyPosition")
@@ -87,7 +83,6 @@ graph.getPort("framePosition").connectTo(phy.getPort("bodyPosition_H"))
 for n in phy.s.GVM.Scene("main").getBodyNames():
     ocb.addBody(n)
     gInterface.MarkersInterface.addMarker(n, False)
-
 
 ##### Configure some robots
 phy.s.GVM.Robot("p2").enableGravity(False)
@@ -106,8 +101,8 @@ controller.s.start()
 
 
 ##### Interactive shell
-import dsimi.interactive
-shell = dsimi.interactive.shell()
+import xdefw.interactive
+shell = xdefw.interactive.shell_console()
 shell()
 
 
