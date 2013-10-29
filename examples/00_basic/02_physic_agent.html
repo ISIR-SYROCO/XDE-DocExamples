@@ -25,8 +25,8 @@
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <link rel="top" title="XDE examples 0.1 documentation" href="../../index.html" />
     <link rel="up" title="Basic Examples" href="../00_basic.html" />
-    <link rel="next" title="Create a graphic agent" href="02_graphic_agent.html" />
-    <link rel="prev" title="Create an Orocos component" href="01_orocos_task.html" /> 
+    <link rel="next" title="Create a graphic agent" href="03_graphic_agent.html" />
+    <link rel="prev" title="Create a graphic agent" href="02_graphic_agent.html" /> 
   </head>
   <body>
     <div class="related">
@@ -36,10 +36,10 @@
           <a href="../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="02_graphic_agent.html" title="Create a graphic agent"
+          <a href="03_graphic_agent.html" title="Create a graphic agent"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="01_orocos_task.html" title="Create an Orocos component"
+          <a href="02_graphic_agent.html" title="Create a graphic agent"
              accesskey="P">previous</a> |</li>
         <li><a href="../../index.html">XDE examples 0.1 documentation</a> &raquo;</li>
           <li><a href="../00_basic.html" accesskey="U">Basic Examples</a> &raquo;</li> 
@@ -59,8 +59,8 @@
 There are many ways to create and configure this agent, as explain in the following sections.</p>
 <p>Source files:</p>
 <ul class="last simple">
-<li><a class="reference download internal" href="../../_downloads/main_orocos.py"><tt class="xref download docutils literal"><span class="pre">main_orocos.py</span></tt></a></li>
-<li><a class="reference download internal" href="../../_downloads/main_simple.py"><tt class="xref download docutils literal"><span class="pre">main_simple.py</span></tt></a>.</li>
+<li><a class="reference download internal" href="../../_downloads/main_orocos2.py"><tt class="xref download docutils literal"><span class="pre">main_orocos.py</span></tt></a></li>
+<li><a class="reference download internal" href="../../_downloads/main_simple2.py"><tt class="xref download docutils literal"><span class="pre">main_simple.py</span></tt></a>.</li>
 </ul>
 </div>
 <div class="section" id="the-orocos-task">
@@ -68,11 +68,11 @@ There are many ways to create and configure this agent, as explain in the follow
 <div class="section" id="create">
 <h3>Create<a class="headerlink" href="#create" title="Permalink to this headline">¶</a></h3>
 <p>The <em>low-level</em> technique is to call the method <tt class="xref py py-meth docutils literal"><span class="pre">deploy.deployer.rtt.Task()</span></tt></p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">dsimi.rtt</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">xdefw.rtt</span>
 <span class="kn">import</span> <span class="nn">deploy.deployer</span> <span class="kn">as</span> <span class="nn">ddeployer</span>
 
-<span class="n">phy</span> <span class="o">=</span> <span class="n">dsimi</span><span class="o">.</span><span class="n">rtt</span><span class="o">.</span><span class="n">Task</span><span class="p">(</span><span class="n">ddeployer</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s">&quot;physic&quot;</span><span class="p">,</span> <span class="s">&quot;dsimi::physics::PhysicAgent&quot;</span><span class="p">,</span> <span class="s">&quot;dsimi-agt-physics&quot;</span><span class="p">),</span>
-                     <span class="n">binding_class</span><span class="o">=</span><span class="n">dsimi</span><span class="o">.</span><span class="n">rtt</span><span class="o">.</span><span class="n">ObjectStringBinding</span><span class="p">,</span>
+<span class="n">phy</span> <span class="o">=</span> <span class="n">xdefw</span><span class="o">.</span><span class="n">rtt</span><span class="o">.</span><span class="n">Task</span><span class="p">(</span><span class="n">ddeployer</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s">&quot;physic&quot;</span><span class="p">,</span> <span class="s">&quot;xdefw::physics::PhysicAgent&quot;</span><span class="p">,</span> <span class="s">&quot;xdefw-agt-physics&quot;</span><span class="p">),</span>
+                     <span class="n">binding_class</span><span class="o">=</span><span class="n">xdefw</span><span class="o">.</span><span class="n">rtt</span><span class="o">.</span><span class="n">ObjectStringBinding</span><span class="p">,</span>
                      <span class="n">static_classes</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;agent&#39;</span><span class="p">,</span> <span class="s">&#39;Connectors&#39;</span><span class="p">])</span>
 
 
@@ -149,14 +149,14 @@ This scene roughly contains the links and bodies.</p>
 </ul>
 
   <h4>Previous topic</h4>
-  <p class="topless"><a href="01_orocos_task.html"
-                        title="previous chapter">Create an Orocos component</a></p>
-  <h4>Next topic</h4>
   <p class="topless"><a href="02_graphic_agent.html"
+                        title="previous chapter">Create a graphic agent</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="03_graphic_agent.html"
                         title="next chapter">Create a graphic agent</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
-    <li><a href="../../_sources/examples/00_basic/01_physic_agent.txt"
+    <li><a href="../../_sources/examples/00_basic/02_physic_agent.txt"
            rel="nofollow">Show Source</a></li>
   </ul>
 <div id="searchbox" style="display: none">
@@ -183,10 +183,10 @@ This scene roughly contains the links and bodies.</p>
           <a href="../../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="02_graphic_agent.html" title="Create a graphic agent"
+          <a href="03_graphic_agent.html" title="Create a graphic agent"
              >next</a> |</li>
         <li class="right" >
-          <a href="01_orocos_task.html" title="Create an Orocos component"
+          <a href="02_graphic_agent.html" title="Create a graphic agent"
              >previous</a> |</li>
         <li><a href="../../index.html">XDE examples 0.1 documentation</a> &raquo;</li>
           <li><a href="../00_basic.html" >Basic Examples</a> &raquo;</li> 

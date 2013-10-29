@@ -39,7 +39,7 @@ for instance Jacobian matrices or generalized coordinates and velocity.
 
 .. literalinclude:: 02_robot_with_desc/main.py
    :start-after: ##### Create a world with description of the kinematic tree
-   :end-before: ##### Deserialize world
+   :end-before: ##### Fill and deserialize world: register world description in phy & graph agents
 
 
 
@@ -56,7 +56,7 @@ to convert elements that are registered in the graphical scene of the world.
 
 
 .. literalinclude:: 02_robot_with_desc/main.py
-   :start-after: ##### Deserialize world
+   :start-after: ##### Fill and deserialize world: register world description in phy & graph agents
    :end-before: ##### Connect physic and graphic agents
 
 

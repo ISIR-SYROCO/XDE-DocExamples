@@ -25,8 +25,8 @@
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <link rel="top" title="XDE examples 0.1 documentation" href="../../index.html" />
     <link rel="up" title="Basic Examples" href="../00_basic.html" />
-    <link rel="next" title="Create a physical agent" href="02_physic_agent.html" />
-    <link rel="prev" title="Create a physical agent" href="01_physic_agent.html" /> 
+    <link rel="next" title="Building robots" href="../01_building_robots.html" />
+    <link rel="prev" title="Create a physical agent" href="02_physic_agent.html" /> 
   </head>
   <body>
     <div class="related">
@@ -36,10 +36,10 @@
           <a href="../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="02_physic_agent.html" title="Create a physical agent"
+          <a href="../01_building_robots.html" title="Building robots"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="01_physic_agent.html" title="Create a physical agent"
+          <a href="02_physic_agent.html" title="Create a physical agent"
              accesskey="P">previous</a> |</li>
         <li><a href="../../index.html">XDE examples 0.1 documentation</a> &raquo;</li>
           <li><a href="../00_basic.html" accesskey="U">Basic Examples</a> &raquo;</li> 
@@ -59,8 +59,8 @@
 There are many ways to create and configure this agent, as explain in the following sections.</p>
 <p>source files:</p>
 <ul class="last simple">
-<li><a class="reference download internal" href="../../_downloads/main_orocos1.py"><tt class="xref download docutils literal"><span class="pre">main_orocos.py</span></tt></a></li>
-<li><a class="reference download internal" href="../../_downloads/main_simple1.py"><tt class="xref download docutils literal"><span class="pre">main_simple.py</span></tt></a></li>
+<li><a class="reference download internal" href="../../_downloads/main_orocos3.py"><tt class="xref download docutils literal"><span class="pre">main_orocos.py</span></tt></a></li>
+<li><a class="reference download internal" href="../../_downloads/main_simple3.py"><tt class="xref download docutils literal"><span class="pre">main_simple.py</span></tt></a></li>
 </ul>
 </div>
 <div class="section" id="the-orocos-task">
@@ -68,11 +68,11 @@ There are many ways to create and configure this agent, as explain in the follow
 <div class="section" id="create">
 <h3>Create<a class="headerlink" href="#create" title="Permalink to this headline">¶</a></h3>
 <p>The <em>low-level</em> technique is to call the method <tt class="xref py py-meth docutils literal"><span class="pre">deploy.deployer.rtt.Task()</span></tt></p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">dsimi.rtt</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">xdefw.rtt</span>
 <span class="kn">import</span> <span class="nn">deploy.deployer</span> <span class="kn">as</span> <span class="nn">ddeployer</span>
 
-<span class="n">graph</span> <span class="o">=</span> <span class="n">dsimi</span><span class="o">.</span><span class="n">rtt</span><span class="o">.</span><span class="n">Task</span><span class="p">(</span><span class="n">ddeployer</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s">&quot;graphic&quot;</span><span class="p">,</span> <span class="s">&quot;dsimi::graphics::GraphicAgent&quot;</span><span class="p">,</span> <span class="s">&quot;dsimi-agt-graphics&quot;</span><span class="p">),</span>
-                       <span class="n">binding_class</span><span class="o">=</span><span class="n">dsimi</span><span class="o">.</span><span class="n">rtt</span><span class="o">.</span><span class="n">ObjectStringBinding</span><span class="p">,</span> 
+<span class="n">graph</span> <span class="o">=</span> <span class="n">xdefw</span><span class="o">.</span><span class="n">rtt</span><span class="o">.</span><span class="n">Task</span><span class="p">(</span><span class="n">ddeployer</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s">&quot;graphic&quot;</span><span class="p">,</span> <span class="s">&quot;xdefw::graphics::GraphicAgent&quot;</span><span class="p">,</span> <span class="s">&quot;xdefw-agt-graphics&quot;</span><span class="p">),</span>
+                       <span class="n">binding_class</span><span class="o">=</span><span class="n">xdefw</span><span class="o">.</span><span class="n">rtt</span><span class="o">.</span><span class="n">ObjectStringBinding</span><span class="p">,</span> 
                        <span class="n">static_classes</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;Viewer&#39;</span><span class="p">,</span> <span class="s">&#39;Dio&#39;</span><span class="p">,</span> <span class="s">&#39;agent&#39;</span><span class="p">,</span> <span class="s">&#39;Connectors&#39;</span><span class="p">])</span>
 </pre></div>
 </div>
@@ -80,7 +80,18 @@ There are many ways to create and configure this agent, as explain in the follow
 <div class="section" id="configure">
 <h3>Configure<a class="headerlink" href="#configure" title="Permalink to this headline">¶</a></h3>
 <p>The viewer has to load plugins and Ogre resources.</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">view</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">Viewer</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># Configure Ogre</span>
+<span class="n">ogre_resource_path</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">share_dir</span><span class="o">+</span><span class="s">&#39;/resources/ogre&#39;</span>
+
+<span class="n">ogre_other_resources</span> <span class="o">=</span> <span class="p">[</span> <span class="c"># get the Ogre3D resources path (material definitions, etc.)</span>
+    <span class="n">loader</span><span class="o">.</span><span class="n">share_dir</span><span class="o">+</span><span class="s">&#39;/resources/ogre/meshes&#39;</span><span class="p">,</span>
+    <span class="n">loader</span><span class="o">.</span><span class="n">share_dir</span><span class="o">+</span><span class="s">&#39;/resources/ogre/materials/textures&#39;</span><span class="p">,</span>
+    <span class="n">loader</span><span class="o">.</span><span class="n">share_dir</span><span class="o">+</span><span class="s">&#39;/resources/ogre/materials/textures/ocean&#39;</span><span class="p">,</span>
+    <span class="n">loader</span><span class="o">.</span><span class="n">share_dir</span><span class="o">+</span><span class="s">&#39;/resources/ogre/materials/programs&#39;</span><span class="p">,</span>
+    <span class="n">loader</span><span class="o">.</span><span class="n">share_dir</span><span class="o">+</span><span class="s">&#39;/resources/ogre/materials/core&#39;</span>
+<span class="p">]</span>
+
+<span class="n">view</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">Viewer</span>
 
 <span class="n">view</span><span class="o">.</span><span class="n">init</span><span class="p">()</span> <span class="c"># initialize ogre</span>
 
@@ -89,20 +100,12 @@ There are many ways to create and configure this agent, as explain in the follow
 <span class="n">plugins</span><span class="p">[</span><span class="s">&#39;plugin_files&#39;</span><span class="p">][</span><span class="s">&#39;render&#39;</span><span class="p">]</span> <span class="o">=</span> \
        <span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">r</span><span class="p">:</span> <span class="n">r</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&quot;_GL&quot;</span><span class="p">)</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span> <span class="p">,</span><span class="n">plugins</span><span class="p">[</span><span class="s">&#39;plugin_files&#39;</span><span class="p">][</span><span class="s">&#39;render&#39;</span><span class="p">])</span>     <span class="c"># only use OpenGL. Directx may not be present</span>
 <span class="n">view</span><span class="o">.</span><span class="n">configurePlugins</span><span class="p">(</span><span class="n">plugins</span><span class="p">)</span>
-
-<span class="c"># Configure Ogre</span>
-<span class="n">ogre_resources</span> <span class="o">=</span> <span class="p">[</span> <span class="c"># get the Ogre3D resources path (material definitions, etc.)</span>
-    <span class="n">loader</span><span class="o">.</span><span class="n">share_dir</span><span class="o">+</span><span class="s">&#39;/resources/ogre/manikin&#39;</span><span class="p">,</span>
-    <span class="n">loader</span><span class="o">.</span><span class="n">share_dir</span><span class="o">+</span><span class="s">&#39;/resources/ogre/meshes&#39;</span><span class="p">,</span>
-    <span class="n">loader</span><span class="o">.</span><span class="n">share_dir</span><span class="o">+</span><span class="s">&#39;/resources/ogre/materials&#39;</span><span class="p">,</span>
-    <span class="n">loader</span><span class="o">.</span><span class="n">share_dir</span><span class="o">+</span><span class="s">&#39;/resources/ogre/materials/textures&#39;</span><span class="p">,</span>
-    <span class="n">loader</span><span class="o">.</span><span class="n">share_dir</span><span class="o">+</span><span class="s">&#39;/resources/ogre/materials/textures/ocean&#39;</span><span class="p">,</span>
-    <span class="n">loader</span><span class="o">.</span><span class="n">share_dir</span><span class="o">+</span><span class="s">&#39;/resources/ogre/materials/programs&#39;</span><span class="p">,</span>
-    <span class="n">loader</span><span class="o">.</span><span class="n">share_dir</span><span class="o">+</span><span class="s">&#39;/resources/ogre/materials/core&#39;</span>
-<span class="p">]</span>
-<span class="n">view</span><span class="o">.</span><span class="n">setResourceFileList</span><span class="p">(</span><span class="n">ogre_resources</span><span class="p">)</span> <span class="c"># load ogre resources</span>
 <span class="n">view</span><span class="o">.</span><span class="n">configureRenderer</span><span class="p">(</span><span class="n">view</span><span class="o">.</span><span class="n">getAvailableRenderers</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
+
 <span class="n">view</span><span class="o">.</span><span class="n">configureDisplay</span><span class="p">(</span><span class="n">view</span><span class="o">.</span><span class="n">getDefaultDisplayConfig</span><span class="p">())</span> <span class="c"># configure default setup</span>
+
+<span class="n">view</span><span class="o">.</span><span class="n">setCoreResourcesPath</span><span class="p">(</span><span class="n">ogre_resource_path</span><span class="p">)</span> <span class="c"># load ogre resources</span>
+<span class="n">view</span><span class="o">.</span><span class="n">setAdditionalResourceFileList</span><span class="p">(</span><span class="n">ogre_other_resources</span><span class="p">)</span> <span class="c"># Add the custom material</span>
 <span class="n">view</span><span class="o">.</span><span class="n">setup</span><span class="p">()</span> <span class="c"># load configuration specify above</span>
 </pre></div>
 </div>
@@ -114,6 +117,7 @@ There are many ways to create and configure this agent, as explain in the follow
 <span class="n">view</span><span class="o">.</span><span class="n">createScene</span><span class="p">(</span><span class="s">&quot;Scene&quot;</span><span class="p">)</span>
 <span class="n">view</span><span class="o">.</span><span class="n">bindSceneWindow</span><span class="p">(</span><span class="s">&quot;Scene&quot;</span><span class="p">,</span> <span class="s">&quot;Window&quot;</span><span class="p">,</span> <span class="s">&quot;Viewport&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="c"># create a viewport a view of a scene in a window</span>
                                                        <span class="c"># 0 is a viewport z-order (first one must be 0)</span>
+<span class="n">view</span><span class="o">.</span><span class="n">initInterfaces</span><span class="p">()</span>   <span class="c"># init interfaces use to setup the graphical scene</span>
 </pre></div>
 </div>
 </div>
@@ -121,12 +125,11 @@ There are many ways to create and configure this agent, as explain in the follow
 <h3>Configure viewer<a class="headerlink" href="#configure-viewer" title="Permalink to this headline">¶</a></h3>
 <p>The viewer is configured as follows</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">view</span><span class="o">.</span><span class="n">enableNavigation</span><span class="p">(</span> <span class="bp">True</span> <span class="p">)</span>       <span class="c"># camera navigation throw mouse</span>
-<span class="n">view</span><span class="o">.</span><span class="n">initInterfaces</span><span class="p">()</span>   <span class="c"># init interfaces use to setup the graphical scene</span>
 <span class="n">gInterface</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">Interface</span><span class="p">(</span> <span class="s">&quot;Scene&quot;</span> <span class="p">)</span> <span class="c"># Graph Interface : mother of all interface</span>
 <span class="n">gInterface</span><span class="o">.</span><span class="n">LightInterface</span><span class="o">.</span><span class="n">enableFog</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span> <span class="c"># no fog</span>
 
 <span class="c"># Set up brackground color</span>
-<span class="kn">import</span> <span class="nn">color_pb2</span>
+<span class="kn">import</span> <span class="nn">xde.desc.core.color_pb2</span> <span class="kn">as</span> <span class="nn">color_pb2</span>
 <span class="n">bg_color</span> <span class="o">=</span> <span class="n">color_pb2</span><span class="o">.</span><span class="n">Color</span><span class="p">()</span>
 <span class="n">bg_color</span><span class="o">.</span><span class="n">R</span><span class="p">,</span> <span class="n">bg_color</span><span class="o">.</span><span class="n">G</span><span class="p">,</span> <span class="n">bg_color</span><span class="o">.</span><span class="n">B</span> <span class="o">=</span> <span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.9</span>
 <span class="n">gInterface</span><span class="o">.</span><span class="n">LightInterface</span><span class="o">.</span><span class="n">setBackgroundColor</span><span class="p">(</span><span class="s">&quot;Viewport&quot;</span><span class="p">,</span> <span class="n">bg_color</span><span class="p">)</span>
@@ -211,14 +214,14 @@ This creates a graphical agent and a viewer by setting few parameters.</p>
 </ul>
 
   <h4>Previous topic</h4>
-  <p class="topless"><a href="01_physic_agent.html"
+  <p class="topless"><a href="02_physic_agent.html"
                         title="previous chapter">Create a physical agent</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="02_physic_agent.html"
-                        title="next chapter">Create a physical agent</a></p>
+  <p class="topless"><a href="../01_building_robots.html"
+                        title="next chapter">Building robots</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
-    <li><a href="../../_sources/examples/00_basic/02_graphic_agent.txt"
+    <li><a href="../../_sources/examples/00_basic/03_graphic_agent.txt"
            rel="nofollow">Show Source</a></li>
   </ul>
 <div id="searchbox" style="display: none">
@@ -245,10 +248,10 @@ This creates a graphical agent and a viewer by setting few parameters.</p>
           <a href="../../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="02_physic_agent.html" title="Create a physical agent"
+          <a href="../01_building_robots.html" title="Building robots"
              >next</a> |</li>
         <li class="right" >
-          <a href="01_physic_agent.html" title="Create a physical agent"
+          <a href="02_physic_agent.html" title="Create a physical agent"
              >previous</a> |</li>
         <li><a href="../../index.html">XDE examples 0.1 documentation</a> &raquo;</li>
           <li><a href="../00_basic.html" >Basic Examples</a> &raquo;</li> 

@@ -1,15 +1,16 @@
-
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Create robot with desc module &mdash; XDE examples v0.1 documentation</title>
+    <title>Create robot with desc module &mdash; XDE examples 0.1 documentation</title>
+    
     <link rel="stylesheet" href="../../_static/josini.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
@@ -22,7 +23,7 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <link rel="top" title="XDE examples v0.1 documentation" href="../../index.html" />
+    <link rel="top" title="XDE examples 0.1 documentation" href="../../index.html" />
     <link rel="up" title="Building robots" href="../01_building_robots.html" />
     <link rel="next" title="Control robots" href="../02_control.html" />
     <link rel="prev" title="Create a robot" href="01_create_robot.html" /> 
@@ -40,7 +41,7 @@
         <li class="right" >
           <a href="01_create_robot.html" title="Create a robot"
              accesskey="P">previous</a> |</li>
-        <li><a href="../../index.html">XDE examples v0.1 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">XDE examples 0.1 documentation</a> &raquo;</li>
           <li><a href="../01_building_robots.html" accesskey="U">Building robots</a> &raquo;</li> 
       </ul>
     </div>  
@@ -99,24 +100,33 @@ but it also contains a graphical scene and a collision scene.</p>
 <p>The following methods create a named mechanism
 whose information about the kinematic and dynamic models can be obtain later,
 for instance Jacobian matrices or generalized coordinates and velocity.</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">desc.scene</span>
-<span class="kn">import</span> <span class="nn">desc.robot</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">desc.physic</span>
+<span class="kn">import</span> <span class="nn">desc.graphic</span>
 
-<span class="n">world</span> <span class="o">=</span> <span class="n">desc</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">createWorld</span><span class="p">()</span>
+<span class="c"># We create the structure that will contain the description of our robot.</span>
+<span class="kn">import</span> <span class="nn">xde.desc.app.concepts_pb2</span> <span class="kn">as</span> <span class="nn">concepts_pb2</span>
+<span class="n">robot_data</span> <span class="o">=</span> <span class="n">concepts_pb2</span><span class="o">.</span><span class="n">RobotData</span><span class="p">()</span>
 
-<span class="n">desc</span><span class="o">.</span><span class="n">robot</span><span class="o">.</span><span class="n">addKinematicTree</span><span class="p">(</span><span class="n">world</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">physical_scene</span><span class="p">,</span>
-                            <span class="n">parent_node</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+<span class="n">desc</span><span class="o">.</span><span class="n">physic</span><span class="o">.</span><span class="n">fillKinematicTree</span><span class="p">(</span><span class="n">robot_data</span><span class="o">.</span><span class="n">physical_robot</span><span class="o">.</span><span class="n">multi_body_model</span><span class="o">.</span><span class="n">kinematic_tree</span><span class="p">,</span>
                             <span class="n">tree</span><span class="o">=</span><span class="n">kin_tree</span><span class="p">,</span>
                             <span class="n">fixed_base</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
                             <span class="n">H_init</span><span class="o">=</span><span class="n">lgsm</span><span class="o">.</span><span class="n">Displacement</span><span class="p">())</span>
 
 
-<span class="n">desc</span><span class="o">.</span><span class="n">physic</span><span class="o">.</span><span class="n">addMechanism</span><span class="p">(</span><span class="n">world</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">physical_scene</span><span class="p">,</span>
+<span class="n">desc</span><span class="o">.</span><span class="n">physic</span><span class="o">.</span><span class="n">fillMechanism</span><span class="p">(</span><span class="n">robot_data</span><span class="o">.</span><span class="n">physical_robot</span><span class="o">.</span><span class="n">multi_body_model</span><span class="o">.</span><span class="n">mechanism</span><span class="p">,</span>
                          <span class="n">name</span><span class="o">=</span><span class="s">&quot;pendulum&quot;</span><span class="p">,</span>
                          <span class="n">root_node</span><span class="o">=</span><span class="s">&quot;b_root&quot;</span><span class="p">,</span>
                          <span class="n">trim_nodes</span><span class="o">=</span><span class="p">[],</span>
                          <span class="n">bodies</span><span class="o">=</span><span class="n">body</span><span class="p">,</span>
                          <span class="n">segments</span><span class="o">=</span><span class="n">body</span><span class="p">)</span>
+
+<span class="c">## We fill the graphical description of the robot.</span>
+<span class="n">desc</span><span class="o">.</span><span class="n">graphic</span><span class="o">.</span><span class="n">fillGraphicalNode</span><span class="p">(</span><span class="n">robot_data</span><span class="o">.</span><span class="n">graphical_robot</span><span class="o">.</span><span class="n">graphical_tree</span><span class="p">,</span> <span class="s">&quot;robot.root&quot;</span><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="n">lgsm</span><span class="o">.</span><span class="n">Displacement</span><span class="p">(),</span> <span class="n">scale</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+
+<span class="c">## We write the description of the robot in a binary file</span>
+<span class="kn">import</span> <span class="nn">desc_core</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">cpath</span> <span class="o">+</span> <span class="s">&quot;/pendulum.desc&quot;</span><span class="p">,</span> <span class="s">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+  <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">desc_core</span><span class="o">.</span><span class="n">Serialize</span><span class="p">(</span><span class="n">robot_data</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
@@ -126,7 +136,15 @@ for instance Jacobian matrices or generalized coordinates and velocity.</p>
 This is done with the <tt class="xref py py-meth docutils literal"><span class="pre">agents.physic.builder.deserializeWorld()</span></tt> method.</p>
 <p>Note that the same goes for the graphical agent,
 to convert elements that are registered in the graphical scene of the world.</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">agents.graphic.builder</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">desc.scene</span>
+<span class="n">world</span> <span class="o">=</span> <span class="n">desc</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">createWorld</span><span class="p">()</span>
+
+<span class="kn">import</span> <span class="nn">concepts.robot</span>
+<span class="n">robot_importer</span> <span class="o">=</span> <span class="n">concepts</span><span class="o">.</span><span class="n">robot</span><span class="o">.</span><span class="n">RobotImporter</span><span class="p">(</span><span class="s">&quot;robot_factory&quot;</span><span class="p">,</span> <span class="n">cpath</span> <span class="o">+</span> <span class="s">&quot;/pendulum.desc&quot;</span><span class="p">)</span>
+<span class="n">robot_importer</span><span class="o">.</span><span class="n">fillLibrary</span><span class="p">(</span><span class="n">world</span><span class="p">)</span>
+<span class="n">robot_importer</span><span class="o">.</span><span class="n">addInstance</span><span class="p">(</span><span class="n">world</span><span class="p">,</span> <span class="s">&quot;pendulum&quot;</span><span class="p">)</span>
+
+<span class="kn">import</span> <span class="nn">agents.graphic.builder</span>
 <span class="kn">import</span> <span class="nn">agents.physic.builder</span>
 
 <span class="n">agents</span><span class="o">.</span><span class="n">graphic</span><span class="o">.</span><span class="n">builder</span><span class="o">.</span><span class="n">deserializeWorld</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">gInterface</span><span class="p">,</span> <span class="n">world</span><span class="p">)</span>
@@ -166,7 +184,7 @@ to convert elements that are registered in the graphical scene of the world.</p>
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" size="18" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
@@ -192,13 +210,13 @@ to convert elements that are registered in the graphical scene of the world.</p>
         <li class="right" >
           <a href="01_create_robot.html" title="Create a robot"
              >previous</a> |</li>
-        <li><a href="../../index.html">XDE examples v0.1 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">XDE examples 0.1 documentation</a> &raquo;</li>
           <li><a href="../01_building_robots.html" >Building robots</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2012, Joseph Salini, Sovannara Hak.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2b1.
     </div>
   </body>
 </html>

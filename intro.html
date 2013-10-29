@@ -1,0 +1,208 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Introduction &mdash; XDE examples 0.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/josini.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="XDE examples 0.1 documentation" href="index.html" />
+    <link rel="next" title="Basic Examples" href="examples/00_basic.html" />
+    <link rel="prev" title="Welcome to XDE examples’s documentation!" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="examples/00_basic.html" title="Basic Examples"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to XDE examples’s documentation!"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">XDE examples 0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="introduction">
+<h1>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h1>
+<p>In this section we will briefly describe what is the Orocos Toolchain and its relation with the XDE framework.
+Indeed, XDE framework is a set of Orocos components developped by the french CEA dedicated to interactive dynamic simulation.
+We will then introduce how the XDE framework is organised.</p>
+<div class="section" id="orocos-toolchain">
+<h2>Orocos Toolchain<a class="headerlink" href="#orocos-toolchain" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>Orocos Toolchain is a framework to build real time applications using a components approach. The toolchain contains:</dt>
+<dd><ul class="first last simple">
+<li>RTT: Real Time Toolkit, which provides a framework to write C++ Orocos components</li>
+<li>OCL: Orocos Component Library, which is a set of Orocos components to manage setup and interactions between components</li>
+<li>Orogen: A code generation tool to quickly generate skeleton of component including compilation scripts</li>
+</ul>
+</dd>
+</dl>
+<div class="section" id="orocos-component">
+<h3>Orocos Component<a class="headerlink" href="#orocos-component" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt>Basically, an Orocos <a class="reference internal" href="#component">component</a> is a state machine with three states:</dt>
+<dd><ul class="first last simple">
+<li>Pre-Operational</li>
+<li>Stopped</li>
+<li>Running</li>
+</ul>
+</dd>
+</dl>
+<p>The transition are triggered by hook function. The component can work in a synchronous mode, where
+the <tt class="docutils literal"><span class="pre">updateHook()</span></tt> is called periodically, and in an asynchronous mode where the <tt class="docutils literal"><span class="pre">updateHook()</span></tt>
+is triggered by events (data on ports for example).</p>
+<div class="figure align-center" id="component">
+<img alt="_images/component.png" src="_images/component.png" />
+<p class="caption">An Orocos component.</p>
+</div>
+<dl class="docutils">
+<dt>We can interact with a component through:</dt>
+<dd><ul class="first last simple">
+<li><tt class="docutils literal"><span class="pre">Services</span></tt> or <tt class="docutils literal"><span class="pre">Operations</span></tt> which typically are functions like <tt class="docutils literal"><span class="pre">setPeriod(T)</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">Data</span> <span class="pre">ports</span></tt> where the data are processed in the <tt class="docutils literal"><span class="pre">updateHook()</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">Properties</span></tt> which are special parameters that can be set from a configuration file</li>
+</ul>
+</dd>
+</dl>
+</div>
+<div class="section" id="ocl-deployer">
+<h3>OCL Deployer<a class="headerlink" href="#ocl-deployer" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt>The Deployer is a special component that provides an interactive shell that enables us to manage other components. Basically, the Deployer allows us to:</dt>
+<dd><ul class="first last simple">
+<li>Import a library containing a component</li>
+<li>Load the component in the application environement</li>
+<li>Connect ports of components</li>
+<li>Start and stop components</li>
+<li>Run scripts to perform those tasks</li>
+</ul>
+</dd>
+</dl>
+</div>
+</div>
+<div class="section" id="xde-and-orocos-relationship">
+<h2>XDE and Orocos relationship<a class="headerlink" href="#xde-and-orocos-relationship" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>XDE framework is a set of Orocos components also called, in XDE applications, agents. The main ones are:</dt>
+<dd><ul class="first last simple">
+<li>Physics</li>
+<li>Graphics</li>
+<li>Virtual human simulation</li>
+<li>IO Devices</li>
+</ul>
+</dd>
+</dl>
+<div class="section" id="python-interface">
+<h3>Python Interface<a class="headerlink" href="#python-interface" title="Permalink to this headline">¶</a></h3>
+<p>XDE framework contains Python interface for RTT. As a consequence,
+it is possible to write Orocos components in Python.</p>
+<p>There is also a python interface for OCL Deployer. It allows us to import library (compiled from C++) that contains
+Orocos components, to load components and to connect them in Python. Basically, in order to build a simulation,
+we have to write a Python script that will be an equivalent of an OCL Deployer script, loading, configuring and connecting different components.</p>
+<div class="figure align-center" id="xde-deploy">
+<img alt="_images/xde_deploy.png" src="_images/xde_deploy.png" />
+<p class="caption">An example of a deployment in XDE.</p>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Introduction</a><ul>
+<li><a class="reference internal" href="#orocos-toolchain">Orocos Toolchain</a><ul>
+<li><a class="reference internal" href="#orocos-component">Orocos Component</a></li>
+<li><a class="reference internal" href="#ocl-deployer">OCL Deployer</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#xde-and-orocos-relationship">XDE and Orocos relationship</a><ul>
+<li><a class="reference internal" href="#python-interface">Python Interface</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Welcome to XDE examples&#8217;s documentation!</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="examples/00_basic.html"
+                        title="next chapter">Basic Examples</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/intro.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="examples/00_basic.html" title="Basic Examples"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to XDE examples’s documentation!"
+             >previous</a> |</li>
+        <li><a href="index.html">XDE examples 0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Joseph Salini, Sovannara Hak.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2b1.
+    </div>
+  </body>
+</html>

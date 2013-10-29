@@ -1,0 +1,179 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Create an Orocos component &mdash; XDE examples 0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/josini.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="XDE examples 0.1 documentation" href="../../index.html" />
+    <link rel="up" title="Basic Examples" href="../00_basic.html" />
+    <link rel="next" title="Create a physical agent" href="01_physic_agent.html" />
+    <link rel="prev" title="Void script" href="00_void.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="01_physic_agent.html" title="Create a physical agent"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="00_void.html" title="Void script"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">XDE examples 0.1 documentation</a> &raquo;</li>
+          <li><a href="../00_basic.html" accesskey="U">Basic Examples</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="create-an-orocos-component">
+<h1>Create an Orocos component<a class="headerlink" href="#create-an-orocos-component" title="Permalink to this headline">¶</a></h1>
+<div class="admonition important">
+<p class="first admonition-title">Important</p>
+<p>This example shows how to <strong>write an orocos component in Python</strong>.</p>
+<p>Source files:</p>
+<ul class="last simple">
+<li><a class="reference download internal" href="../../_downloads/orocos_task.py"><tt class="xref download docutils literal"><span class="pre">orocos_task.py</span></tt></a></li>
+</ul>
+</div>
+<div class="section" id="the-orocos-task">
+<h2>The orocos task<a class="headerlink" href="#the-orocos-task" title="Permalink to this headline">¶</a></h2>
+<p>First you have to import the modules of the Python interface for RTT:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">loader</span>
+<span class="kn">import</span> <span class="nn">rtt_interface</span>
+<span class="kn">import</span> <span class="nn">xdefw.rtt</span>
+</pre></div>
+</div>
+<p>Then write a class that derives from <tt class="docutils literal"><span class="pre">xdefw.rtt.Task</span></tt>. In the constructor,
+you can set the period of the component, add data ports...</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">MyComponent</span><span class="p">(</span><span class="n">xdefw</span><span class="o">.</span><span class="n">rtt</span><span class="o">.</span><span class="n">Task</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">time_step</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">MyComponent</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">rtt_interface</span><span class="o">.</span><span class="n">PyTaskFactory</span><span class="o">.</span><span class="n">CreateTask</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">setPeriod</span><span class="p">(</span><span class="n">time_step</span><span class="p">)</span>
+
+<span class="c">##### Create ports</span>
+        <span class="c"># addCreateInputPort(name, type, eventPort)</span>
+        <span class="c"># eventPort is a boolean, if True, the input port becomes an event port</span>
+        <span class="c"># event port triggers updateHook() when data is received</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">i_port</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">addCreateInputPort</span><span class="p">(</span><span class="s">&quot;i&quot;</span><span class="p">,</span> <span class="s">&quot;VectorXd&quot;</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">o_port</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">addCreateOutputPort</span><span class="p">(</span><span class="s">&quot;o&quot;</span><span class="p">,</span> <span class="s">&quot;VectorXd&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Then, you have to implement the different hooks that will define the behavior of the component:</p>
+<div class="highlight-python"><div class="highlight"><pre>    <span class="k">def</span> <span class="nf">startHook</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">print</span> <span class="s">&quot;Start!&quot;</span>
+
+    <span class="k">def</span> <span class="nf">stopHook</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">print</span> <span class="s">&quot;Stop!&quot;</span>
+
+    <span class="k">def</span> <span class="nf">configureHook</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">print</span> <span class="s">&quot;Configure!&quot;</span>
+
+    <span class="k">def</span> <span class="nf">updateHook</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">print</span> <span class="s">&quot;Update!&quot;</span>
+
+        <span class="c"># Read a port.</span>
+        <span class="c"># The function return a couple: (data, flag)</span>
+        <span class="c"># the flag is True if data has been properly read</span>
+        <span class="n">i</span><span class="p">,</span> <span class="n">iok</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">i_port</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">iok</span><span class="p">:</span>
+            <span class="k">print</span> <span class="n">i</span>
+            <span class="c"># Write something</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">o_port</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The operations of the orocos task can be accessed in Python in the field <tt class="docutils literal"><span class="pre">s</span></tt>.
+For example <tt class="docutils literal"><span class="pre">task.s.getPeriod()</span></tt></p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Create an Orocos component</a><ul>
+<li><a class="reference internal" href="#the-orocos-task">The orocos task</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="00_void.html"
+                        title="previous chapter">Void script</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="01_physic_agent.html"
+                        title="next chapter">Create a physical agent</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/examples/00_basic/01_orocos_task.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="01_physic_agent.html" title="Create a physical agent"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="00_void.html" title="Void script"
+             >previous</a> |</li>
+        <li><a href="../../index.html">XDE examples 0.1 documentation</a> &raquo;</li>
+          <li><a href="../00_basic.html" >Basic Examples</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Joseph Salini, Sovannara Hak.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2b1.
+    </div>
+  </body>
+</html>
