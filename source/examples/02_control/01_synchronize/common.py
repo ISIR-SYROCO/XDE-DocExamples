@@ -39,8 +39,7 @@ def get_graphic_agent():
 
 
 import desc.scene
-import desc.robot
-
+import desc.physic
 
 # Robot
 def create_pendulum(world, p_name="pendulum", p_init=None):
@@ -62,7 +61,7 @@ def create_pendulum(world, p_name="pendulum", p_init=None):
 
 
     # Create a description of the kinematic tree
-    desc.robot.addKinematicTree(world.scene.physical_scene,
+    desc.physic.fillKinematicTree(world.scene.physical_scene.nodes.add(),
                                 parent_node=None,
                                 tree=kin_tree,
                                 fixed_base=True,

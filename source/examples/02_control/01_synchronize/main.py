@@ -21,13 +21,13 @@ import time
 #-------------------------------------------------------------------------------
 
 import rtt_interface
-import dsimi.rtt
+import xdefw.rtt
 
-class MyController(dsimi.rtt.Task):
+class MyController(xdefw.rtt.Task):
 
     def __init__(self, Task_name):
         task = rtt_interface.PyTaskFactory.CreateTask(Task_name)
-        dsimi.rtt.Task.__init__(self, task)
+        xdefw.rtt.Task.__init__(self, task)
         
         self.tick = self.addCreateInputPort("controller_tick", "double", True)
         self.tick_ok = False
@@ -66,7 +66,7 @@ controller.s.setPeriod(.01)
 
 ##### Create clock, to synchronize phy and controller
 import deploy.deployer as ddeployer
-clock = dsimi.rtt.Task(ddeployer.load("clock", "dio::Clock", "dio-cpn-clock", "dio/component/"))
+clock = xdefw.rtt.Task(ddeployer.load("clock", "dio::Clock", "dio-cpn-clock", ""))
 clock.s.setPeriod(.1)
 
 
@@ -89,8 +89,8 @@ controller.s.stop()
 clock.s.stop()
 
 ##### Interactive shell
-import dsimi.interactive
-shell = dsimi.interactive.shell()
+import xdefw.interactive
+shell = xdefw.interactive.shell_console()
 shell()
 
 
