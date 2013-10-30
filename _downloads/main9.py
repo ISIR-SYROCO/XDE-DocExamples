@@ -51,7 +51,7 @@ import rtt_interface
 import dsimi.rtt
 import physicshelper
 
-class CartesianController(dsimi.rtt.Task):
+class MyController(dsimi.rtt.Task):
   
     def __init__(self, taskName, world, robotName):
         task = rtt_interface.PyTaskFactory.CreateTask(taskName)
@@ -59,16 +59,7 @@ class CartesianController(dsimi.rtt.Task):
 
         self.model = physicshelper.createDynamicModel(world, robotName)
 
-        self.q_in = self.addCreateInputPort("q", "VectorXd", True)
-        self.q_ok = False
-        
-        self.qdot_in = self.addCreateInputPort("qdot", "VectorXd", True)
-        self.qdot_ok = False
-    
         self.tau_out = self.addCreateOutputPort("tau", "VectorXd")
-        
-        self.kp = 100
-        self.kd = 20
   
     def startHook(self):
         pass
@@ -77,72 +68,34 @@ class CartesianController(dsimi.rtt.Task):
         pass
   
     def updateHook(self):
-        if not self.q_ok:
-            self.q,self.q_ok = self.q_in.read()
-        if not self.qdot_ok:
-            self.qdot,self.qdot_ok = self.qdot_in.read()
-        
-        if self.q_ok and self.qdot_ok:
-            self.q_ok = False
-            self.qdot_ok = False
-            self.doUpdate(self.q, self.qdot)
-
+        self.doUpdate()
   
-    def doUpdate(self, q, qdot):
-        model = self.model
-        model.setJointPositions(q)
-        model.setJointVelocities(qdot)
-        
-        H6 = model.getSegmentPosition(model.getSegmentIndex("p1_b_3"))
-        H = lgsm.Displacement(lgsm.vectord(0,0,0), H6.getRotation())
-        J66 = model.getSegmentJacobian(model.getSegmentIndex("p1_b_3"))
-        J60 = H.adjoint() * J66
-        T60 = H.adjoint() * model.getSegmentVelocity(model.getSegmentIndex("p1_b_3"))
-    
-        Xdes = lgsm.Displacement(.3,.3,.3,1,0,0,0) 
-         
-        xd = Xdes.getTranslation() # desired position of the effector
-        x  = H6.getTranslation()
-        v = T60.getLinearVelocity()
-        fc = self.kp * (xd - x) - self.kd * v
-    
-        #tau = lgsm.vector([0] * model.nbInternalDofs())
-        tau = J60[3:6,:].transpose() * fc
-        
-        tau += model.getGravityTerms()
-        
+    def doUpdate(self):
+        time.sleep(0.001)                  # simulate a short time operation
+        #time.sleep(0.1)                  # simulate a time-consumming operation
+        tau = lgsm.vector([8, 4, 1])
         self.tau_out.write(tau)
 
 
 
 #-------------------------------------------------------------------------------
 #
-# Create Controller, Clock
+# Create Controller
 #
 #-------------------------------------------------------------------------------
 
 # Create controller
-controller = CartesianController("MyController", world, "p1") # ControllerName, the world instance, RobotName
+controller = MyController("MyController", world, "p1") # ControllerName, the world instance, RobotName
 controller.s.setPeriod(0.001)
 
-phy.s.Connectors.OConnectorRobotState.new("ocpos", "p1_", "p1")         # ConnectorName, PortName, RobotName
-                                                                        # It generates two ports named "PortName"+"q" & "PortName"+"qdpt"
-phy.s.Connectors.IConnectorRobotJointTorque.new("icjt", "p1_", "p1")    # ConnectorName, PortName, RobotName
-                                                                        # It generates a port named "PortName"+"tau"
-
-
-##### Create clock
+##### Create clock, to synchronize phy and controller
 import deploy.deployer as ddeployer
 clock = dsimi.rtt.Task(ddeployer.load("clock", "dio::Clock", "dio-cpn-clock", "dio/component/"))
-clock.s.setPeriod(time_step) #clock period == phy period
+clock.s.setPeriod(.01)
 
-
-#-------------------------------------------------------------------------------
-#
-# Create input ports in physic agent for synchronization
-#
-#-------------------------------------------------------------------------------
-
+# add Input Port in physic agent
+phy.s.Connectors.IConnectorRobotJointTorque.new("ict", "p1_", "p1") # ConnectorName, PortName, RobotName
+                                                                    # It generates a port named "PortName"+"tau"
 phy.addCreateInputPort("clock_trigger", "double")
 
 icps = phy.s.Connectors.IConnectorSynchro.new("icps")
@@ -150,21 +103,7 @@ icps.addEvent("p1_tau")
 icps.addEvent("clock_trigger")
 
 clock.getPort("ticks").connectTo(phy.getPort("clock_trigger"))
-
-
-
-
-#-------------------------------------------------------------------------------
-#
-# Create connection between phy and controller for Cartesian control
-#
-#-------------------------------------------------------------------------------
-
-phy.getPort('p1_q').connectTo(controller.getPort('q'))
-phy.getPort('p1_qdot').connectTo(controller.getPort('qdot'))
-
 controller.getPort("tau").connectTo(phy.getPort("p1_tau"))
-
 
 #-------------------------------------------------------------------------------
 #
@@ -176,8 +115,6 @@ phy.s.start()
 graph.s.start()
 controller.s.start()
 clock.s.start()
-
-phy.s.agent.triggerUpdate()
 
 ##### Interactive shell
 import dsimi.interactive

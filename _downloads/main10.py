@@ -1,6 +1,6 @@
 #-------------------------------------------------------------------------------
 #
-# Load libraries
+# Load libraries and setup agents
 #
 #-------------------------------------------------------------------------------
 import sys
@@ -10,44 +10,65 @@ cpath = os.path.dirname(os.path.abspath(inspect.getfile( inspect.currentframe())
 sys.path.append(cpath)
 
 import common
+
 import lgsm
+
 import time
 
 time_step = 0.01
 
+phy, ms, lmd = common.get_physic_agent(time_step)
 
-    
+graph, gInterface = common.get_graphic_agent()
+
+world = common.create_world_and_deserialized(phy, ms, lmd, graph, gInterface)
+
+
 #-------------------------------------------------------------------------------
 #
-# Create a new Task. This will be the Kinematic controller.
+# Create Connections between phy and graph
 #
 #-------------------------------------------------------------------------------
+##### Connect physic and graphic agents to see bodies with markers
+ocb = phy.s.Connectors.OConnectorBodyStateList.new("ocb", "bodyPosition")
+graph.s.Connectors.IConnectorFrame.new("icf", "framePosition", "mainScene")
+graph.getPort("framePosition").connectTo(phy.getPort("bodyPosition_H"))
+
+# add markers on bodies
+for n in phy.s.GVM.Scene("main").getBodyNames():
+    ocb.addBody(n)
+    gInterface.MarkersInterface.addMarker(n, False)
+
+
+
+#-------------------------------------------------------------------------------
+#
+# Create a new Task. This will be the controller.
+#
+#-------------------------------------------------------------------------------
+
 import rtt_interface
 import dsimi.rtt
 import physicshelper
 
-class KinematicController(dsimi.rtt.Task):
+class CartesianController(dsimi.rtt.Task):
   
     def __init__(self, taskName, world, robotName):
         task = rtt_interface.PyTaskFactory.CreateTask(taskName)
         dsimi.rtt.Task.__init__(self, task)
 
-        # model instance
         self.model = physicshelper.createDynamicModel(world, robotName)
 
-        # create input ports
         self.q_in = self.addCreateInputPort("q", "VectorXd", True)
         self.q_ok = False
+        
         self.qdot_in = self.addCreateInputPort("qdot", "VectorXd", True)
         self.qdot_ok = False
     
-        # create output ports
-        self.q_des_out = self.addCreateOutputPort("q_des", "VectorXd")
-        self.qdot_des_out = self.addCreateOutputPort("qdot_des", "VectorXd")
-        self.kp_des_out = self.addCreateOutputPort("kp_des", "VectorXd")
-        self.kd_des_out = self.addCreateOutputPort("kd_des", "VectorXd")
-        self.kp_des = 100
-        self.kd_des = 20
+        self.tau_out = self.addCreateOutputPort("tau", "VectorXd")
+        
+        self.kp = 100
+        self.kd = 20
   
     def startHook(self):
         pass
@@ -72,68 +93,42 @@ class KinematicController(dsimi.rtt.Task):
         model.setJointPositions(q)
         model.setJointVelocities(qdot)
         
-        # define output vectors
-        q_des_out = q
-        qdot_des_out = lgsm.vector([.1] * (model.nbInternalDofs()))
-        kp_des_out = lgsm.vector([self.kp_des] * model.nbInternalDofs())
-        kd_des_out = lgsm.vector([self.kd_des] * model.nbInternalDofs())
+        H6 = model.getSegmentPosition(model.getSegmentIndex("p1_b_3"))
+        H = lgsm.Displacement(lgsm.vectord(0,0,0), H6.getRotation())
+        J66 = model.getSegmentJacobian(model.getSegmentIndex("p1_b_3"))
+        J60 = H.adjoint() * J66
+        T60 = H.adjoint() * model.getSegmentVelocity(model.getSegmentIndex("p1_b_3"))
+    
+        Xdes = lgsm.Displacement(.3,.3,.3,1,0,0,0) 
+         
+        xd = Xdes.getTranslation() # desired position of the effector
+        x  = H6.getTranslation()
+        v = T60.getLinearVelocity()
+        fc = self.kp * (xd - x) - self.kd * v
+    
+        #tau = lgsm.vector([0] * model.nbInternalDofs())
+        tau = J60[3:6,:].transpose() * fc
         
+        tau += model.getGravityTerms()
         
-        
-        # send output vectors
-        self.kp_des_out.write(kp_des_out)
-        self.kd_des_out.write(kd_des_out)
-        self.q_des_out.write(q_des_out)
-        self.qdot_des_out.write(qdot_des_out)
-        # print "-------------------"
-        # print q
-        # print qdot
-        # print q_des_out
-        # print qdot_des_out
+        self.tau_out.write(tau)
 
 
 
 #-------------------------------------------------------------------------------
 #
-# Setup agents & Create Connections between phy and graph
-#
-#-------------------------------------------------------------------------------
-# create agents
-phy, ms, lmd = common.get_physic_agent(time_step)                               # create physic agent
-graph, gInterface = common.get_graphic_agent()                                  # create graphic agent
-world = common.create_world_and_deserialized(phy, ms, lmd, graph, gInterface)   # create world and deserialize
-
-##### Connect physic and graphic agents to see bodies with markers
-ocb = phy.s.Connectors.OConnectorBodyStateList.new("ocb", "bodyPosition")
-graph.s.Connectors.IConnectorFrame.new("icf", "framePosition", "mainScene")
-graph.getPort("framePosition").connectTo(phy.getPort("bodyPosition_H"))
-
-# add markers on bodies
-for n in phy.s.GVM.Scene("main").getBodyNames():
-    ocb.addBody(n)
-    gInterface.MarkersInterface.addMarker(n, False)
-
-
-
-
-#-------------------------------------------------------------------------------
-#
-# Create Kinematic controller & clock
+# Create Controller, Clock
 #
 #-------------------------------------------------------------------------------
 
 # Create controller
-controller = KinematicController("MyController", world, "p1") # ControllerName, the world instance, RobotName
+controller = CartesianController("MyController", world, "p1") # ControllerName, the world instance, RobotName
 controller.s.setPeriod(0.001)
 
 phy.s.Connectors.OConnectorRobotState.new("ocpos", "p1_", "p1")         # ConnectorName, PortName, RobotName
-                                                                        # It generates two ports named "PortName"+"q"
-                                                                        #                              "PortName"+"qdot"
-irj = phy.s.Connectors.IConnectorRobotJointPDCoupling.new("icrjPDc", "p1_", "p1")    # ConnectorName, PortName, RobotName
-                                                                        # It generates 4 ports named "PortName"+"q_des"
-                                                                        #                                      +"qdot_des"
-                                                                        #                                      +"kp_des"
-                                                                        #                                      +"kd_des"
+                                                                        # It generates two ports named "PortName"+"q" & "PortName"+"qdpt"
+phy.s.Connectors.IConnectorRobotJointTorque.new("icjt", "p1_", "p1")    # ConnectorName, PortName, RobotName
+                                                                        # It generates a port named "PortName"+"tau"
 
 
 ##### Create clock
@@ -151,26 +146,24 @@ clock.s.setPeriod(time_step) #clock period == phy period
 phy.addCreateInputPort("clock_trigger", "double")
 
 icps = phy.s.Connectors.IConnectorSynchro.new("icps")
-icps.addEvent("p1_qdot_des")
+icps.addEvent("p1_tau")
 icps.addEvent("clock_trigger")
 
 clock.getPort("ticks").connectTo(phy.getPort("clock_trigger"))
 
 
 
+
 #-------------------------------------------------------------------------------
 #
-# Create connection between phy and controller for Kinematic control
+# Create connection between phy and controller for Cartesian control
 #
 #-------------------------------------------------------------------------------
 
 phy.getPort('p1_q').connectTo(controller.getPort('q'))
 phy.getPort('p1_qdot').connectTo(controller.getPort('qdot'))
 
-controller.getPort("q_des").connectTo(phy.getPort("p1_q_des"))
-controller.getPort("qdot_des").connectTo(phy.getPort("p1_qdot_des"))
-controller.getPort("kp_des").connectTo(phy.getPort("p1_kp_des"))
-controller.getPort("kd_des").connectTo(phy.getPort("p1_kd_des"))
+controller.getPort("tau").connectTo(phy.getPort("p1_tau"))
 
 
 #-------------------------------------------------------------------------------
@@ -184,11 +177,7 @@ graph.s.start()
 controller.s.start()
 clock.s.start()
 
-
 phy.s.agent.triggerUpdate()
-
-p1 = phy.s.GVM.Robot("p1")
-p1.enableAllJointPDCouplings(True)
 
 ##### Interactive shell
 import dsimi.interactive

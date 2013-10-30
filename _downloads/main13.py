@@ -33,11 +33,8 @@ graph, gInterface = common.get_graphic_agent()
 
 import iCubcommon
 
-world = iCubcommon.add_iCub(damping=1, H_init=[0,0,1,1,0,0,0], fixed_base=False)
-iCubcommon.add_iCub_meshes(world, createComposite=True, compositeOffset=0.001)
-iCubcommon.addGround(world)
-iCubcommon.addContactLaws(world)
-iCubcommon.addCollisionPairs(world)
+world = iCubcommon.add_iCub(H_init=[0,0,0,1,0,0,0], fixed_base=True)
+iCubcommon.add_iCub_meshes(world)
 
 ##### Deserialize world: register world description in phy & graph agents
 import agents.graphic.builder

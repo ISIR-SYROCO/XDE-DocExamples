@@ -13,66 +13,94 @@ import common
 
 import lgsm
 
-time_step = 0.01
-
-phy, ms, lmd = common.get_physic_agent(time_step)
+phy, ms, lmd = common.get_physic_agent()
 
 graph, gInterface = common.get_graphic_agent()
 
 
-#-------------------------------------------------------------------------------
-#
-# Create a new Task. This will be the controller.
-#
-#-------------------------------------------------------------------------------
-
-import rtt_interface
-import xdefw.rtt
-
-class RxController(xdefw.rtt.Task):
-
-    def __init__(self, Task_name):
-        task = rtt_interface.PyTaskFactory.CreateTask(Task_name)
-        xdefw.rtt.Task.__init__(self, task)
-
-    def startHook(self):
-        pass
-  
-    def stopHook(self):
-        pass
-  
-    def updateHook(self):
-        self.doUpdate()
-  
-    def doUpdate(self):
-        print "IN doUpdate"
-
 
 #-------------------------------------------------------------------------------
 #
-# Create the robot with the desc module.
+# Create, export and import a robot with the desc module.
+#
+# The goal is to make a general description of the robot.
+# This description is then writen in a binary file.
+# This file can then be imported.
 #
 #-------------------------------------------------------------------------------
 
+##### Create the kinematic tree
+
+# Each node is a segment.
+#
+# A node is a tuple (segment_name, segment_mass, H_child_parent, list_of_dofs, list_of_children).
+#
+# each dof being a tuple (dof_type, center_in_parent, axis_in_parent, damping, qmin, qmax, qref)
+# list_of_dofs is a list of degrees of freedom,
+# dof_type is either 'hinge' or 'prismatic'. Empty list of dofs means fixed joint.
+#
+# The last arguments "list_of_children" is a list of nodes.
+
+
+body  = ["b_root", "b_1", "b_2", "b_3"]
+joint = ["j_root", "j_1", "j_2", "j_3"]
+mass = 1 #1kg
+damp = 2
+
+kin_tree = (body[0], mass, lgsm.Displacement(), [], [
+              (body[1], mass, lgsm.Displacementd(.5,0,0,1,0,0,0), [('hinge',[0,0,0],[0,1,0], damp, -3.14, 3.14, 0.2)], [
+                (body[2], mass, lgsm.Displacementd(.5,0,0,1,0,0,0), [('hinge',[0,0,0],[0,1,0], damp, -3.14, 3.14, 0.2)], [
+                  (body[3], mass, lgsm.Displacementd(.5,0,0,1,0,0,0), [('hinge',[0,0,0],[0,1,0], damp, -3.14, 3.14, 0.2)], []
+                )]
+              )]
+            )])
+
+
+
+##### Create a description of the robot
+import desc.physic
+import desc.graphic
+
+import xde.desc.app.concepts_pb2 as concepts_pb2
+robot_data = concepts_pb2.RobotData()
+
+desc.physic.fillKinematicTree(robot_data.physical_robot.multi_body_model.kinematic_tree,
+                            tree=kin_tree,
+                            fixed_base=True,
+                            H_init=lgsm.Displacement())
+
+
+desc.physic.fillMechanism(robot_data.physical_robot.multi_body_model.mechanism,
+                         name="pendulum",
+                         root_node="b_root",
+                         trim_nodes=[],
+                         bodies=body,
+                         segments=body)
+
+## We fill the graphical description of the robot.
+desc.graphic.fillGraphicalNode(robot_data.graphical_robot.graphical_tree, "robot.root", position=lgsm.Displacement(), scale=[1,1,1])
+
+##### We write the description of the robot in a binary file
+import desc_core
+with open(cpath + "/pendulum.desc", "wb") as f:
+  f.write(desc_core.Serialize(robot_data))
+
+##### Import and deserialize world: register world description in phy & graph agents
 import desc.scene
-
 world = desc.scene.createWorld()
 
-# add some pendulums
-common.create_pendulum(world, "p1", lgsm.Displacement())
+import concepts.robot
+robot_importer = concepts.robot.RobotImporter("robot_factory", cpath + "/pendulum.desc")
+robot_importer.fillLibrary(world)
+robot_importer.addInstance(world, "pendulum")
 
-common.create_pendulum(world, "p2", lgsm.Displacement(0,.5,0,1,0,0,0))
-common.create_pendulum(world, "p3", lgsm.Displacement(0,1.,0,1,0,0,0))
-
-##### Deserialize world: register world description in phy & graph agents
 import agents.graphic.builder
 import agents.physic.builder
 
 agents.graphic.builder.deserializeWorld(graph, gInterface, world)
 agents.physic.builder.deserializeWorld(phy, ms, lmd, world)
 
-controller = RxController("RxController")
-controller.s.setPeriod(1.)
+
 
 ##### Connect physic and graphic agents to see bodies with markers
 ocb = phy.s.Connectors.OConnectorBodyStateList.new("ocb", "bodyPosition")
@@ -84,10 +112,6 @@ for n in phy.s.GVM.Scene("main").getBodyNames():
     ocb.addBody(n)
     gInterface.MarkersInterface.addMarker(n, False)
 
-##### Configure some robots
-phy.s.GVM.Robot("p2").enableGravity(False)
-
-
 
 #-------------------------------------------------------------------------------
 #
@@ -97,7 +121,6 @@ phy.s.GVM.Robot("p2").enableGravity(False)
 
 phy.s.start()
 graph.s.start()
-controller.s.start()
 
 
 ##### Interactive shell

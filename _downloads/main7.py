@@ -13,32 +13,11 @@ import common
 
 import lgsm
 
-import time
-
 time_step = 0.01
 
 phy, ms, lmd = common.get_physic_agent(time_step)
 
 graph, gInterface = common.get_graphic_agent()
-
-world = common.create_world_and_deserialized(phy, ms, lmd, graph, gInterface)
-
-
-#-------------------------------------------------------------------------------
-#
-# Create Connections between phy and graph
-#
-#-------------------------------------------------------------------------------
-##### Connect physic and graphic agents to see bodies with markers
-ocb = phy.s.Connectors.OConnectorBodyStateList.new("ocb", "bodyPosition")
-graph.s.Connectors.IConnectorFrame.new("icf", "framePosition", "mainScene")
-graph.getPort("framePosition").connectTo(phy.getPort("bodyPosition_H"))
-
-# add markers on bodies
-for n in phy.s.GVM.Scene("main").getBodyNames():
-    ocb.addBody(n)
-    gInterface.MarkersInterface.addMarker(n, False)
-
 
 
 #-------------------------------------------------------------------------------
@@ -48,16 +27,29 @@ for n in phy.s.GVM.Scene("main").getBodyNames():
 #-------------------------------------------------------------------------------
 
 import rtt_interface
-import dsimi.rtt
+import xdefw.rtt
 import physicshelper
+import xde.desc.physic.physic_pb2
 
-class MyController(dsimi.rtt.Task):
+class MyController(xdefw.rtt.Task):
   
     def __init__(self, taskName, world, robotName):
         task = rtt_interface.PyTaskFactory.CreateTask(taskName)
-        dsimi.rtt.Task.__init__(self, task)
+        xdefw.rtt.Task.__init__(self, task)
 
-        self.model = physicshelper.createDynamicModel(world, robotName)
+        multiBodyModel = xde.desc.physic.physic_pb2.MultiBodyModel()
+        mechanism_index = 0
+        for m in world.scene.physical_scene.mechanisms:
+            if robotName == m.name:
+                break
+            else:
+                mechanism_index = mechanism_index + 1
+
+        multiBodyModel.kinematic_tree.CopyFrom(world.scene.physical_scene.nodes[ mechanism_index ])
+        multiBodyModel.meshes.extend(world.library.meshes)
+        multiBodyModel.mechanism.CopyFrom(world.scene.physical_scene.mechanisms[ mechanism_index ])
+        multiBodyModel.composites.extend(world.scene.physical_scene.collision_scene.meshes)
+        self.model = physicshelper.createDynamicModel(multiBodyModel)
 
         self.tau_out = self.addCreateOutputPort("tau", "VectorXd")
   
@@ -71,39 +63,57 @@ class MyController(dsimi.rtt.Task):
         self.doUpdate()
   
     def doUpdate(self):
-        time.sleep(0.5)
         tau = lgsm.vector([8, 4, 1])
         self.tau_out.write(tau)
 
 
+
+
 #-------------------------------------------------------------------------------
 #
-# Create Controller
+# Create the robot with the desc module.
 #
 #-------------------------------------------------------------------------------
 
-# Create controller
-controller = MyController("MyController", world, "p1") # ControllerName, the world instance, RobotName
+import desc.scene
+
+world = desc.scene.createWorld()
+
+# add some pendulums
+common.create_pendulum(world, "p1", lgsm.Displacement())
+common.create_pendulum(world, "p2", lgsm.Displacement(0,.5,0,1,0,0,0))
+common.create_pendulum(world, "p3", lgsm.Displacement(0,1.,0,1,0,0,0))
+
+##### Deserialize world: register world description in phy & graph agents
+import agents.graphic.builder
+import agents.physic.builder
+
+agents.graphic.builder.deserializeWorld(graph, gInterface, world)
+agents.physic.builder.deserializeWorld(phy, ms, lmd, world)
+
+
+controller = MyController("MyController", world, "p1")
 controller.s.setPeriod(time_step)
 
-# Create clock
-import deploy.deployer as ddeployer
-clock = dsimi.rtt.Task(ddeployer.load("clock", "dio::Clock", "dio-cpn-clock", "dio/component/"))
-clock.s.setPeriod(0.5)
 
-# add Input Port in physic agent
+##### Connect physic and graphic agents to see bodies with markers
+ocb = phy.s.Connectors.OConnectorBodyStateList.new("ocb", "bodyPosition")
+graph.s.Connectors.IConnectorFrame.new("icf", "framePosition", "mainScene")
+graph.getPort("framePosition").connectTo(phy.getPort("bodyPosition_H"))
+
+# add markers on bodies
+for n in phy.s.GVM.Scene("main").getBodyNames():
+    ocb.addBody(n)
+    gInterface.MarkersInterface.addMarker(n, False)
+
+
+##### Configure some robots
+phy.s.GVM.Robot("p2").enableGravity(False)
+
+##### Connect Controller and robots
 phy.s.Connectors.IConnectorRobotJointTorque.new("ict", "p1_", "p1") # ConnectorName, PortName, RobotName
                                                                     # It generates a port named "PortName"+"tau"
-phy.addCreateInputPort("clock_trigger", "double")
-
-icps = phy.s.Connectors.IConnectorSynchro.new("icps")
-icps.addEvent("p1_tau")
-icps.addEvent("clock_trigger")
-
-clock.getPort("ticks").connectTo(phy.getPort("clock_trigger"))
 controller.getPort("tau").connectTo(phy.getPort("p1_tau"))
-
-
 
 #-------------------------------------------------------------------------------
 #
@@ -114,11 +124,10 @@ controller.getPort("tau").connectTo(phy.getPort("p1_tau"))
 phy.s.start()
 graph.s.start()
 controller.s.start()
-clock.s.start()
 
 ##### Interactive shell
-import dsimi.interactive
-shell = dsimi.interactive.shell()
+import xdefw.interactive
+shell = xdefw.interactive.shell_console()
 shell()
 
 

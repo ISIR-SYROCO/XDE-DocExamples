@@ -11,7 +11,13 @@ sys.path.append(cpath)
 
 import common
 
-import time
+import lgsm
+
+time_step = 0.01
+
+phy, ms, lmd = common.get_physic_agent(time_step)
+
+graph, gInterface = common.get_graphic_agent()
 
 
 #-------------------------------------------------------------------------------
@@ -21,16 +27,13 @@ import time
 #-------------------------------------------------------------------------------
 
 import rtt_interface
-import dsimi.rtt
+import xdefw.rtt
 
-class MyController(dsimi.rtt.Task):
+class RxController(xdefw.rtt.Task):
 
     def __init__(self, Task_name):
         task = rtt_interface.PyTaskFactory.CreateTask(Task_name)
-        dsimi.rtt.Task.__init__(self, task)
-        
-        self.tick = self.addCreateInputPort("controller_tick", "double", True)
-        self.tick_ok = False
+        xdefw.rtt.Task.__init__(self, task)
 
     def startHook(self):
         pass
@@ -39,39 +42,51 @@ class MyController(dsimi.rtt.Task):
         pass
   
     def updateHook(self):
-        print "IN  updateHook"
-        
-        tick_val, self.tick_ok = self.tick.read()
-        
-        print tick_val, self.tick_ok
-        
-        if self.tick_ok:
-            self.tick_ok = False
-            self.doUpdate(tick_val)
+        self.doUpdate()
   
-    def doUpdate(self, tick):
-        print "IN doUpdate: tick = "+str(tick)
-
+    def doUpdate(self):
+        print "IN doUpdate"
 
 
 #-------------------------------------------------------------------------------
 #
-# Create clock and controller
+# Create the robot with the desc module.
 #
 #-------------------------------------------------------------------------------
 
-##### Create controller
-controller = MyController("MyController")
-controller.s.setPeriod(.01)
+import desc.scene
 
-##### Create clock, to synchronize phy and controller
-import deploy.deployer as ddeployer
-clock = dsimi.rtt.Task(ddeployer.load("clock", "dio::Clock", "dio-cpn-clock", "dio/component/"))
-clock.s.setPeriod(.1)
+world = desc.scene.createWorld()
 
+# add some pendulums
+common.create_pendulum(world, "p1", lgsm.Displacement())
 
-##### Connect and synchronize phy and controller
-clock.getPort("ticks").connectTo(controller.getPort("controller_tick"))
+common.create_pendulum(world, "p2", lgsm.Displacement(0,.5,0,1,0,0,0))
+common.create_pendulum(world, "p3", lgsm.Displacement(0,1.,0,1,0,0,0))
+
+##### Deserialize world: register world description in phy & graph agents
+import agents.graphic.builder
+import agents.physic.builder
+
+agents.graphic.builder.deserializeWorld(graph, gInterface, world)
+agents.physic.builder.deserializeWorld(phy, ms, lmd, world)
+
+controller = RxController("RxController")
+controller.s.setPeriod(1.)
+
+##### Connect physic and graphic agents to see bodies with markers
+ocb = phy.s.Connectors.OConnectorBodyStateList.new("ocb", "bodyPosition")
+graph.s.Connectors.IConnectorFrame.new("icf", "framePosition", "mainScene")
+graph.getPort("framePosition").connectTo(phy.getPort("bodyPosition_H"))
+
+# add markers on bodies
+for n in phy.s.GVM.Scene("main").getBodyNames():
+    ocb.addBody(n)
+    gInterface.MarkersInterface.addMarker(n, False)
+
+##### Configure some robots
+phy.s.GVM.Robot("p2").enableGravity(False)
+
 
 
 #-------------------------------------------------------------------------------
@@ -80,19 +95,14 @@ clock.getPort("ticks").connectTo(controller.getPort("controller_tick"))
 #
 #-------------------------------------------------------------------------------
 
+phy.s.start()
+graph.s.start()
 controller.s.start()
-clock.s.start()
 
-time.sleep(5)
-
-controller.s.stop()
-clock.s.stop()
 
 ##### Interactive shell
-import dsimi.interactive
-shell = dsimi.interactive.shell()
+import xdefw.interactive
+shell = xdefw.interactive.shell_console()
 shell()
-
-
 
 

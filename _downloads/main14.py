@@ -31,10 +31,13 @@ graph, gInterface = common.get_graphic_agent()
 #
 #-------------------------------------------------------------------------------
 
-import RX90common
+import iCubcommon
 
-world = RX90common.add_RX90_with_meshes()
-
+world = iCubcommon.add_iCub(damping=1, H_init=[0,0,1,1,0,0,0], fixed_base=False)
+iCubcommon.add_iCub_meshes(world, createComposite=True, compositeOffset=0.001)
+iCubcommon.addGround(world)
+iCubcommon.addContactLaws(world)
+iCubcommon.addCollisionPairs(world)
 
 ##### Deserialize world: register world description in phy & graph agents
 import agents.graphic.builder
@@ -45,24 +48,22 @@ print "graphic..."
 agents.graphic.builder.deserializeWorld(graph, gInterface, world)
 print "and physic..."
 agents.physic.builder.deserializeWorld(phy, ms, lmd, world)
-print "done."
+print "... done."
 
-
+phy.s.GVM.Robot("iCub").enableGravity(False)
 
 
 ##### Connect physic and graphic agents to see bodies with markers
 ocb = phy.s.Connectors.OConnectorBodyStateList.new("ocb", "body_state")
 
-graph.s.Connectors.IConnectorFrame.new("icf", "framePosition", "mainScene")
-graph.getPort("framePosition").connectTo(phy.getPort("body_state_H"))
-
-# add markers on bodies
-for b in world.scene.rigid_body_bindings:
-    if len(b.graph_node) and len(b.rigid_body):
-        ocb.addBody(str(b.rigid_body))
+for n in phy.s.GVM.Scene("main").getBodyNames():
+    if n != "groundRigidBody":
+        ocb.addBody(n)
 
 graph.s.Connectors.IConnectorBody.new("icb", "body_state_H", "mainScene")
 graph.getPort("body_state_H").connectTo(phy.getPort("body_state_H"))
+
+
 
 #-------------------------------------------------------------------------------
 #
@@ -73,9 +74,9 @@ graph.getPort("body_state_H").connectTo(phy.getPort("body_state_H"))
 phy.s.start()
 graph.s.start()
 
-rx90 = phy.s.GVM.Robot('RX90')
-rx90.enableGravity(False)
-print "To enable gravity, type: rx90.enableGravity(True)"
+
+icub = phy.s.GVM.Robot('iCub')
+print "To enable gravity, type: icub.enableGravity(True)"
 
 ##### Interactive shell
 import dsimi.interactive

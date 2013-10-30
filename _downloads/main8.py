@@ -48,16 +48,29 @@ for n in phy.s.GVM.Scene("main").getBodyNames():
 #-------------------------------------------------------------------------------
 
 import rtt_interface
-import dsimi.rtt
+import xdefw.rtt
 import physicshelper
+import xde.desc.physic.physic_pb2
 
-class MyController(dsimi.rtt.Task):
+class MyController(xdefw.rtt.Task):
   
     def __init__(self, taskName, world, robotName):
         task = rtt_interface.PyTaskFactory.CreateTask(taskName)
-        dsimi.rtt.Task.__init__(self, task)
+        xdefw.rtt.Task.__init__(self, task)
 
-        self.model = physicshelper.createDynamicModel(world, robotName)
+        multiBodyModel = xde.desc.physic.physic_pb2.MultiBodyModel()
+        mechanism_index = 0
+        for m in world.scene.physical_scene.mechanisms:
+            if robotName == m.name:
+                break
+            else:
+                mechanism_index = mechanism_index + 1
+
+        multiBodyModel.kinematic_tree.CopyFrom(world.scene.physical_scene.nodes[ mechanism_index ])
+        multiBodyModel.meshes.extend(world.library.meshes)
+        multiBodyModel.mechanism.CopyFrom(world.scene.physical_scene.mechanisms[ mechanism_index ])
+        multiBodyModel.composites.extend(world.scene.physical_scene.collision_scene.meshes)
+        self.model = physicshelper.createDynamicModel(multiBodyModel)
 
         self.tau_out = self.addCreateOutputPort("tau", "VectorXd")
   
@@ -71,11 +84,9 @@ class MyController(dsimi.rtt.Task):
         self.doUpdate()
   
     def doUpdate(self):
-        time.sleep(0.001)                  # simulate a short time operation
-        #time.sleep(0.1)                  # simulate a time-consumming operation
+        time.sleep(0.5)
         tau = lgsm.vector([8, 4, 1])
         self.tau_out.write(tau)
-
 
 
 #-------------------------------------------------------------------------------
@@ -86,12 +97,12 @@ class MyController(dsimi.rtt.Task):
 
 # Create controller
 controller = MyController("MyController", world, "p1") # ControllerName, the world instance, RobotName
-controller.s.setPeriod(0.001)
+controller.s.setPeriod(time_step)
 
-##### Create clock, to synchronize phy and controller
+# Create clock
 import deploy.deployer as ddeployer
-clock = dsimi.rtt.Task(ddeployer.load("clock", "dio::Clock", "dio-cpn-clock", "dio/component/"))
-clock.s.setPeriod(.01)
+clock = xdefw.rtt.Task(ddeployer.load("clock", "dio::Clock", "dio-cpn-clock", ""))
+clock.s.setPeriod(0.5)
 
 # add Input Port in physic agent
 phy.s.Connectors.IConnectorRobotJointTorque.new("ict", "p1_", "p1") # ConnectorName, PortName, RobotName
@@ -105,6 +116,8 @@ icps.addEvent("clock_trigger")
 clock.getPort("ticks").connectTo(phy.getPort("clock_trigger"))
 controller.getPort("tau").connectTo(phy.getPort("p1_tau"))
 
+
+
 #-------------------------------------------------------------------------------
 #
 # Run agents
@@ -117,8 +130,8 @@ controller.s.start()
 clock.s.start()
 
 ##### Interactive shell
-import dsimi.interactive
-shell = dsimi.interactive.shell()
+import xdefw.interactive
+shell = xdefw.interactive.shell_console()
 shell()
 
 

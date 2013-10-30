@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Create robot with desc module &mdash; XDE examples 0.1 documentation</title>
+    <title>Export a robot with desc module &mdash; XDE examples 0.1 documentation</title>
     
     <link rel="stylesheet" href="../../_static/josini.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -25,8 +25,8 @@
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <link rel="top" title="XDE examples 0.1 documentation" href="../../index.html" />
     <link rel="up" title="Building robots" href="../01_building_robots.html" />
-    <link rel="next" title="Export a robot with desc module" href="03_export_robot.html" />
-    <link rel="prev" title="Create a robot" href="01_create_robot.html" /> 
+    <link rel="next" title="Control robots" href="../02_control.html" />
+    <link rel="prev" title="Create robot with desc module" href="02_robot_with_desc.html" /> 
   </head>
   <body>
     <div class="related">
@@ -36,10 +36,10 @@
           <a href="../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="03_export_robot.html" title="Export a robot with desc module"
+          <a href="../02_control.html" title="Control robots"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="01_create_robot.html" title="Create a robot"
+          <a href="02_robot_with_desc.html" title="Create robot with desc module"
              accesskey="P">previous</a> |</li>
         <li><a href="../../index.html">XDE examples 0.1 documentation</a> &raquo;</li>
           <li><a href="../01_building_robots.html" accesskey="U">Building robots</a> &raquo;</li> 
@@ -51,15 +51,15 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="create-robot-with-desc-module">
-<h1>Create robot with desc module<a class="headerlink" href="#create-robot-with-desc-module" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="export-a-robot-with-desc-module">
+<h1>Export a robot with desc module<a class="headerlink" href="#export-a-robot-with-desc-module" title="Permalink to this headline">¶</a></h1>
 <div class="admonition important">
 <p class="first admonition-title">Important</p>
-<p>This example shows how to create a <strong>robot</strong> with the module <tt class="xref py py-mod docutils literal"><span class="pre">desc</span></tt>.</p>
+<p>This example shows how to export/import a <strong>robot</strong> with the module <tt class="xref py py-mod docutils literal"><span class="pre">desc</span></tt>.</p>
 <p>Source files:</p>
 <ul class="last simple">
-<li><a class="reference download internal" href="../../_downloads/main3.py"><tt class="xref download docutils literal"><span class="pre">main.py</span></tt></a>.</li>
-<li><a class="reference download internal" href="../../_downloads/common.py"><tt class="xref download docutils literal"><span class="pre">common.py</span></tt></a>.</li>
+<li><a class="reference download internal" href="../../_downloads/main4.py"><tt class="xref download docutils literal"><span class="pre">main.py</span></tt></a>.</li>
+<li><a class="reference download internal" href="../../_downloads/common1.py"><tt class="xref download docutils literal"><span class="pre">common.py</span></tt></a>.</li>
 </ul>
 </div>
 <div class="section" id="kinematic-tree">
@@ -92,41 +92,28 @@ Each tuple represents a node which defines each segment of the robot.</p>
 </pre></div>
 </div>
 </div>
-<div class="section" id="robot-description">
-<h2>Robot description<a class="headerlink" href="#robot-description" title="Permalink to this headline">¶</a></h2>
-<p>When the kinematic tree is set, it has to be <em>registered</em> in a <strong>world</strong>.
-This world is composed of a physical scene (where the kinematic tree is <em>registered</em>),
-but it also contains a graphical scene and a collision scene.</p>
-<p>The following methods create a named mechanism
-whose information about the kinematic and dynamic models can be obtain later,
-for instance Jacobian matrices or generalized coordinates and velocity.</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">desc.scene</span>
-<span class="n">world</span> <span class="o">=</span> <span class="n">desc</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">createWorld</span><span class="p">()</span>
-<span class="kn">import</span> <span class="nn">desc.physic</span>
-<span class="kn">import</span> <span class="nn">desc.graphic</span>
-
-<span class="n">desc</span><span class="o">.</span><span class="n">physic</span><span class="o">.</span><span class="n">fillKinematicTree</span><span class="p">(</span><span class="n">world</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">physical_scene</span><span class="o">.</span><span class="n">nodes</span><span class="o">.</span><span class="n">add</span><span class="p">(),</span>
-                            <span class="n">tree</span><span class="o">=</span><span class="n">kin_tree</span><span class="p">,</span>
-                            <span class="n">fixed_base</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
-                            <span class="n">H_init</span><span class="o">=</span><span class="n">lgsm</span><span class="o">.</span><span class="n">Displacement</span><span class="p">())</span>
-
-
-<span class="n">desc</span><span class="o">.</span><span class="n">physic</span><span class="o">.</span><span class="n">addMechanism</span><span class="p">(</span><span class="n">world</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">physical_scene</span><span class="p">,</span>
-                         <span class="n">name</span><span class="o">=</span><span class="s">&quot;pendulum&quot;</span><span class="p">,</span>
-                         <span class="n">root_node</span><span class="o">=</span><span class="s">&quot;b_root&quot;</span><span class="p">,</span>
-                         <span class="n">trim_nodes</span><span class="o">=</span><span class="p">[],</span>
-                         <span class="n">bodies</span><span class="o">=</span><span class="n">body</span><span class="p">,</span>
-                         <span class="n">segments</span><span class="o">=</span><span class="n">body</span><span class="p">)</span>
+<div class="section" id="export-robot">
+<h2>Export robot<a class="headerlink" href="#export-robot" title="Permalink to this headline">¶</a></h2>
+<p>Once the description of the robot is done, we can export it into a binary file.
+This can be useful if you always work with the same robot.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">desc_core</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">cpath</span> <span class="o">+</span> <span class="s">&quot;/pendulum.desc&quot;</span><span class="p">,</span> <span class="s">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+  <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">desc_core</span><span class="o">.</span><span class="n">Serialize</span><span class="p">(</span><span class="n">robot_data</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
-<div class="section" id="deserialization">
-<h2>Deserialization<a class="headerlink" href="#deserialization" title="Permalink to this headline">¶</a></h2>
-<p>when the world building is complete, it has to be converted into elements in the GVM scene.
-This is done with the <tt class="xref py py-meth docutils literal"><span class="pre">agents.physic.builder.deserializeWorld()</span></tt> method.</p>
-<p>Note that the same goes for the graphical agent,
-to convert elements that are registered in the graphical scene of the world.</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">agents.graphic.builder</span>
+<div class="section" id="import-and-deserialization">
+<h2>Import and deserialization<a class="headerlink" href="#import-and-deserialization" title="Permalink to this headline">¶</a></h2>
+<p>The binary file can then be imported:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">desc.scene</span>
+<span class="n">world</span> <span class="o">=</span> <span class="n">desc</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">createWorld</span><span class="p">()</span>
+
+<span class="kn">import</span> <span class="nn">concepts.robot</span>
+<span class="n">robot_importer</span> <span class="o">=</span> <span class="n">concepts</span><span class="o">.</span><span class="n">robot</span><span class="o">.</span><span class="n">RobotImporter</span><span class="p">(</span><span class="s">&quot;robot_factory&quot;</span><span class="p">,</span> <span class="n">cpath</span> <span class="o">+</span> <span class="s">&quot;/pendulum.desc&quot;</span><span class="p">)</span>
+<span class="n">robot_importer</span><span class="o">.</span><span class="n">fillLibrary</span><span class="p">(</span><span class="n">world</span><span class="p">)</span>
+<span class="n">robot_importer</span><span class="o">.</span><span class="n">addInstance</span><span class="p">(</span><span class="n">world</span><span class="p">,</span> <span class="s">&quot;pendulum&quot;</span><span class="p">)</span>
+
+<span class="kn">import</span> <span class="nn">agents.graphic.builder</span>
 <span class="kn">import</span> <span class="nn">agents.physic.builder</span>
 
 <span class="n">agents</span><span class="o">.</span><span class="n">graphic</span><span class="o">.</span><span class="n">builder</span><span class="o">.</span><span class="n">deserializeWorld</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">gInterface</span><span class="p">,</span> <span class="n">world</span><span class="p">)</span>
@@ -144,23 +131,23 @@ to convert elements that are registered in the graphical scene of the world.</p>
         <div class="sphinxsidebarwrapper">
   <h3><a href="../../index.html">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">Create robot with desc module</a><ul>
+<li><a class="reference internal" href="#">Export a robot with desc module</a><ul>
 <li><a class="reference internal" href="#kinematic-tree">Kinematic tree</a></li>
-<li><a class="reference internal" href="#robot-description">Robot description</a></li>
-<li><a class="reference internal" href="#deserialization">Deserialization</a></li>
+<li><a class="reference internal" href="#export-robot">Export robot</a></li>
+<li><a class="reference internal" href="#import-and-deserialization">Import and deserialization</a></li>
 </ul>
 </li>
 </ul>
 
   <h4>Previous topic</h4>
-  <p class="topless"><a href="01_create_robot.html"
-                        title="previous chapter">Create a robot</a></p>
+  <p class="topless"><a href="02_robot_with_desc.html"
+                        title="previous chapter">Create robot with desc module</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="03_export_robot.html"
-                        title="next chapter">Export a robot with desc module</a></p>
+  <p class="topless"><a href="../02_control.html"
+                        title="next chapter">Control robots</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
-    <li><a href="../../_sources/examples/01_building_robots/02_robot_with_desc.txt"
+    <li><a href="../../_sources/examples/01_building_robots/03_export_robot.txt"
            rel="nofollow">Show Source</a></li>
   </ul>
 <div id="searchbox" style="display: none">
@@ -187,10 +174,10 @@ to convert elements that are registered in the graphical scene of the world.</p>
           <a href="../../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="03_export_robot.html" title="Export a robot with desc module"
+          <a href="../02_control.html" title="Control robots"
              >next</a> |</li>
         <li class="right" >
-          <a href="01_create_robot.html" title="Create a robot"
+          <a href="02_robot_with_desc.html" title="Create robot with desc module"
              >previous</a> |</li>
         <li><a href="../../index.html">XDE examples 0.1 documentation</a> &raquo;</li>
           <li><a href="../01_building_robots.html" >Building robots</a> &raquo;</li> 
