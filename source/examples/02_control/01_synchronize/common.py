@@ -62,7 +62,6 @@ def create_pendulum(world, p_name="pendulum", p_init=None):
 
     # Create a description of the kinematic tree
     desc.physic.fillKinematicTree(world.scene.physical_scene.nodes.add(),
-                                parent_node=None,
                                 tree=kin_tree,
                                 fixed_base=True,
                                 H_init=lgsm.Displacement())
