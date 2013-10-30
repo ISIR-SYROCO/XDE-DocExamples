@@ -27,16 +27,29 @@ graph, gInterface = common.get_graphic_agent()
 #-------------------------------------------------------------------------------
 
 import rtt_interface
-import dsimi.rtt
+import xdefw.rtt
 import physicshelper
+import xde.desc.physic.physic_pb2
 
-class MyController(dsimi.rtt.Task):
+class MyController(xdefw.rtt.Task):
   
     def __init__(self, taskName, world, robotName):
         task = rtt_interface.PyTaskFactory.CreateTask(taskName)
-        dsimi.rtt.Task.__init__(self, task)
+        xdefw.rtt.Task.__init__(self, task)
 
-        self.model = physicshelper.createDynamicModel(world, robotName)
+        multiBodyModel = xde.desc.physic.physic_pb2.MultiBodyModel()
+        mechanism_index = 0
+        for m in world.scene.physical_scene.mechanisms:
+            if robotName == m.name:
+                break
+            else:
+                mechanism_index = mechanism_index + 1
+
+        multiBodyModel.kinematic_tree.CopyFrom(world.scene.physical_scene.nodes[ mechanism_index ])
+        multiBodyModel.meshes.extend(world.library.meshes)
+        multiBodyModel.mechanism.CopyFrom(world.scene.physical_scene.mechanisms[ mechanism_index ])
+        multiBodyModel.composites.extend(world.scene.physical_scene.collision_scene.meshes)
+        self.model = physicshelper.createDynamicModel(multiBodyModel)
 
         self.tau_out = self.addCreateOutputPort("tau", "VectorXd")
   
@@ -113,8 +126,8 @@ graph.s.start()
 controller.s.start()
 
 ##### Interactive shell
-import dsimi.interactive
-shell = dsimi.interactive.shell()
+import xdefw.interactive
+shell = xdefw.interactive.shell_console()
 shell()
 
 
