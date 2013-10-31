@@ -60,6 +60,159 @@
 <li><a class="reference download internal" href="../../_downloads/main10.py"><tt class="xref download docutils literal"><span class="pre">main.py</span></tt></a>.</li>
 </ul>
 </div>
+<div class="admonition important">
+<p class="first admonition-title">Important</p>
+<p class="last">This example shows how to write a simple cartesian controller.</p>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">CartesianController</span><span class="p">(</span><span class="n">xdefw</span><span class="o">.</span><span class="n">rtt</span><span class="o">.</span><span class="n">Task</span><span class="p">):</span>
+  
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">taskName</span><span class="p">,</span> <span class="n">world</span><span class="p">,</span> <span class="n">robotName</span><span class="p">):</span>
+        <span class="n">task</span> <span class="o">=</span> <span class="n">rtt_interface</span><span class="o">.</span><span class="n">PyTaskFactory</span><span class="o">.</span><span class="n">CreateTask</span><span class="p">(</span><span class="n">taskName</span><span class="p">)</span>
+        <span class="n">xdefw</span><span class="o">.</span><span class="n">rtt</span><span class="o">.</span><span class="n">Task</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">)</span>
+
+        <span class="n">multiBodyModel</span> <span class="o">=</span> <span class="n">xde</span><span class="o">.</span><span class="n">desc</span><span class="o">.</span><span class="n">physic</span><span class="o">.</span><span class="n">physic_pb2</span><span class="o">.</span><span class="n">MultiBodyModel</span><span class="p">()</span>
+        <span class="n">mechanism_index</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">world</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">physical_scene</span><span class="o">.</span><span class="n">mechanisms</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">robotName</span> <span class="o">==</span> <span class="n">m</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
+                <span class="k">break</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">mechanism_index</span> <span class="o">=</span> <span class="n">mechanism_index</span> <span class="o">+</span> <span class="mi">1</span>
+
+        <span class="n">multiBodyModel</span><span class="o">.</span><span class="n">kinematic_tree</span><span class="o">.</span><span class="n">CopyFrom</span><span class="p">(</span><span class="n">world</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">physical_scene</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span> <span class="n">mechanism_index</span> <span class="p">])</span>
+        <span class="n">multiBodyModel</span><span class="o">.</span><span class="n">meshes</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">world</span><span class="o">.</span><span class="n">library</span><span class="o">.</span><span class="n">meshes</span><span class="p">)</span>
+        <span class="n">multiBodyModel</span><span class="o">.</span><span class="n">mechanism</span><span class="o">.</span><span class="n">CopyFrom</span><span class="p">(</span><span class="n">world</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">physical_scene</span><span class="o">.</span><span class="n">mechanisms</span><span class="p">[</span> <span class="n">mechanism_index</span> <span class="p">])</span>
+        <span class="n">multiBodyModel</span><span class="o">.</span><span class="n">composites</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">world</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">physical_scene</span><span class="o">.</span><span class="n">collision_scene</span><span class="o">.</span><span class="n">meshes</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">physicshelper</span><span class="o">.</span><span class="n">createDynamicModel</span><span class="p">(</span><span class="n">multiBodyModel</span><span class="p">)</span>
+
+        <span class="c"># Input port to read the current state of the robot</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">q_in</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">addCreateInputPort</span><span class="p">(</span><span class="s">&quot;q&quot;</span><span class="p">,</span> <span class="s">&quot;VectorXd&quot;</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">q_ok</span> <span class="o">=</span> <span class="bp">False</span>
+        
+        <span class="c"># Input port to read the current state of the robot</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">qdot_in</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">addCreateInputPort</span><span class="p">(</span><span class="s">&quot;qdot&quot;</span><span class="p">,</span> <span class="s">&quot;VectorXd&quot;</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">qdot_ok</span> <span class="o">=</span> <span class="bp">False</span>
+    
+        <span class="c"># Output port to write torque commands</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tau_out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">addCreateOutputPort</span><span class="p">(</span><span class="s">&quot;tau&quot;</span><span class="p">,</span> <span class="s">&quot;VectorXd&quot;</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">kp</span> <span class="o">=</span> <span class="mi">100</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kd</span> <span class="o">=</span> <span class="mi">20</span>
+  
+    <span class="k">def</span> <span class="nf">startHook</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+  
+    <span class="k">def</span> <span class="nf">stopHook</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+  
+    <span class="k">def</span> <span class="nf">updateHook</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c"># Try to read new value of robot state</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">q_ok</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">q</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">q_ok</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">q_in</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">qdot_ok</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">qdot</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">qdot_ok</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">qdot_in</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">q_ok</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">qdot_ok</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">q_ok</span> <span class="o">=</span> <span class="bp">False</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">qdot_ok</span> <span class="o">=</span> <span class="bp">False</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">doUpdate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">qdot</span><span class="p">)</span>
+
+  
+    <span class="k">def</span> <span class="nf">doUpdate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="n">qdot</span><span class="p">):</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">setJointPositions</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">setJointVelocities</span><span class="p">(</span><span class="n">qdot</span><span class="p">)</span>
+        
+        <span class="n">H6</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">getSegmentPosition</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">getSegmentIndex</span><span class="p">(</span><span class="s">&quot;p1_b_3&quot;</span><span class="p">))</span>
+        <span class="n">H</span> <span class="o">=</span> <span class="n">lgsm</span><span class="o">.</span><span class="n">Displacement</span><span class="p">()</span>
+        <span class="n">H</span><span class="o">.</span><span class="n">setTranslation</span><span class="p">(</span><span class="n">lgsm</span><span class="o">.</span><span class="n">vectord</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">))</span>
+        <span class="n">H</span><span class="o">.</span><span class="n">setRotation</span><span class="p">(</span><span class="n">H6</span><span class="o">.</span><span class="n">getRotation</span><span class="p">())</span>
+        <span class="n">J66</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">getSegmentJacobian</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">getSegmentIndex</span><span class="p">(</span><span class="s">&quot;p1_b_3&quot;</span><span class="p">))</span>
+        <span class="n">J60</span> <span class="o">=</span> <span class="n">H</span><span class="o">.</span><span class="n">adjoint</span><span class="p">()</span> <span class="o">*</span> <span class="n">J66</span>
+        <span class="n">T60</span> <span class="o">=</span> <span class="n">H</span><span class="o">.</span><span class="n">adjoint</span><span class="p">()</span> <span class="o">*</span> <span class="n">model</span><span class="o">.</span><span class="n">getSegmentVelocity</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">getSegmentIndex</span><span class="p">(</span><span class="s">&quot;p1_b_3&quot;</span><span class="p">))</span>
+    
+        <span class="n">Xdes</span> <span class="o">=</span> <span class="n">lgsm</span><span class="o">.</span><span class="n">Displacement</span><span class="p">(</span><span class="o">.</span><span class="mi">3</span><span class="p">,</span><span class="o">.</span><span class="mi">3</span><span class="p">,</span><span class="o">.</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span> 
+         
+        <span class="n">xd</span> <span class="o">=</span> <span class="n">Xdes</span><span class="o">.</span><span class="n">getTranslation</span><span class="p">()</span> <span class="c"># desired position of the effector</span>
+        <span class="n">x</span>  <span class="o">=</span> <span class="n">H6</span><span class="o">.</span><span class="n">getTranslation</span><span class="p">()</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="n">T60</span><span class="o">.</span><span class="n">getLinearVelocity</span><span class="p">()</span>
+        <span class="n">fc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kp</span> <span class="o">*</span> <span class="p">(</span><span class="n">xd</span> <span class="o">-</span> <span class="n">x</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">kd</span> <span class="o">*</span> <span class="n">v</span>
+    
+        <span class="c">#tau = lgsm.vector([0] * model.nbInternalDofs())</span>
+        <span class="n">tau</span> <span class="o">=</span> <span class="n">J60</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">,:]</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span> <span class="o">*</span> <span class="n">fc</span>
+        
+        <span class="n">tau</span> <span class="o">+=</span> <span class="n">model</span><span class="o">.</span><span class="n">getGravityTerms</span><span class="p">()</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">tau_out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">tau</span><span class="p">)</span>
+
+
+
+<span class="c">#-------------------------------------------------------------------------------</span>
+<span class="c">#</span>
+<span class="c"># Create Controller, Clock</span>
+<span class="c">#</span>
+<span class="c">#-------------------------------------------------------------------------------</span>
+
+<span class="c"># Create controller</span>
+<span class="n">controller</span> <span class="o">=</span> <span class="n">CartesianController</span><span class="p">(</span><span class="s">&quot;MyController&quot;</span><span class="p">,</span> <span class="n">world</span><span class="p">,</span> <span class="s">&quot;p1&quot;</span><span class="p">)</span> <span class="c"># ControllerName, the world instance, RobotName</span>
+<span class="n">controller</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">setPeriod</span><span class="p">(</span><span class="mf">0.001</span><span class="p">)</span>
+
+<span class="n">phy</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">Connectors</span><span class="o">.</span><span class="n">OConnectorRobotState</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s">&quot;ocpos&quot;</span><span class="p">,</span> <span class="s">&quot;p1_&quot;</span><span class="p">,</span> <span class="s">&quot;p1&quot;</span><span class="p">)</span>         <span class="c"># ConnectorName, PortName, RobotName</span>
+                                                                        <span class="c"># It generates two ports named &quot;PortName&quot;+&quot;q&quot; &amp; &quot;PortName&quot;+&quot;qdpt&quot;</span>
+<span class="n">phy</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">Connectors</span><span class="o">.</span><span class="n">IConnectorRobotJointTorque</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s">&quot;icjt&quot;</span><span class="p">,</span> <span class="s">&quot;p1_&quot;</span><span class="p">,</span> <span class="s">&quot;p1&quot;</span><span class="p">)</span>    <span class="c"># ConnectorName, PortName, RobotName</span>
+                                                                        <span class="c"># It generates a port named &quot;PortName&quot;+&quot;tau&quot;</span>
+
+
+<span class="c">##### Create clock</span>
+<span class="kn">import</span> <span class="nn">deploy.deployer</span> <span class="kn">as</span> <span class="nn">ddeployer</span>
+<span class="n">clock</span> <span class="o">=</span> <span class="n">xdefw</span><span class="o">.</span><span class="n">rtt</span><span class="o">.</span><span class="n">Task</span><span class="p">(</span><span class="n">ddeployer</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s">&quot;clock&quot;</span><span class="p">,</span> <span class="s">&quot;dio::Clock&quot;</span><span class="p">,</span> <span class="s">&quot;dio-cpn-clock&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">))</span>
+<span class="n">clock</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">setPeriod</span><span class="p">(</span><span class="n">time_step</span><span class="p">)</span> <span class="c">#clock period == phy period</span>
+
+
+<span class="c">#-------------------------------------------------------------------------------</span>
+<span class="c">#</span>
+<span class="c"># Create input ports in physic agent for synchronization</span>
+<span class="c">#</span>
+<span class="c">#-------------------------------------------------------------------------------</span>
+
+<span class="n">phy</span><span class="o">.</span><span class="n">addCreateInputPort</span><span class="p">(</span><span class="s">&quot;clock_trigger&quot;</span><span class="p">,</span> <span class="s">&quot;double&quot;</span><span class="p">)</span>
+
+<span class="n">icps</span> <span class="o">=</span> <span class="n">phy</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">Connectors</span><span class="o">.</span><span class="n">IConnectorSynchro</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s">&quot;icps&quot;</span><span class="p">)</span>
+<span class="n">icps</span><span class="o">.</span><span class="n">addEvent</span><span class="p">(</span><span class="s">&quot;p1_tau&quot;</span><span class="p">)</span>
+<span class="n">icps</span><span class="o">.</span><span class="n">addEvent</span><span class="p">(</span><span class="s">&quot;clock_trigger&quot;</span><span class="p">)</span>
+
+<span class="n">clock</span><span class="o">.</span><span class="n">getPort</span><span class="p">(</span><span class="s">&quot;ticks&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">connectTo</span><span class="p">(</span><span class="n">phy</span><span class="o">.</span><span class="n">getPort</span><span class="p">(</span><span class="s">&quot;clock_trigger&quot;</span><span class="p">))</span>
+
+
+
+
+<span class="c">#-------------------------------------------------------------------------------</span>
+<span class="c">#</span>
+<span class="c"># Create connection between phy and controller for Cartesian control</span>
+<span class="c">#</span>
+<span class="c">#-------------------------------------------------------------------------------</span>
+
+<span class="n">phy</span><span class="o">.</span><span class="n">getPort</span><span class="p">(</span><span class="s">&#39;p1_q&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">connectTo</span><span class="p">(</span><span class="n">controller</span><span class="o">.</span><span class="n">getPort</span><span class="p">(</span><span class="s">&#39;q&#39;</span><span class="p">))</span>
+<span class="n">phy</span><span class="o">.</span><span class="n">getPort</span><span class="p">(</span><span class="s">&#39;p1_qdot&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">connectTo</span><span class="p">(</span><span class="n">controller</span><span class="o">.</span><span class="n">getPort</span><span class="p">(</span><span class="s">&#39;qdot&#39;</span><span class="p">))</span>
+
+<span class="n">controller</span><span class="o">.</span><span class="n">getPort</span><span class="p">(</span><span class="s">&quot;tau&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">connectTo</span><span class="p">(</span><span class="n">phy</span><span class="o">.</span><span class="n">getPort</span><span class="p">(</span><span class="s">&quot;p1_tau&quot;</span><span class="p">))</span>
+
+
+<span class="c">#-------------------------------------------------------------------------------</span>
+<span class="c">#</span>
+<span class="c"># Run agents</span>
+<span class="c">#</span>
+<span class="c">#-------------------------------------------------------------------------------</span>
+
+<span class="n">phy</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+<span class="n">graph</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+<span class="n">controller</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+<span class="n">clock</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+<span class="c"># Bootstrap the update of the physic agent so that the controller can</span>
+<span class="c"># do a first iteration</span>
+<span class="n">phy</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">agent</span><span class="o">.</span><span class="n">triggerUpdate</span><span class="p">()</span>
+</pre></div>
+</div>
 </div>
 
 

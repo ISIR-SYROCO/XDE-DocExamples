@@ -23,17 +23,30 @@ time_step = 0.01
 #
 #-------------------------------------------------------------------------------
 import rtt_interface
-import dsimi.rtt
+import xdefw.rtt
 import physicshelper
+import xde.desc.physic.physic_pb2
 
-class KinematicController(dsimi.rtt.Task):
+class KinematicController(xdefw.rtt.Task):
   
     def __init__(self, taskName, world, robotName):
         task = rtt_interface.PyTaskFactory.CreateTask(taskName)
-        dsimi.rtt.Task.__init__(self, task)
+        xdefw.rtt.Task.__init__(self, task)
 
         # model instance
-        self.model = physicshelper.createDynamicModel(world, robotName)
+        multiBodyModel = xde.desc.physic.physic_pb2.MultiBodyModel()
+        mechanism_index = 0
+        for m in world.scene.physical_scene.mechanisms:
+            if robotName == m.name:
+                break
+            else:
+                mechanism_index = mechanism_index + 1
+
+        multiBodyModel.kinematic_tree.CopyFrom(world.scene.physical_scene.nodes[ mechanism_index ])
+        multiBodyModel.meshes.extend(world.library.meshes)
+        multiBodyModel.mechanism.CopyFrom(world.scene.physical_scene.mechanisms[ mechanism_index ])
+        multiBodyModel.composites.extend(world.scene.physical_scene.collision_scene.meshes)
+        self.model = physicshelper.createDynamicModel(multiBodyModel)
 
         # create input ports
         self.q_in = self.addCreateInputPort("q", "VectorXd", True)
@@ -138,7 +151,7 @@ irj = phy.s.Connectors.IConnectorRobotJointPDCoupling.new("icrjPDc", "p1_", "p1"
 
 ##### Create clock
 import deploy.deployer as ddeployer
-clock = dsimi.rtt.Task(ddeployer.load("clock", "dio::Clock", "dio-cpn-clock", "dio/component/"))
+clock = xdefw.rtt.Task(ddeployer.load("clock", "dio::Clock", "dio-cpn-clock", ""))
 clock.s.setPeriod(time_step) #clock period == phy period
 
 
@@ -191,8 +204,8 @@ p1 = phy.s.GVM.Robot("p1")
 p1.enableAllJointPDCouplings(True)
 
 ##### Interactive shell
-import dsimi.interactive
-shell = dsimi.interactive.shell()
+import xdefw.interactive
+shell = xdefw.interactive.shell_console()
 shell()
 
 
