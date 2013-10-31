@@ -48,14 +48,14 @@ for n in phy.s.GVM.Scene("main").getBodyNames():
 #-------------------------------------------------------------------------------
 
 import rtt_interface
-import dsimi.rtt
+import xdefw.rtt
 import physicshelper
 
-class MyController(dsimi.rtt.Task):
+class MyController(xdefw.rtt.Task):
   
     def __init__(self, taskName, world, robotName):
         task = rtt_interface.PyTaskFactory.CreateTask(taskName)
-        dsimi.rtt.Task.__init__(self, task)
+        xdefw.rtt.Task.__init__(self, task)
 
         self.model = physicshelper.createDynamicModel(world, robotName)
 
@@ -90,18 +90,24 @@ controller.s.setPeriod(0.001)
 
 ##### Create clock, to synchronize phy and controller
 import deploy.deployer as ddeployer
-clock = dsimi.rtt.Task(ddeployer.load("clock", "dio::Clock", "dio-cpn-clock", "dio/component/"))
+clock = xdefw.rtt.Task(ddeployer.load("clock", "dio::Clock", "dio-cpn-clock", ""))
 clock.s.setPeriod(.01)
 
-# add Input Port in physic agent
+# add Input Port in physic agent to be able to send Joint torques to a robot
 phy.s.Connectors.IConnectorRobotJointTorque.new("ict", "p1_", "p1") # ConnectorName, PortName, RobotName
                                                                     # It generates a port named "PortName"+"tau"
+# Create a port in the physic agent to receive ticks
 phy.addCreateInputPort("clock_trigger", "double")
 
+# Create a Synchronization connectors: when all events of the connector is received,
+# the updateHook, and by extension the computation of the physic, of the agent is triggered.
 icps = phy.s.Connectors.IConnectorSynchro.new("icps")
+# Add event to the connector involving the reception of a new torque command.
 icps.addEvent("p1_tau")
+# Add event to the connector involving the reception of a new tick.
 icps.addEvent("clock_trigger")
 
+# Connection of the clock tick and controller output port to the physic agent
 clock.getPort("ticks").connectTo(phy.getPort("clock_trigger"))
 controller.getPort("tau").connectTo(phy.getPort("p1_tau"))
 
@@ -117,8 +123,8 @@ controller.s.start()
 clock.s.start()
 
 ##### Interactive shell
-import dsimi.interactive
-shell = dsimi.interactive.shell()
+import xdefw.interactive
+shell = xdefw.interactive.shell()
 shell()
 
 

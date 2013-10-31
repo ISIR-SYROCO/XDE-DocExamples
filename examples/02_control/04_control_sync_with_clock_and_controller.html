@@ -60,13 +60,43 @@
 <li><a class="reference download internal" href="../../_downloads/main9.py"><tt class="xref download docutils literal"><span class="pre">main.py</span></tt></a>.</li>
 </ul>
 </div>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p>En fait, dès qu&#8217;il y a un input port dans l&#8217;agent physic, alors celui ci n&#8217;est plus temps réel mais est calé sur l&#8217;input (voire aussi avec un l&#8217;input synchro).</p>
-<p>S&#8217;il n&#8217;y a rien l&#8217;input est le temps d&#8217;intégration.</p>
-<p>ATTENTION: ce temps d&#8217;intégration reste le même dans les deux cas.</p>
-<p>donc si les input de l&#8217;agent physic sont plus rapide que le temps d&#8217;intégration la simulation a l&#8217;air accélérée.</p>
-<p class="last">si les inputs sont plus lents, alors la simu a l&#8217;air ralenti.</p>
+<div class="admonition important">
+<p class="first admonition-title">Important</p>
+<p>This example shows how to write non-real time simulations. The computation
+of the physics is triggered by events, as opposed to the real time simulations
+where the computation of the physics is triggered by a clock.</p>
+<p class="last">It is important to note that the integration step is not affected, but the rate of integration is.
+It means that if the events occur faster than the integration time, the simulation
+will look accelerated. If the events occur slower than the integration time,
+the simulation will appear to be in slow motion.</p>
+</div>
+<div class="section" id="synchronization-of-the-physic-agent">
+<h2>Synchronization of the physic agent<a class="headerlink" href="#synchronization-of-the-physic-agent" title="Permalink to this headline">¶</a></h2>
+<p>This example shows how to synchronize the physics with a controller:
+as soon as the command is computed, the computation of the physic is triggered.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">deploy.deployer</span> <span class="kn">as</span> <span class="nn">ddeployer</span>
+<span class="n">clock</span> <span class="o">=</span> <span class="n">xdefw</span><span class="o">.</span><span class="n">rtt</span><span class="o">.</span><span class="n">Task</span><span class="p">(</span><span class="n">ddeployer</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s">&quot;clock&quot;</span><span class="p">,</span> <span class="s">&quot;dio::Clock&quot;</span><span class="p">,</span> <span class="s">&quot;dio-cpn-clock&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">))</span>
+<span class="n">clock</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">setPeriod</span><span class="p">(</span><span class="o">.</span><span class="mo">01</span><span class="p">)</span>
+
+<span class="c"># add Input Port in physic agent to be able to send Joint torques to a robot</span>
+<span class="n">phy</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">Connectors</span><span class="o">.</span><span class="n">IConnectorRobotJointTorque</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s">&quot;ict&quot;</span><span class="p">,</span> <span class="s">&quot;p1_&quot;</span><span class="p">,</span> <span class="s">&quot;p1&quot;</span><span class="p">)</span> <span class="c"># ConnectorName, PortName, RobotName</span>
+                                                                    <span class="c"># It generates a port named &quot;PortName&quot;+&quot;tau&quot;</span>
+<span class="c"># Create a port in the physic agent to receive ticks</span>
+<span class="n">phy</span><span class="o">.</span><span class="n">addCreateInputPort</span><span class="p">(</span><span class="s">&quot;clock_trigger&quot;</span><span class="p">,</span> <span class="s">&quot;double&quot;</span><span class="p">)</span>
+
+<span class="c"># Create a Synchronization connectors: when all events of the connector is received,</span>
+<span class="c"># the updateHook, and by extension the computation of the physic, of the agent is triggered.</span>
+<span class="n">icps</span> <span class="o">=</span> <span class="n">phy</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">Connectors</span><span class="o">.</span><span class="n">IConnectorSynchro</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s">&quot;icps&quot;</span><span class="p">)</span>
+<span class="c"># Add event to the connector involving the reception of a new torque command.</span>
+<span class="n">icps</span><span class="o">.</span><span class="n">addEvent</span><span class="p">(</span><span class="s">&quot;p1_tau&quot;</span><span class="p">)</span>
+<span class="c"># Add event to the connector involving the reception of a new tick.</span>
+<span class="n">icps</span><span class="o">.</span><span class="n">addEvent</span><span class="p">(</span><span class="s">&quot;clock_trigger&quot;</span><span class="p">)</span>
+
+<span class="c"># Connection of the clock tick and controller output port to the physic agent</span>
+<span class="n">clock</span><span class="o">.</span><span class="n">getPort</span><span class="p">(</span><span class="s">&quot;ticks&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">connectTo</span><span class="p">(</span><span class="n">phy</span><span class="o">.</span><span class="n">getPort</span><span class="p">(</span><span class="s">&quot;clock_trigger&quot;</span><span class="p">))</span>
+<span class="n">controller</span><span class="o">.</span><span class="n">getPort</span><span class="p">(</span><span class="s">&quot;tau&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">connectTo</span><span class="p">(</span><span class="n">phy</span><span class="o">.</span><span class="n">getPort</span><span class="p">(</span><span class="s">&quot;p1_tau&quot;</span><span class="p">))</span>
+</pre></div>
+</div>
 </div>
 </div>
 
@@ -76,6 +106,14 @@
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
+  <h3><a href="../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Waiting for the controller for non-real time simulations</a><ul>
+<li><a class="reference internal" href="#synchronization-of-the-physic-agent">Synchronization of the physic agent</a></li>
+</ul>
+</li>
+</ul>
+
   <h4>Previous topic</h4>
   <p class="topless"><a href="03_control_sync_with_clock.html"
                         title="previous chapter">Control a robot with a clock trigger</a></p>
