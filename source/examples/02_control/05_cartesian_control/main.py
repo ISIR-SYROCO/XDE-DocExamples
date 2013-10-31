@@ -48,23 +48,40 @@ for n in phy.s.GVM.Scene("main").getBodyNames():
 #-------------------------------------------------------------------------------
 
 import rtt_interface
-import dsimi.rtt
+import xdefw.rtt
 import physicshelper
+import xde.desc.physic.physic_pb2
 
-class CartesianController(dsimi.rtt.Task):
+##### Cartesian controller
+class CartesianController(xdefw.rtt.Task):
   
     def __init__(self, taskName, world, robotName):
         task = rtt_interface.PyTaskFactory.CreateTask(taskName)
-        dsimi.rtt.Task.__init__(self, task)
+        xdefw.rtt.Task.__init__(self, task)
 
-        self.model = physicshelper.createDynamicModel(world, robotName)
+        multiBodyModel = xde.desc.physic.physic_pb2.MultiBodyModel()
+        mechanism_index = 0
+        for m in world.scene.physical_scene.mechanisms:
+            if robotName == m.name:
+                break
+            else:
+                mechanism_index = mechanism_index + 1
 
+        multiBodyModel.kinematic_tree.CopyFrom(world.scene.physical_scene.nodes[ mechanism_index ])
+        multiBodyModel.meshes.extend(world.library.meshes)
+        multiBodyModel.mechanism.CopyFrom(world.scene.physical_scene.mechanisms[ mechanism_index ])
+        multiBodyModel.composites.extend(world.scene.physical_scene.collision_scene.meshes)
+        self.model = physicshelper.createDynamicModel(multiBodyModel)
+
+        # Input port to read the current state of the robot
         self.q_in = self.addCreateInputPort("q", "VectorXd", True)
         self.q_ok = False
         
+        # Input port to read the current state of the robot
         self.qdot_in = self.addCreateInputPort("qdot", "VectorXd", True)
         self.qdot_ok = False
     
+        # Output port to write torque commands
         self.tau_out = self.addCreateOutputPort("tau", "VectorXd")
         
         self.kp = 100
@@ -77,6 +94,7 @@ class CartesianController(dsimi.rtt.Task):
         pass
   
     def updateHook(self):
+        # Try to read new value of robot state
         if not self.q_ok:
             self.q,self.q_ok = self.q_in.read()
         if not self.qdot_ok:
@@ -94,7 +112,9 @@ class CartesianController(dsimi.rtt.Task):
         model.setJointVelocities(qdot)
         
         H6 = model.getSegmentPosition(model.getSegmentIndex("p1_b_3"))
-        H = lgsm.Displacement(lgsm.vectord(0,0,0), H6.getRotation())
+        H = lgsm.Displacement()
+        H.setTranslation(lgsm.vectord(0,0,0))
+        H.setRotation(H6.getRotation())
         J66 = model.getSegmentJacobian(model.getSegmentIndex("p1_b_3"))
         J60 = H.adjoint() * J66
         T60 = H.adjoint() * model.getSegmentVelocity(model.getSegmentIndex("p1_b_3"))
@@ -133,7 +153,7 @@ phy.s.Connectors.IConnectorRobotJointTorque.new("icjt", "p1_", "p1")    # Connec
 
 ##### Create clock
 import deploy.deployer as ddeployer
-clock = dsimi.rtt.Task(ddeployer.load("clock", "dio::Clock", "dio-cpn-clock", "dio/component/"))
+clock = xdefw.rtt.Task(ddeployer.load("clock", "dio::Clock", "dio-cpn-clock", ""))
 clock.s.setPeriod(time_step) #clock period == phy period
 
 
@@ -177,11 +197,13 @@ graph.s.start()
 controller.s.start()
 clock.s.start()
 
+# Bootstrap the update of the physic agent so that the controller can
+# do a first iteration
 phy.s.agent.triggerUpdate()
 
 ##### Interactive shell
-import dsimi.interactive
-shell = dsimi.interactive.shell()
+import xdefw.interactive
+shell = xdefw.interactive.shell_console()
 shell()
 
 
