@@ -10,7 +10,6 @@ import desc.graphic
 import desc.physic
 import desc.core
 import desc.scene
-import desc.robot
 import desc.collision
 
 import desc.simple.scene
@@ -33,12 +32,10 @@ def add_iCub(damping = 2, H_init=None, fixed_base=True):
 
     ########## Build physical scene
     print "add iCub Kinematic Tree"
-    phy_root = desc.robot.addKinematicTree(world.scene.physical_scene,
-                                parent_node=None,
+    desc.physic.fillKinematicTree(world.scene.physical_scene.nodes.add(),
                                 tree=kin_tree,
                                 fixed_base=fixed_base,
                                 H_init=H_init)
-
 
     print "add iCub Mechanism"
     desc.physic.addMechanism(world.scene.physical_scene,
@@ -48,6 +45,7 @@ def add_iCub(damping = 2, H_init=None, fixed_base=True):
                              bodies=list(bodies_data),
                              segments=list(bodies_data))
 
+    phy_root = desc.physic.findInPhysicalScene(world.scene.physical_scene, "waist")
 
     def setNodeMomentsOfInertia(node):
         b_name = node.rigid_body.name
