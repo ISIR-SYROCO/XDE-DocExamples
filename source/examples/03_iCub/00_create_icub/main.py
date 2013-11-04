@@ -77,8 +77,8 @@ icub.enableGravity(False)
 print "To enable gravity, type: icub.enableGravity(True)"
 
 ##### Interactive shell
-import dsimi.interactive
-shell = dsimi.interactive.shell()
+import xdefw.interactive
+shell = xdefw.interactive.shell_console()
 shell()
 
 
