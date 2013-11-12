@@ -81,16 +81,14 @@ def add_iCub_meshes(world, useCollisionMeshes=False, createComposite=False, comp
     for node in root_node.children:
         node.ClearField("position")
         node.position.extend(lgsm.Displacement().tolist())
-#        node.ClearField("scale")
-#        node.scale.extend([1,1,1])
 
     
     ########## Build graphical scene
     for body_name in meshes_data:
         body_g_node = desc.graphic.addGraphicalNode(world.scene.graphical_scene, body_name, None, root_node)
-        body_g_node.ClearField("position")
+        body_g_node.ClearField("position") # Position has to be cleared when adding a new node, otherwise an error related to vector size appears.
         body_g_node.position.extend(lgsm.Displacement().tolist())
-        body_g_node.ClearField("scale")
+        body_g_node.ClearField("scale")    # Scale has to be cleared when adding a new node
         body_g_node.scale.extend([1, 1, 1])
 
         for sub_mesh, H_body_submesh in meshes_data[body_name]:
@@ -121,7 +119,6 @@ def add_iCub_meshes(world, useCollisionMeshes=False, createComposite=False, comp
                 composite.root_node.position.extend([0,0,0,1,0,0,0])
 
         # Create bindings between, physical, graphical and collision scenes
-#        desc.scene.addBinding(world, body_name, body_name, "", composite_name)
         graph_node      = desc.core.findInTree(world.scene.graphical_scene.root_node, body_name)
         phy_node        = desc.physic.findInPhysicalScene(world.scene.physical_scene, body_name)
         graph_node.name = body_name # it is suitable to have the same name for both graphics and physics.
@@ -144,12 +141,11 @@ def addGround(world):
     ground_position = lgsm.Displacementd()
     ground_position.setTranslation(lgsm.vector(0,0,-0.1))
     desc.simple.physic.addFixedJoint(world, "ground.joint", "ground", ground_position)
-    #desc.simple.scene.addBinding(world, phy="ground", graph="ground", graph_ref="", coll="ground.comp")
 
+    #Binding graph, phy and coll object
     ground_graph_node      = desc.core.findInTree(world.scene.graphical_scene.root_node, "ground")
     ground_phy_node        = desc.physic.findInPhysicalScene(world.scene.physical_scene, "ground")
     ground_graph_node.name = "ground" # it is suitable to have the same name for both graphics and physics.
-
     ground_phy_node.rigid_body.composite_name="ground.comp"
 
 
