@@ -115,7 +115,7 @@ def add_iCub_meshes(world, useCollisionMeshes=False, createComposite=False, comp
         if createComposite is True:
             if len(body_g_node.children):
                 composite_name = body_name+".comp"
-                composite = desc.collision.addCompositeMesh(world.scene.collision_scene, composite_name, offset=compositeOffset)
+                composite = desc.collision.addCompositeMesh(world.scene.physical_scene.collision_scene, composite_name, offset=compositeOffset)
                 desc.collision.copyFromGraphicalTree(composite.root_node, body_g_node)
                 composite.root_node.ClearField("position")
                 composite.root_node.position.extend([0,0,0,1,0,0,0])
@@ -141,8 +141,16 @@ def addGround(world):
     desc.simple.graphic.addGraphicalTree(world, ground_world, node_name="ground")
     desc.simple.collision.addCompositeMesh(world, phy_ground_world, composite_name="ground.comp", offset=0.05, clean_meshes=False, ignore_library_conflicts=False)
     desc.simple.physic.addRigidBody(world, "ground", mass=1, contact_material="material.concrete")
-    desc.simple.physic.addFixedJoint(world, "ground.joint", "ground", lgsm.Displacementd(0,0,-0.1))
-    desc.simple.scene.addBinding(world, phy="ground", graph="ground", graph_ref="", coll="ground.comp")
+    ground_position = lgsm.Displacementd()
+    ground_position.setTranslation(lgsm.vector(0,0,-0.1))
+    desc.simple.physic.addFixedJoint(world, "ground.joint", "ground", ground_position)
+    #desc.simple.scene.addBinding(world, phy="ground", graph="ground", graph_ref="", coll="ground.comp")
+
+    ground_graph_node      = desc.core.findInTree(world.scene.graphical_scene.root_node, "ground")
+    ground_phy_node        = desc.physic.findInPhysicalScene(world.scene.physical_scene, "ground")
+    ground_graph_node.name = "ground" # it is suitable to have the same name for both graphics and physics.
+
+    ground_phy_node.rigid_body.composite_name="ground.comp"
 
 
 
@@ -157,8 +165,8 @@ def addContactLaws(world, friction_coeff=.4):
 
 
 def addCollisionPairs(world):
-    cp = world.scene.collision_pairs.add()
+    cp = world.scene.physical_scene.collision_pairs.add()
     cp.body_i = "ground"
-    cp.mechanism_i = "iCub"
-    cp.enabled = True
+    cp.mechanism_j = "iCub"
+    cp.queries.add(type=1, enabled=True)
 
