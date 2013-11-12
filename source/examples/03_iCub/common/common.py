@@ -20,7 +20,7 @@ def get_physic_agent():
     lmd = agents.physic.core.createXCDScene(phy, "xcd", "LMD", lmd_max=.01)  # collision scene
 
     ms.setGeometricalScene(lmd) # link physic scene and collision scene
-    phy.s.setPeriod(time_step)
+    phy.s.setPeriod(0)
     
     return phy, ms, lmd
 

@@ -81,12 +81,17 @@ def add_iCub_meshes(world, useCollisionMeshes=False, createComposite=False, comp
     for node in root_node.children:
         node.ClearField("position")
         node.position.extend(lgsm.Displacement().tolist())
+#        node.ClearField("scale")
+#        node.scale.extend([1,1,1])
 
     
     ########## Build graphical scene
     for body_name in meshes_data:
         body_g_node = desc.graphic.addGraphicalNode(world.scene.graphical_scene, body_name, None, root_node)
-        desc.graphic.setNodeScale(body_g_node, [1,1,1])
+        body_g_node.ClearField("position")
+        body_g_node.position.extend(lgsm.Displacement().tolist())
+        body_g_node.ClearField("scale")
+        body_g_node.scale.extend([1, 1, 1])
 
         for sub_mesh, H_body_submesh in meshes_data[body_name]:
             if useCollisionMeshes is False:
@@ -116,8 +121,12 @@ def add_iCub_meshes(world, useCollisionMeshes=False, createComposite=False, comp
                 composite.root_node.position.extend([0,0,0,1,0,0,0])
 
         # Create bindings between, physical, graphical and collision scenes
-        desc.scene.addBinding(world, body_name, body_name, "", composite_name)
+#        desc.scene.addBinding(world, body_name, body_name, "", composite_name)
+        graph_node      = desc.core.findInTree(world.scene.graphical_scene.root_node, body_name)
+        phy_node        = desc.physic.findInPhysicalScene(world.scene.physical_scene, body_name)
+        graph_node.name = body_name # it is suitable to have the same name for both graphics and physics.
 
+        phy_node.rigid_body.composite_name=composite_name
     
     
     return world

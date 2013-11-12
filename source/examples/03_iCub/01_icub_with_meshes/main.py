@@ -36,6 +36,7 @@ import iCubcommon
 world = iCubcommon.add_iCub(H_init=[0,0,0,1,0,0,0], fixed_base=True)
 iCubcommon.add_iCub_meshes(world)
 
+import desc.core
 ##### Deserialize world: register world description in phy & graph agents
 import agents.graphic.builder
 import agents.physic.builder
@@ -68,6 +69,7 @@ graph.getPort("body_state_H").connectTo(phy.getPort("body_state_H"))
 #
 #-------------------------------------------------------------------------------
 
+phy.s.setPeriod(common.time_step)
 phy.s.start()
 graph.s.start()
 
@@ -76,8 +78,8 @@ icub = phy.s.GVM.Robot('iCub')
 print "To enable gravity, type: icub.enableGravity(True)"
 
 ##### Interactive shell
-import dsimi.interactive
-shell = dsimi.interactive.shell()
+import xdefw.interactive
+shell = xdefw.interactive.shell_console()
 shell()
 
 
