@@ -20,6 +20,8 @@ time_step = 0.01
 #-------------------------------------------------------------------------------
 #
 # Create a new Task. This will be the Kinematic controller.
+# This is a simple controller that will send the current joint position
+# as the desired joint position
 #
 #-------------------------------------------------------------------------------
 import rtt_interface
@@ -27,6 +29,7 @@ import xdefw.rtt
 import physicshelper
 import xde.desc.physic.physic_pb2
 
+##### The Controller
 class KinematicController(xdefw.rtt.Task):
   
     def __init__(self, taskName, world, robotName):
@@ -49,12 +52,14 @@ class KinematicController(xdefw.rtt.Task):
         self.model = physicshelper.createDynamicModel(multiBodyModel)
 
         # create input ports
+        # Those ports will be used to get the current state of the robot
         self.q_in = self.addCreateInputPort("q", "VectorXd", True)
         self.q_ok = False
         self.qdot_in = self.addCreateInputPort("qdot", "VectorXd", True)
         self.qdot_ok = False
     
         # create output ports
+        # Those ports will be used to send the command to the robot
         self.q_des_out = self.addCreateOutputPort("q_des", "VectorXd")
         self.qdot_des_out = self.addCreateOutputPort("qdot_des", "VectorXd")
         self.kp_des_out = self.addCreateOutputPort("kp_des", "VectorXd")
@@ -135,13 +140,19 @@ for n in phy.s.GVM.Scene("main").getBodyNames():
 #
 #-------------------------------------------------------------------------------
 
-# Create controller
+# Create controller associated with the robot p1
 controller = KinematicController("MyController", world, "p1") # ControllerName, the world instance, RobotName
 controller.s.setPeriod(0.001)
 
+# In order to get the state of the robot, we need to create a ConnectorRobotState
+# This will add ports to the physic agent which we can plug to some input ports to read
+# joint position and joint velocities of the robot
 phy.s.Connectors.OConnectorRobotState.new("ocpos", "p1_", "p1")         # ConnectorName, PortName, RobotName
                                                                         # It generates two ports named "PortName"+"q"
                                                                         #                              "PortName"+"qdot"
+# In order to send command to the robot, we need to create a RobotJointPDCoupling
+# This will add ports to the physic agent which can be plugged to some output ports,
+# where a command is written.
 irj = phy.s.Connectors.IConnectorRobotJointPDCoupling.new("icrjPDc", "p1_", "p1")    # ConnectorName, PortName, RobotName
                                                                         # It generates 4 ports named "PortName"+"q_des"
                                                                         #                                      +"qdot_des"
@@ -186,12 +197,7 @@ controller.getPort("kp_des").connectTo(phy.getPort("p1_kp_des"))
 controller.getPort("kd_des").connectTo(phy.getPort("p1_kd_des"))
 
 
-#-------------------------------------------------------------------------------
-#
 # Run agents
-#
-#-------------------------------------------------------------------------------
-
 phy.s.start()
 graph.s.start()
 controller.s.start()
