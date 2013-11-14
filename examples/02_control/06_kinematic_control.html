@@ -53,12 +53,154 @@
             
   <div class="section" id="kinematic-control">
 <h1>Kinematic control<a class="headerlink" href="#kinematic-control" title="Permalink to this headline">¶</a></h1>
+<div class="admonition important">
+<p class="first admonition-title">Important</p>
+<p class="last">This example show how to build a kinematic controller for a pendulum</p>
+</div>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p>Get source of this example:</p>
 <ul class="last simple">
 <li><a class="reference download internal" href="../../_downloads/main11.py"><tt class="xref download docutils literal"><span class="pre">main.py</span></tt></a>.</li>
 </ul>
+</div>
+<div class="section" id="the-kinematic-controller">
+<h2>The kinematic controller<a class="headerlink" href="#the-kinematic-controller" title="Permalink to this headline">¶</a></h2>
+<p>The controller is an Orocos component. In this example we use python to implement it.
+In the initialisation, we create a multibody_model, that is updated to be representative
+of state of the simulated robot and used to compute when needed
+jacobians for instance.
+Then in the updateHook, the current joint positions/velocities are read from the robot state,
+and those are used as desired positions/velocities.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">KinematicController</span><span class="p">(</span><span class="n">xdefw</span><span class="o">.</span><span class="n">rtt</span><span class="o">.</span><span class="n">Task</span><span class="p">):</span>
+  
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">taskName</span><span class="p">,</span> <span class="n">world</span><span class="p">,</span> <span class="n">robotName</span><span class="p">):</span>
+        <span class="n">task</span> <span class="o">=</span> <span class="n">rtt_interface</span><span class="o">.</span><span class="n">PyTaskFactory</span><span class="o">.</span><span class="n">CreateTask</span><span class="p">(</span><span class="n">taskName</span><span class="p">)</span>
+        <span class="n">xdefw</span><span class="o">.</span><span class="n">rtt</span><span class="o">.</span><span class="n">Task</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">)</span>
+
+        <span class="c"># model instance</span>
+        <span class="n">multiBodyModel</span> <span class="o">=</span> <span class="n">xde</span><span class="o">.</span><span class="n">desc</span><span class="o">.</span><span class="n">physic</span><span class="o">.</span><span class="n">physic_pb2</span><span class="o">.</span><span class="n">MultiBodyModel</span><span class="p">()</span>
+        <span class="n">mechanism_index</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">world</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">physical_scene</span><span class="o">.</span><span class="n">mechanisms</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">robotName</span> <span class="o">==</span> <span class="n">m</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
+                <span class="k">break</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">mechanism_index</span> <span class="o">=</span> <span class="n">mechanism_index</span> <span class="o">+</span> <span class="mi">1</span>
+
+        <span class="n">multiBodyModel</span><span class="o">.</span><span class="n">kinematic_tree</span><span class="o">.</span><span class="n">CopyFrom</span><span class="p">(</span><span class="n">world</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">physical_scene</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span> <span class="n">mechanism_index</span> <span class="p">])</span>
+        <span class="n">multiBodyModel</span><span class="o">.</span><span class="n">meshes</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">world</span><span class="o">.</span><span class="n">library</span><span class="o">.</span><span class="n">meshes</span><span class="p">)</span>
+        <span class="n">multiBodyModel</span><span class="o">.</span><span class="n">mechanism</span><span class="o">.</span><span class="n">CopyFrom</span><span class="p">(</span><span class="n">world</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">physical_scene</span><span class="o">.</span><span class="n">mechanisms</span><span class="p">[</span> <span class="n">mechanism_index</span> <span class="p">])</span>
+        <span class="n">multiBodyModel</span><span class="o">.</span><span class="n">composites</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">world</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">physical_scene</span><span class="o">.</span><span class="n">collision_scene</span><span class="o">.</span><span class="n">meshes</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">physicshelper</span><span class="o">.</span><span class="n">createDynamicModel</span><span class="p">(</span><span class="n">multiBodyModel</span><span class="p">)</span>
+
+        <span class="c"># create input ports</span>
+        <span class="c"># Those ports will be used to get the current state of the robot</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">q_in</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">addCreateInputPort</span><span class="p">(</span><span class="s">&quot;q&quot;</span><span class="p">,</span> <span class="s">&quot;VectorXd&quot;</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">q_ok</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">qdot_in</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">addCreateInputPort</span><span class="p">(</span><span class="s">&quot;qdot&quot;</span><span class="p">,</span> <span class="s">&quot;VectorXd&quot;</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">qdot_ok</span> <span class="o">=</span> <span class="bp">False</span>
+    
+        <span class="c"># create output ports</span>
+        <span class="c"># Those ports will be used to send the command to the robot</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">q_des_out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">addCreateOutputPort</span><span class="p">(</span><span class="s">&quot;q_des&quot;</span><span class="p">,</span> <span class="s">&quot;VectorXd&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">qdot_des_out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">addCreateOutputPort</span><span class="p">(</span><span class="s">&quot;qdot_des&quot;</span><span class="p">,</span> <span class="s">&quot;VectorXd&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kp_des_out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">addCreateOutputPort</span><span class="p">(</span><span class="s">&quot;kp_des&quot;</span><span class="p">,</span> <span class="s">&quot;VectorXd&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kd_des_out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">addCreateOutputPort</span><span class="p">(</span><span class="s">&quot;kd_des&quot;</span><span class="p">,</span> <span class="s">&quot;VectorXd&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kp_des</span> <span class="o">=</span> <span class="mi">100</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kd_des</span> <span class="o">=</span> <span class="mi">20</span>
+  
+    <span class="k">def</span> <span class="nf">startHook</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+  
+    <span class="k">def</span> <span class="nf">stopHook</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+  
+    <span class="k">def</span> <span class="nf">updateHook</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">q_ok</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">q</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">q_ok</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">q_in</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">qdot_ok</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">qdot</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">qdot_ok</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">qdot_in</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">q_ok</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">qdot_ok</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">q_ok</span> <span class="o">=</span> <span class="bp">False</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">qdot_ok</span> <span class="o">=</span> <span class="bp">False</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">doUpdate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">qdot</span><span class="p">)</span>
+
+  
+    <span class="k">def</span> <span class="nf">doUpdate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="n">qdot</span><span class="p">):</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">setJointPositions</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">setJointVelocities</span><span class="p">(</span><span class="n">qdot</span><span class="p">)</span>
+        
+        <span class="c"># define output vectors</span>
+        <span class="n">q_des_out</span> <span class="o">=</span> <span class="n">q</span>
+        <span class="n">qdot_des_out</span> <span class="o">=</span> <span class="n">lgsm</span><span class="o">.</span><span class="n">vector</span><span class="p">([</span><span class="o">.</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">nbInternalDofs</span><span class="p">()))</span>
+        <span class="n">kp_des_out</span> <span class="o">=</span> <span class="n">lgsm</span><span class="o">.</span><span class="n">vector</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">kp_des</span><span class="p">]</span> <span class="o">*</span> <span class="n">model</span><span class="o">.</span><span class="n">nbInternalDofs</span><span class="p">())</span>
+        <span class="n">kd_des_out</span> <span class="o">=</span> <span class="n">lgsm</span><span class="o">.</span><span class="n">vector</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">kd_des</span><span class="p">]</span> <span class="o">*</span> <span class="n">model</span><span class="o">.</span><span class="n">nbInternalDofs</span><span class="p">())</span>
+        
+        
+        
+        <span class="c"># send output vectors</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kp_des_out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">kp_des_out</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kd_des_out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">kd_des_out</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">q_des_out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">q_des_out</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">qdot_des_out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">qdot_des_out</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The controller is then instanciated and associated to the robot p1.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">controller</span> <span class="o">=</span> <span class="n">KinematicController</span><span class="p">(</span><span class="s">&quot;MyController&quot;</span><span class="p">,</span> <span class="n">world</span><span class="p">,</span> <span class="s">&quot;p1&quot;</span><span class="p">)</span> <span class="c"># ControllerName, the world instance, RobotName</span>
+<span class="n">controller</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">setPeriod</span><span class="p">(</span><span class="mf">0.001</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>In order to read the state of the robot, we need to create a special connector:
+the OConnectorRobotState which will add ports to the physic agent.
+The argument are <tt class="docutils literal"><span class="pre">Connectors.OConnectorRobotState.new(connector_name,</span> <span class="pre">prefix_port_name,</span> <span class="pre">robot_name)</span></tt>.
+The <tt class="docutils literal"><span class="pre">prefix_port_name</span></tt> will be use to prefix the name of the new ports.
+The state of the associated robot be written in those ports. Connecting
+input ports to those generated ports will allow us to read the state of the robot.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># In order to get the state of the robot, we need to create a ConnectorRobotState</span>
+<span class="c"># This will add ports to the physic agent which we can plug to some input ports to read</span>
+<span class="c"># joint position and joint velocities of the robot</span>
+<span class="n">phy</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">Connectors</span><span class="o">.</span><span class="n">OConnectorRobotState</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s">&quot;ocpos&quot;</span><span class="p">,</span> <span class="s">&quot;p1_&quot;</span><span class="p">,</span> <span class="s">&quot;p1&quot;</span><span class="p">)</span>         <span class="c"># ConnectorName, PortName, RobotName</span>
+                                                                        <span class="c"># It generates two ports named &quot;PortName&quot;+&quot;q&quot;</span>
+                                                                        <span class="c">#                              &quot;PortName&quot;+&quot;qdot&quot;</span>
+</pre></div>
+</div>
+<p>A similar connector has to be created to send command to the robot:
+the creation of a IConnectorRobotJointPDCoupling will add ports to the physic agent.
+Those ports have to be plugged to some output ports where a command is written.
+Typically, it is plugged to the output of a controller.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># In order to send command to the robot, we need to create a RobotJointPDCoupling</span>
+<span class="c"># This will add ports to the physic agent which can be plugged to some output ports,</span>
+<span class="c"># where a command is written.</span>
+<span class="n">irj</span> <span class="o">=</span> <span class="n">phy</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">Connectors</span><span class="o">.</span><span class="n">IConnectorRobotJointPDCoupling</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s">&quot;icrjPDc&quot;</span><span class="p">,</span> <span class="s">&quot;p1_&quot;</span><span class="p">,</span> <span class="s">&quot;p1&quot;</span><span class="p">)</span>    <span class="c"># ConnectorName, PortName, RobotName</span>
+                                                                        <span class="c"># It generates 4 ports named &quot;PortName&quot;+&quot;q_des&quot;</span>
+                                                                        <span class="c">#                                      +&quot;qdot_des&quot;</span>
+                                                                        <span class="c">#                                      +&quot;kp_des&quot;</span>
+                                                                        <span class="c">#                                      +&quot;kd_des&quot;</span>
+</pre></div>
+</div>
+<p>Then we have to connect the controller and the ports added by the creation of the connectors:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c">#-------------------------------------------------------------------------------</span>
+<span class="c">#</span>
+<span class="c"># Create connection between phy and controller for Kinematic control</span>
+<span class="c">#</span>
+<span class="c">#-------------------------------------------------------------------------------</span>
+
+<span class="n">phy</span><span class="o">.</span><span class="n">getPort</span><span class="p">(</span><span class="s">&#39;p1_q&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">connectTo</span><span class="p">(</span><span class="n">controller</span><span class="o">.</span><span class="n">getPort</span><span class="p">(</span><span class="s">&#39;q&#39;</span><span class="p">))</span>
+<span class="n">phy</span><span class="o">.</span><span class="n">getPort</span><span class="p">(</span><span class="s">&#39;p1_qdot&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">connectTo</span><span class="p">(</span><span class="n">controller</span><span class="o">.</span><span class="n">getPort</span><span class="p">(</span><span class="s">&#39;qdot&#39;</span><span class="p">))</span>
+
+<span class="n">controller</span><span class="o">.</span><span class="n">getPort</span><span class="p">(</span><span class="s">&quot;q_des&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">connectTo</span><span class="p">(</span><span class="n">phy</span><span class="o">.</span><span class="n">getPort</span><span class="p">(</span><span class="s">&quot;p1_q_des&quot;</span><span class="p">))</span>
+<span class="n">controller</span><span class="o">.</span><span class="n">getPort</span><span class="p">(</span><span class="s">&quot;qdot_des&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">connectTo</span><span class="p">(</span><span class="n">phy</span><span class="o">.</span><span class="n">getPort</span><span class="p">(</span><span class="s">&quot;p1_qdot_des&quot;</span><span class="p">))</span>
+<span class="n">controller</span><span class="o">.</span><span class="n">getPort</span><span class="p">(</span><span class="s">&quot;kp_des&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">connectTo</span><span class="p">(</span><span class="n">phy</span><span class="o">.</span><span class="n">getPort</span><span class="p">(</span><span class="s">&quot;p1_kp_des&quot;</span><span class="p">))</span>
+<span class="n">controller</span><span class="o">.</span><span class="n">getPort</span><span class="p">(</span><span class="s">&quot;kd_des&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">connectTo</span><span class="p">(</span><span class="n">phy</span><span class="o">.</span><span class="n">getPort</span><span class="p">(</span><span class="s">&quot;p1_kd_des&quot;</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>It has to be noted that the joint control have to be enable for the robot:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">p1</span> <span class="o">=</span> <span class="n">phy</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">GVM</span><span class="o">.</span><span class="n">Robot</span><span class="p">(</span><span class="s">&quot;p1&quot;</span><span class="p">)</span>
+<span class="n">p1</span><span class="o">.</span><span class="n">enableAllJointPDCouplings</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+</pre></div>
+</div>
 </div>
 </div>
 
@@ -68,6 +210,14 @@
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
+  <h3><a href="../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Kinematic control</a><ul>
+<li><a class="reference internal" href="#the-kinematic-controller">The kinematic controller</a></li>
+</ul>
+</li>
+</ul>
+
   <h4>Previous topic</h4>
   <p class="topless"><a href="05_cartesian_control.html"
                         title="previous chapter">Cartesian control</a></p>
