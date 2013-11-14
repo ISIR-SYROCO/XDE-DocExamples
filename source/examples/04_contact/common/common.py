@@ -7,7 +7,7 @@ deploy.loadTypekitsAndPlugins()
 
 ##### import for clock agent
 import deploy.deployer as ddeployer
-import dsimi.rtt
+import xdefw.rtt
 
 ##### Create physic and graphic agents
 import agents.physic.core
@@ -41,7 +41,7 @@ def get_graphic_agent(enableNavigation=True, showGround=True):
 
 def get_clock_agent(time_step=0.01):
     ##### Create clock
-    clock = dsimi.rtt.Task(ddeployer.load("clock", "dio::Clock", "dio-cpn-clock", "dio/component/"))
+    clock = xdefw.rtt.Task(ddeployer.load("clock", "dio::Clock", "dio-cpn-clock", ""))
     clock.s.setPeriod(time_step)
     return clock
 

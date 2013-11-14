@@ -10,7 +10,6 @@ import desc.graphic
 import desc.physic
 import desc.core
 import desc.scene
-import desc.robot
 import desc.collision
 
 import desc.simple.scene
@@ -55,7 +54,8 @@ def add_RX90_with_meshes(damping = 2, rx90_offset=0.001):
     ])
 
     ########## Build physical scene
-    phy_root = desc.robot.addKinematicTree(world.scene.physical_scene, parent_node=None, tree=kin_tree, fixed_base=True, H_init=H_init)
+    phy_root = world.scene.physical_scene.nodes.add()
+    desc.physic.fillKinematicTree(phy_root, tree=kin_tree, fixed_base=True, H_init=H_init)
     desc.physic.addMechanism(world.scene.physical_scene, name="rx90", root_node="00", trim_nodes=[], bodies=rx_bodies, segments=rx_segments)
 
 
@@ -65,7 +65,7 @@ def add_RX90_with_meshes(damping = 2, rx90_offset=0.001):
 
     for node_name, comp_name in zip(nodes_name, composites_name):
         graph_node = desc.core.findInTree(world.scene.graphical_scene.root_node, node_name)
-        composite = desc.collision.addCompositeMesh(world.scene.collision_scene, comp_name, offset=rx90_offset)
+        composite = desc.collision.addCompositeMesh(world.scene.physical_scene.collision_scene, comp_name, offset=rx90_offset)
         desc.collision.copyFromGraphicalTree(composite.root_node, graph_node)
         composite.root_node.ClearField("position")
         composite.root_node.position.extend([0,0,0,1,0,0,0])
@@ -73,7 +73,12 @@ def add_RX90_with_meshes(damping = 2, rx90_offset=0.001):
     for node_name, body_name, comp_name in zip(nodes_name, bodies_name, composites_name):
         graph_node = desc.core.findInTree(world.scene.graphical_scene.root_node, node_name)
         graph_node.name = body_name # it is suitable to have the same name for both graphics and physics.
-        desc.scene.addBinding(world, body_name, body_name, "", comp_name)
+        #desc.scene.addBinding(world, body_name, body_name, "", comp_name)
+        graph_node      = desc.core.findInTree(world.scene.graphical_scene.root_node, body_name)
+        phy_node        = desc.physic.findInPhysicalScene(world.scene.physical_scene, body_name)
+        graph_node.name = body_name # it is suitable to have the same name for both graphics and physics.
+
+        phy_node.rigid_body.composite_name=comp_name
 
 
 
