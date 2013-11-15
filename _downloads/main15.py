@@ -39,6 +39,7 @@ world = RX90common.add_RX90_with_meshes()
 ##### Deserialize world: register world description in phy & graph agents
 import agents.graphic.builder
 import agents.physic.builder
+import desc.physic
 
 print "deserializeWorld..."
 print "graphic..."
@@ -57,9 +58,8 @@ graph.s.Connectors.IConnectorFrame.new("icf", "framePosition", "mainScene")
 graph.getPort("framePosition").connectTo(phy.getPort("body_state_H"))
 
 # add markers on bodies
-for b in world.scene.rigid_body_bindings:
-    if len(b.graph_node) and len(b.rigid_body):
-        ocb.addBody(str(b.rigid_body))
+for b in desc.physic.getRigidBodyNames(world.scene.physical_scene):
+    ocb.addBody(b)
 
 graph.s.Connectors.IConnectorBody.new("icb", "body_state_H", "mainScene")
 graph.getPort("body_state_H").connectTo(phy.getPort("body_state_H"))
@@ -73,13 +73,13 @@ graph.getPort("body_state_H").connectTo(phy.getPort("body_state_H"))
 phy.s.start()
 graph.s.start()
 
-rx90 = phy.s.GVM.Robot('RX90')
+rx90 = phy.s.GVM.Robot('rx90')
 rx90.enableGravity(False)
 print "To enable gravity, type: rx90.enableGravity(True)"
 
 ##### Interactive shell
-import dsimi.interactive
-shell = dsimi.interactive.shell()
+import xdefw.interactive
+shell = xdefw.interactive.shell_console()
 shell()
 
 

@@ -135,18 +135,17 @@ class CartesianController(xdefw.rtt.Task):
 
 
 
-#-------------------------------------------------------------------------------
-#
-# Create Controller, Clock
-#
-#-------------------------------------------------------------------------------
+##### Create Controller, Clock
 
 # Create controller
 controller = CartesianController("MyController", world, "p1") # ControllerName, the world instance, RobotName
 controller.s.setPeriod(0.001)
 
+# Creation of robot state connectors
 phy.s.Connectors.OConnectorRobotState.new("ocpos", "p1_", "p1")         # ConnectorName, PortName, RobotName
                                                                         # It generates two ports named "PortName"+"q" & "PortName"+"qdpt"
+
+# Creation of robot torque input
 phy.s.Connectors.IConnectorRobotJointTorque.new("icjt", "p1_", "p1")    # ConnectorName, PortName, RobotName
                                                                         # It generates a port named "PortName"+"tau"
 
@@ -174,24 +173,14 @@ clock.getPort("ticks").connectTo(phy.getPort("clock_trigger"))
 
 
 
-#-------------------------------------------------------------------------------
-#
 # Create connection between phy and controller for Cartesian control
-#
-#-------------------------------------------------------------------------------
-
 phy.getPort('p1_q').connectTo(controller.getPort('q'))
 phy.getPort('p1_qdot').connectTo(controller.getPort('qdot'))
 
 controller.getPort("tau").connectTo(phy.getPort("p1_tau"))
 
 
-#-------------------------------------------------------------------------------
-#
 # Run agents
-#
-#-------------------------------------------------------------------------------
-
 phy.s.start()
 graph.s.start()
 controller.s.start()

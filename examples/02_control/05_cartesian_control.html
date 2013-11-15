@@ -53,6 +53,10 @@
             
   <div class="section" id="cartesian-control">
 <h1>Cartesian control<a class="headerlink" href="#cartesian-control" title="Permalink to this headline">¶</a></h1>
+<div class="admonition important">
+<p class="first admonition-title">Important</p>
+<p class="last">This example show how to build a simple cartesian controller for a pendulum</p>
+</div>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p>Get source of this example:</p>
@@ -60,10 +64,14 @@
 <li><a class="reference download internal" href="../../_downloads/main10.py"><tt class="xref download docutils literal"><span class="pre">main.py</span></tt></a>.</li>
 </ul>
 </div>
-<div class="admonition important">
-<p class="first admonition-title">Important</p>
-<p class="last">This example shows how to write a simple cartesian controller.</p>
-</div>
+<div class="section" id="the-cartesian-controller">
+<h2>The cartesian controller<a class="headerlink" href="#the-cartesian-controller" title="Permalink to this headline">¶</a></h2>
+<p>The controller is an Orocos component. In this example we use python to implement it.
+In the initialisation, we create a multibody_model, that is updated to be representative
+of state of the simulated robot and used to compute when needed
+jacobians for instance.
+Then in the updateHook, the current joint positions/velocities are read from the robot state,
+and those are used as desired positions/velocities.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">CartesianController</span><span class="p">(</span><span class="n">xdefw</span><span class="o">.</span><span class="n">rtt</span><span class="o">.</span><span class="n">Task</span><span class="p">):</span>
   
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">taskName</span><span class="p">,</span> <span class="n">world</span><span class="p">,</span> <span class="n">robotName</span><span class="p">):</span>
@@ -143,75 +151,42 @@
         <span class="n">tau</span> <span class="o">+=</span> <span class="n">model</span><span class="o">.</span><span class="n">getGravityTerms</span><span class="p">()</span>
         
         <span class="bp">self</span><span class="o">.</span><span class="n">tau_out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">tau</span><span class="p">)</span>
-
-
-
-<span class="c">#-------------------------------------------------------------------------------</span>
-<span class="c">#</span>
-<span class="c"># Create Controller, Clock</span>
-<span class="c">#</span>
-<span class="c">#-------------------------------------------------------------------------------</span>
-
-<span class="c"># Create controller</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="association-with-the-robot">
+<h2>Association with the robot<a class="headerlink" href="#association-with-the-robot" title="Permalink to this headline">¶</a></h2>
+<p>The controller is then instanciated and associated to the robot p1.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># Create controller</span>
 <span class="n">controller</span> <span class="o">=</span> <span class="n">CartesianController</span><span class="p">(</span><span class="s">&quot;MyController&quot;</span><span class="p">,</span> <span class="n">world</span><span class="p">,</span> <span class="s">&quot;p1&quot;</span><span class="p">)</span> <span class="c"># ControllerName, the world instance, RobotName</span>
 <span class="n">controller</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">setPeriod</span><span class="p">(</span><span class="mf">0.001</span><span class="p">)</span>
-
-<span class="n">phy</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">Connectors</span><span class="o">.</span><span class="n">OConnectorRobotState</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s">&quot;ocpos&quot;</span><span class="p">,</span> <span class="s">&quot;p1_&quot;</span><span class="p">,</span> <span class="s">&quot;p1&quot;</span><span class="p">)</span>         <span class="c"># ConnectorName, PortName, RobotName</span>
+</pre></div>
+</div>
+<p>In order to read the state of the robot, we need to create a special connector:
+the OConnectorRobotState which will add ports to the physic agent.
+The argument are <tt class="docutils literal"><span class="pre">Connectors.OConnectorRobotState.new(connector_name,</span> <span class="pre">prefix_port_name,</span> <span class="pre">robot_name)</span></tt>.
+The <tt class="docutils literal"><span class="pre">prefix_port_name</span></tt> will be use to prefix the name of the new ports.
+The state of the associated robot be written in those ports. Connecting
+input ports to those generated ports will allow us to read the state of the robot.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">phy</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">Connectors</span><span class="o">.</span><span class="n">OConnectorRobotState</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s">&quot;ocpos&quot;</span><span class="p">,</span> <span class="s">&quot;p1_&quot;</span><span class="p">,</span> <span class="s">&quot;p1&quot;</span><span class="p">)</span>         <span class="c"># ConnectorName, PortName, RobotName</span>
                                                                         <span class="c"># It generates two ports named &quot;PortName&quot;+&quot;q&quot; &amp; &quot;PortName&quot;+&quot;qdpt&quot;</span>
-<span class="n">phy</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">Connectors</span><span class="o">.</span><span class="n">IConnectorRobotJointTorque</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s">&quot;icjt&quot;</span><span class="p">,</span> <span class="s">&quot;p1_&quot;</span><span class="p">,</span> <span class="s">&quot;p1&quot;</span><span class="p">)</span>    <span class="c"># ConnectorName, PortName, RobotName</span>
+</pre></div>
+</div>
+<p>A similar connector has to be created to send command to the robot:
+the creation of a IConnectorRobotJointTorque will add a port to the physic agent.
+This port has to be plugged to an output port where a torque command is written.
+Typically, it is plugged to the output of a controller.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">phy</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">Connectors</span><span class="o">.</span><span class="n">IConnectorRobotJointTorque</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s">&quot;icjt&quot;</span><span class="p">,</span> <span class="s">&quot;p1_&quot;</span><span class="p">,</span> <span class="s">&quot;p1&quot;</span><span class="p">)</span>    <span class="c"># ConnectorName, PortName, RobotName</span>
                                                                         <span class="c"># It generates a port named &quot;PortName&quot;+&quot;tau&quot;</span>
-
-
-<span class="c">##### Create clock</span>
-<span class="kn">import</span> <span class="nn">deploy.deployer</span> <span class="kn">as</span> <span class="nn">ddeployer</span>
-<span class="n">clock</span> <span class="o">=</span> <span class="n">xdefw</span><span class="o">.</span><span class="n">rtt</span><span class="o">.</span><span class="n">Task</span><span class="p">(</span><span class="n">ddeployer</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s">&quot;clock&quot;</span><span class="p">,</span> <span class="s">&quot;dio::Clock&quot;</span><span class="p">,</span> <span class="s">&quot;dio-cpn-clock&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">))</span>
-<span class="n">clock</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">setPeriod</span><span class="p">(</span><span class="n">time_step</span><span class="p">)</span> <span class="c">#clock period == phy period</span>
-
-
-<span class="c">#-------------------------------------------------------------------------------</span>
-<span class="c">#</span>
-<span class="c"># Create input ports in physic agent for synchronization</span>
-<span class="c">#</span>
-<span class="c">#-------------------------------------------------------------------------------</span>
-
-<span class="n">phy</span><span class="o">.</span><span class="n">addCreateInputPort</span><span class="p">(</span><span class="s">&quot;clock_trigger&quot;</span><span class="p">,</span> <span class="s">&quot;double&quot;</span><span class="p">)</span>
-
-<span class="n">icps</span> <span class="o">=</span> <span class="n">phy</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">Connectors</span><span class="o">.</span><span class="n">IConnectorSynchro</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s">&quot;icps&quot;</span><span class="p">)</span>
-<span class="n">icps</span><span class="o">.</span><span class="n">addEvent</span><span class="p">(</span><span class="s">&quot;p1_tau&quot;</span><span class="p">)</span>
-<span class="n">icps</span><span class="o">.</span><span class="n">addEvent</span><span class="p">(</span><span class="s">&quot;clock_trigger&quot;</span><span class="p">)</span>
-
-<span class="n">clock</span><span class="o">.</span><span class="n">getPort</span><span class="p">(</span><span class="s">&quot;ticks&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">connectTo</span><span class="p">(</span><span class="n">phy</span><span class="o">.</span><span class="n">getPort</span><span class="p">(</span><span class="s">&quot;clock_trigger&quot;</span><span class="p">))</span>
-
-
-
-
-<span class="c">#-------------------------------------------------------------------------------</span>
-<span class="c">#</span>
-<span class="c"># Create connection between phy and controller for Cartesian control</span>
-<span class="c">#</span>
-<span class="c">#-------------------------------------------------------------------------------</span>
-
-<span class="n">phy</span><span class="o">.</span><span class="n">getPort</span><span class="p">(</span><span class="s">&#39;p1_q&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">connectTo</span><span class="p">(</span><span class="n">controller</span><span class="o">.</span><span class="n">getPort</span><span class="p">(</span><span class="s">&#39;q&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Then we have to connect the controller and the ports added by the creation of the connectors:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">phy</span><span class="o">.</span><span class="n">getPort</span><span class="p">(</span><span class="s">&#39;p1_q&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">connectTo</span><span class="p">(</span><span class="n">controller</span><span class="o">.</span><span class="n">getPort</span><span class="p">(</span><span class="s">&#39;q&#39;</span><span class="p">))</span>
 <span class="n">phy</span><span class="o">.</span><span class="n">getPort</span><span class="p">(</span><span class="s">&#39;p1_qdot&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">connectTo</span><span class="p">(</span><span class="n">controller</span><span class="o">.</span><span class="n">getPort</span><span class="p">(</span><span class="s">&#39;qdot&#39;</span><span class="p">))</span>
 
 <span class="n">controller</span><span class="o">.</span><span class="n">getPort</span><span class="p">(</span><span class="s">&quot;tau&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">connectTo</span><span class="p">(</span><span class="n">phy</span><span class="o">.</span><span class="n">getPort</span><span class="p">(</span><span class="s">&quot;p1_tau&quot;</span><span class="p">))</span>
-
-
-<span class="c">#-------------------------------------------------------------------------------</span>
-<span class="c">#</span>
-<span class="c"># Run agents</span>
-<span class="c">#</span>
-<span class="c">#-------------------------------------------------------------------------------</span>
-
-<span class="n">phy</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
-<span class="n">graph</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
-<span class="n">controller</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
-<span class="n">clock</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
-
-<span class="c"># Bootstrap the update of the physic agent so that the controller can</span>
-<span class="c"># do a first iteration</span>
-<span class="n">phy</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">agent</span><span class="o">.</span><span class="n">triggerUpdate</span><span class="p">()</span>
 </pre></div>
+</div>
 </div>
 </div>
 
@@ -221,6 +196,15 @@
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
+  <h3><a href="../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Cartesian control</a><ul>
+<li><a class="reference internal" href="#the-cartesian-controller">The cartesian controller</a></li>
+<li><a class="reference internal" href="#association-with-the-robot">Association with the robot</a></li>
+</ul>
+</li>
+</ul>
+
   <h4>Previous topic</h4>
   <p class="topless"><a href="04_control_sync_with_clock_and_controller.html"
                         title="previous chapter">Waiting for the controller for non-real time simulations</a></p>

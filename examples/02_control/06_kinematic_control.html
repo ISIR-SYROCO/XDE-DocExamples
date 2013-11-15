@@ -147,6 +147,9 @@ and those are used as desired positions/velocities.</p>
         <span class="bp">self</span><span class="o">.</span><span class="n">qdot_des_out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">qdot_des_out</span><span class="p">)</span>
 </pre></div>
 </div>
+</div>
+<div class="section" id="association-with-the-robot">
+<h2>Association with the robot<a class="headerlink" href="#association-with-the-robot" title="Permalink to this headline">¶</a></h2>
 <p>The controller is then instanciated and associated to the robot p1.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">controller</span> <span class="o">=</span> <span class="n">KinematicController</span><span class="p">(</span><span class="s">&quot;MyController&quot;</span><span class="p">,</span> <span class="n">world</span><span class="p">,</span> <span class="s">&quot;p1&quot;</span><span class="p">)</span> <span class="c"># ControllerName, the world instance, RobotName</span>
 <span class="n">controller</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">setPeriod</span><span class="p">(</span><span class="mf">0.001</span><span class="p">)</span>
@@ -214,6 +217,7 @@ Typically, it is plugged to the output of a controller.</p>
   <ul>
 <li><a class="reference internal" href="#">Kinematic control</a><ul>
 <li><a class="reference internal" href="#the-kinematic-controller">The kinematic controller</a></li>
+<li><a class="reference internal" href="#association-with-the-robot">Association with the robot</a></li>
 </ul>
 </li>
 </ul>

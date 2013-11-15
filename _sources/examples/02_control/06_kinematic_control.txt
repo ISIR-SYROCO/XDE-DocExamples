@@ -24,6 +24,9 @@ and those are used as desired positions/velocities.
    :start-after: ##### The Controller
    :end-before:         # print "-------------------"
 
+Association with the robot
+--------------------------
+
 The controller is then instanciated and associated to the robot p1.
 
 .. literalinclude:: 06_kinematic_control/main.py

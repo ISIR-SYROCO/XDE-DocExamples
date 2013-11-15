@@ -60,6 +60,221 @@
 <li><a class="reference download internal" href="../../_downloads/main16.py"><tt class="xref download docutils literal"><span class="pre">main.py</span></tt></a>.</li>
 </ul>
 </div>
+<div class="highlight-python"><div class="highlight"><pre><span class="c">#-------------------------------------------------------------------------------</span>
+<span class="c">#</span>
+<span class="c"># Load libraries and setup agents</span>
+<span class="c">#</span>
+<span class="c">#-------------------------------------------------------------------------------</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">inspect</span>
+<span class="n">cpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">getfile</span><span class="p">(</span> <span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">())))</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cpath</span><span class="p">)</span>
+<span class="n">cpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">getfile</span><span class="p">(</span> <span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">())))</span> <span class="o">+</span> <span class="s">&quot;/../common&quot;</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cpath</span><span class="p">)</span>
+
+<span class="kn">import</span> <span class="nn">common</span>
+
+<span class="kn">import</span> <span class="nn">lgsm</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+<span class="n">phy</span><span class="p">,</span> <span class="n">ms</span><span class="p">,</span> <span class="n">lmd</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">get_physic_agent</span><span class="p">()</span>
+
+<span class="n">graph</span><span class="p">,</span> <span class="n">gInterface</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">get_graphic_agent</span><span class="p">()</span>
+
+
+
+
+<span class="c">#-------------------------------------------------------------------------------</span>
+<span class="c">#</span>
+<span class="c"># Create a new Task. This will be the Kinematic controller.</span>
+<span class="c">#</span>
+<span class="c">#-------------------------------------------------------------------------------</span>
+<span class="kn">import</span> <span class="nn">rtt_interface</span>
+<span class="kn">import</span> <span class="nn">xdefw.rtt</span>
+<span class="kn">import</span> <span class="nn">xde.desc.physic</span>
+<span class="kn">import</span> <span class="nn">desc.physic</span>
+<span class="kn">import</span> <span class="nn">physicshelper</span>
+
+<span class="k">class</span> <span class="nc">KinematicController</span><span class="p">(</span><span class="n">xdefw</span><span class="o">.</span><span class="n">rtt</span><span class="o">.</span><span class="n">Task</span><span class="p">):</span>
+  
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">taskName</span><span class="p">,</span> <span class="n">world</span><span class="p">,</span> <span class="n">robotName</span><span class="p">):</span>
+        <span class="n">task</span> <span class="o">=</span> <span class="n">rtt_interface</span><span class="o">.</span><span class="n">PyTaskFactory</span><span class="o">.</span><span class="n">CreateTask</span><span class="p">(</span><span class="n">taskName</span><span class="p">)</span>
+        <span class="n">xdefw</span><span class="o">.</span><span class="n">rtt</span><span class="o">.</span><span class="n">Task</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">)</span>
+
+        <span class="c"># model instance</span>
+        <span class="n">multiBodyModel</span> <span class="o">=</span> <span class="n">xde</span><span class="o">.</span><span class="n">desc</span><span class="o">.</span><span class="n">physic</span><span class="o">.</span><span class="n">physic_pb2</span><span class="o">.</span><span class="n">MultiBodyModel</span><span class="p">()</span>
+        <span class="n">mechanism_index</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">world</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">physical_scene</span><span class="o">.</span><span class="n">mechanisms</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">robotName</span> <span class="o">==</span> <span class="n">m</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
+                <span class="k">break</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">mechanism_index</span> <span class="o">=</span> <span class="n">mechanism_index</span> <span class="o">+</span> <span class="mi">1</span>
+
+        <span class="n">multiBodyModel</span><span class="o">.</span><span class="n">kinematic_tree</span><span class="o">.</span><span class="n">CopyFrom</span><span class="p">(</span><span class="n">world</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">physical_scene</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span> <span class="n">mechanism_index</span> <span class="p">])</span>
+        <span class="n">multiBodyModel</span><span class="o">.</span><span class="n">meshes</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">world</span><span class="o">.</span><span class="n">library</span><span class="o">.</span><span class="n">meshes</span><span class="p">)</span>
+        <span class="n">multiBodyModel</span><span class="o">.</span><span class="n">mechanism</span><span class="o">.</span><span class="n">CopyFrom</span><span class="p">(</span><span class="n">world</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">physical_scene</span><span class="o">.</span><span class="n">mechanisms</span><span class="p">[</span> <span class="n">mechanism_index</span> <span class="p">])</span>
+        <span class="n">multiBodyModel</span><span class="o">.</span><span class="n">composites</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">world</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">physical_scene</span><span class="o">.</span><span class="n">collision_scene</span><span class="o">.</span><span class="n">meshes</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">physicshelper</span><span class="o">.</span><span class="n">createDynamicModel</span><span class="p">(</span><span class="n">multiBodyModel</span><span class="p">)</span>
+
+        <span class="c"># create input ports</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">c_in</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">addCreateInputPort</span><span class="p">(</span><span class="s">&quot;cont&quot;</span><span class="p">,</span> <span class="s">&quot;SMsg&quot;</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">c_ok</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">c</span> <span class="o">=</span> <span class="bp">None</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">tau_out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">addCreateOutputPort</span><span class="p">(</span><span class="s">&quot;tau&quot;</span><span class="p">,</span> <span class="s">&quot;VectorXd&quot;</span><span class="p">)</span>
+
+
+    <span class="k">def</span> <span class="nf">startHook</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+  
+    <span class="k">def</span> <span class="nf">stopHook</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+  
+    <span class="k">def</span> <span class="nf">updateHook</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">c_ok</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">c_ok</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">c_in</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">c_ok</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">c_ok</span> <span class="o">=</span> <span class="bp">False</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">doUpdate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="p">)</span>
+
+  
+    <span class="k">def</span> <span class="nf">doUpdate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span>
+        
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">cpt</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&quot;no contact yet&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c"># That what we get </span>
+            <span class="k">print</span> <span class="s">&quot;---------------&quot;</span>
+            <span class="k">print</span> <span class="s">&quot;Contact points:&quot;</span>
+            <span class="k">print</span> <span class="s">&quot;Nb of contact: &quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">cpt</span><span class="p">)</span>
+            <span class="n">i_contact</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">cc</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">cpt</span><span class="p">):</span>
+                <span class="k">print</span> <span class="s">&quot;for contact &quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">i_contact</span><span class="p">)</span><span class="o">+</span><span class="s">&quot; : &quot;</span>
+                <span class="k">print</span> <span class="s">&quot;    ai :&quot;</span><span class="p">,</span> <span class="n">cc</span><span class="o">.</span><span class="n">ai</span><span class="p">[:]</span>
+                <span class="k">print</span> <span class="s">&quot;    aj :&quot;</span><span class="p">,</span> <span class="n">cc</span><span class="o">.</span><span class="n">aj</span><span class="p">[:]</span>
+                <span class="k">print</span> <span class="s">&quot;    gap:&quot;</span><span class="p">,</span> <span class="n">cc</span><span class="o">.</span><span class="n">gap</span>
+                <span class="k">print</span> <span class="s">&quot;    ni :&quot;</span><span class="p">,</span> <span class="n">cc</span><span class="o">.</span><span class="n">ni</span><span class="p">[:]</span>
+                <span class="k">print</span> <span class="s">&quot;    nj :&quot;</span><span class="p">,</span> <span class="n">cc</span><span class="o">.</span><span class="n">nj</span><span class="p">[:]</span>
+                <span class="k">print</span> <span class="s">&quot;    normalForce:&quot;</span><span class="p">,</span> <span class="n">cc</span><span class="o">.</span><span class="n">normalForce</span>
+                <span class="n">i_contact</span> <span class="o">=</span> <span class="n">i_contact</span><span class="o">+</span><span class="mi">1</span>
+
+        <span class="n">tau</span> <span class="o">=</span> <span class="n">lgsm</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">nbInternalDofs</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tau_out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">tau</span><span class="p">)</span>
+        
+<span class="c"># Create the robot with the desc module.</span>
+<span class="c">#</span>
+<span class="c"># The goal is to make a general description of the robot.</span>
+<span class="c"># The robot is then create in the physical scene with</span>
+<span class="c"># the deserializeWorld method.</span>
+
+<span class="kn">import</span> <span class="nn">RX90common</span>
+
+<span class="n">world</span> <span class="o">=</span> <span class="n">RX90common</span><span class="o">.</span><span class="n">add_RX90_with_meshes</span><span class="p">()</span>
+<span class="n">RX90common</span><span class="o">.</span><span class="n">addGround</span><span class="p">(</span><span class="n">world</span><span class="p">)</span>
+<span class="n">RX90common</span><span class="o">.</span><span class="n">addContactLaws</span><span class="p">(</span><span class="n">world</span><span class="p">)</span>
+<span class="n">RX90common</span><span class="o">.</span><span class="n">addCollisionPairs</span><span class="p">(</span><span class="n">world</span><span class="p">)</span>
+
+
+<span class="c">##### Deserialize world: register world description in phy &amp; graph agents</span>
+<span class="kn">import</span> <span class="nn">agents.graphic.builder</span>
+<span class="kn">import</span> <span class="nn">agents.physic.builder</span>
+
+<span class="k">print</span> <span class="s">&quot;deserializeWorld...&quot;</span>
+<span class="k">print</span> <span class="s">&quot;graphic...&quot;</span>
+<span class="n">agents</span><span class="o">.</span><span class="n">graphic</span><span class="o">.</span><span class="n">builder</span><span class="o">.</span><span class="n">deserializeWorld</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">gInterface</span><span class="p">,</span> <span class="n">world</span><span class="p">)</span>
+<span class="k">print</span> <span class="s">&quot;and physic...&quot;</span>
+<span class="n">agents</span><span class="o">.</span><span class="n">physic</span><span class="o">.</span><span class="n">builder</span><span class="o">.</span><span class="n">deserializeWorld</span><span class="p">(</span><span class="n">phy</span><span class="p">,</span> <span class="n">ms</span><span class="p">,</span> <span class="n">lmd</span><span class="p">,</span> <span class="n">world</span><span class="p">)</span>
+<span class="k">print</span> <span class="s">&quot;done.&quot;</span>
+
+
+
+
+<span class="c"># Connect Physic and graphic agent</span>
+<span class="c">##### Connect physic and graphic agents to see bodies with markers</span>
+<span class="n">ocb</span> <span class="o">=</span> <span class="n">phy</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">Connectors</span><span class="o">.</span><span class="n">OConnectorBodyStateList</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s">&quot;ocb&quot;</span><span class="p">,</span> <span class="s">&quot;body_state&quot;</span><span class="p">)</span>
+
+<span class="n">graph</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">Connectors</span><span class="o">.</span><span class="n">IConnectorFrame</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s">&quot;icf&quot;</span><span class="p">,</span> <span class="s">&quot;framePosition&quot;</span><span class="p">,</span> <span class="s">&quot;mainScene&quot;</span><span class="p">)</span>
+<span class="n">graph</span><span class="o">.</span><span class="n">getPort</span><span class="p">(</span><span class="s">&quot;framePosition&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">connectTo</span><span class="p">(</span><span class="n">phy</span><span class="o">.</span><span class="n">getPort</span><span class="p">(</span><span class="s">&quot;body_state_H&quot;</span><span class="p">))</span>
+
+<span class="c"># add markers on bodies</span>
+<span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">desc</span><span class="o">.</span><span class="n">physic</span><span class="o">.</span><span class="n">getRigidBodyNames</span><span class="p">(</span><span class="n">world</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">physical_scene</span><span class="p">):</span>
+    <span class="n">ocb</span><span class="o">.</span><span class="n">addBody</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+
+<span class="n">graph</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">Connectors</span><span class="o">.</span><span class="n">IConnectorBody</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s">&quot;icb&quot;</span><span class="p">,</span> <span class="s">&quot;body_state_H&quot;</span><span class="p">,</span> <span class="s">&quot;mainScene&quot;</span><span class="p">)</span>
+<span class="n">graph</span><span class="o">.</span><span class="n">getPort</span><span class="p">(</span><span class="s">&quot;body_state_H&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">connectTo</span><span class="p">(</span><span class="n">phy</span><span class="o">.</span><span class="n">getPort</span><span class="p">(</span><span class="s">&quot;body_state_H&quot;</span><span class="p">))</span>
+
+
+
+<span class="c"># Create Kinematic controller &amp; clock</span>
+<span class="n">controller</span> <span class="o">=</span> <span class="n">KinematicController</span><span class="p">(</span><span class="s">&quot;MyController&quot;</span><span class="p">,</span> <span class="n">world</span><span class="p">,</span> <span class="s">&quot;rx90&quot;</span><span class="p">)</span> <span class="c"># ControllerName, the world instance, RobotName</span>
+<span class="n">controller</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">setPeriod</span><span class="p">(</span><span class="mf">0.01</span><span class="p">)</span>
+
+<span class="n">phy</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">Connectors</span><span class="o">.</span><span class="n">IConnectorRobotJointTorque</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s">&quot;icjt&quot;</span><span class="p">,</span> <span class="s">&quot;rx90_&quot;</span><span class="p">,</span> <span class="s">&quot;rx90&quot;</span><span class="p">)</span>
+
+<span class="c">##### Create clock</span>
+<span class="kn">import</span> <span class="nn">deploy.deployer</span> <span class="kn">as</span> <span class="nn">ddeployer</span>
+<span class="n">clock</span> <span class="o">=</span> <span class="n">xdefw</span><span class="o">.</span><span class="n">rtt</span><span class="o">.</span><span class="n">Task</span><span class="p">(</span><span class="n">ddeployer</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s">&quot;clock&quot;</span><span class="p">,</span> <span class="s">&quot;dio::Clock&quot;</span><span class="p">,</span> <span class="s">&quot;dio-cpn-clock&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">))</span>
+<span class="n">clock</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">setPeriod</span><span class="p">(</span><span class="mf">0.01</span><span class="p">)</span> <span class="c">#clock period == phy period</span>
+
+
+<span class="n">phy</span><span class="o">.</span><span class="n">addCreateInputPort</span><span class="p">(</span><span class="s">&quot;clock_trigger&quot;</span><span class="p">,</span> <span class="s">&quot;double&quot;</span><span class="p">)</span>
+
+<span class="n">icps</span> <span class="o">=</span> <span class="n">phy</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">Connectors</span><span class="o">.</span><span class="n">IConnectorSynchro</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s">&quot;icps&quot;</span><span class="p">)</span>
+<span class="n">icps</span><span class="o">.</span><span class="n">addEvent</span><span class="p">(</span><span class="s">&quot;rx90_tau&quot;</span><span class="p">)</span>
+<span class="n">icps</span><span class="o">.</span><span class="n">addEvent</span><span class="p">(</span><span class="s">&quot;clock_trigger&quot;</span><span class="p">)</span>
+
+<span class="n">clock</span><span class="o">.</span><span class="n">getPort</span><span class="p">(</span><span class="s">&quot;ticks&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">connectTo</span><span class="p">(</span><span class="n">phy</span><span class="o">.</span><span class="n">getPort</span><span class="p">(</span><span class="s">&quot;clock_trigger&quot;</span><span class="p">))</span>
+
+<span class="n">controller</span><span class="o">.</span><span class="n">getPort</span><span class="p">(</span><span class="s">&quot;tau&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">connectTo</span><span class="p">(</span><span class="n">phy</span><span class="o">.</span><span class="n">getPort</span><span class="p">(</span><span class="s">&quot;rx90_tau&quot;</span><span class="p">))</span>
+
+<span class="c"># Connection for information about contacts and visualization</span>
+<span class="n">occ</span> <span class="o">=</span> <span class="n">phy</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">Connectors</span><span class="o">.</span><span class="n">OConnectorContactBody</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s">&quot;occ&quot;</span><span class="p">,</span> <span class="s">&quot;contacts&quot;</span><span class="p">)</span>
+<span class="n">occ</span><span class="o">.</span><span class="n">addInteraction</span><span class="p">(</span><span class="n">phy</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">GVM</span><span class="o">.</span><span class="n">Robot</span><span class="p">(</span><span class="s">&quot;rx90&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">getSegmentRigidBody2</span><span class="p">(</span><span class="s">&quot;03&quot;</span><span class="p">),</span> <span class="s">&quot;ground&quot;</span><span class="p">)</span>
+<span class="n">occ</span><span class="o">.</span><span class="n">addInteraction</span><span class="p">(</span><span class="n">phy</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">GVM</span><span class="o">.</span><span class="n">Robot</span><span class="p">(</span><span class="s">&quot;rx90&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">getSegmentRigidBody2</span><span class="p">(</span><span class="s">&quot;04&quot;</span><span class="p">),</span> <span class="s">&quot;ground&quot;</span><span class="p">)</span>
+<span class="n">occ</span><span class="o">.</span><span class="n">addInteraction</span><span class="p">(</span><span class="n">phy</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">GVM</span><span class="o">.</span><span class="n">Robot</span><span class="p">(</span><span class="s">&quot;rx90&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">getSegmentRigidBody2</span><span class="p">(</span><span class="s">&quot;05&quot;</span><span class="p">),</span> <span class="s">&quot;ground&quot;</span><span class="p">)</span>
+<span class="n">occ</span><span class="o">.</span><span class="n">addInteraction</span><span class="p">(</span><span class="n">phy</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">GVM</span><span class="o">.</span><span class="n">Robot</span><span class="p">(</span><span class="s">&quot;rx90&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">getSegmentRigidBody2</span><span class="p">(</span><span class="s">&quot;06&quot;</span><span class="p">),</span> <span class="s">&quot;ground&quot;</span><span class="p">)</span>
+
+<span class="n">icc</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">Connectors</span><span class="o">.</span><span class="n">IConnectorContacts</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s">&quot;icc&quot;</span><span class="p">,</span> <span class="s">&quot;contacts&quot;</span><span class="p">,</span> <span class="s">&quot;mainScene&quot;</span><span class="p">)</span>
+<span class="n">icc</span><span class="o">.</span><span class="n">setMaxProximity</span><span class="p">(</span><span class="o">.</span><span class="mo">05</span><span class="p">)</span>
+<span class="n">icc</span><span class="o">.</span><span class="n">setGlyphScale</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="n">graph</span><span class="o">.</span><span class="n">getPort</span><span class="p">(</span><span class="s">&quot;contacts&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">connectTo</span><span class="p">(</span><span class="n">phy</span><span class="o">.</span><span class="n">getPort</span><span class="p">(</span><span class="s">&quot;contacts&quot;</span><span class="p">))</span>
+
+
+<span class="n">controller</span><span class="o">.</span><span class="n">getPort</span><span class="p">(</span><span class="s">&quot;cont&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">connectTo</span><span class="p">(</span><span class="n">phy</span><span class="o">.</span><span class="n">getPort</span><span class="p">(</span><span class="s">&quot;contacts&quot;</span><span class="p">))</span>
+
+<span class="c"># Run agents</span>
+
+<span class="n">phy</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">setPeriod</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">time_step</span><span class="p">)</span>
+<span class="n">phy</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+<span class="n">graph</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+<span class="n">controller</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+<span class="n">clock</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+<span class="n">phy</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">agent</span><span class="o">.</span><span class="n">triggerUpdate</span><span class="p">()</span>
+
+
+<span class="n">rx90</span> <span class="o">=</span> <span class="n">phy</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">GVM</span><span class="o">.</span><span class="n">Robot</span><span class="p">(</span><span class="s">&#39;rx90&#39;</span><span class="p">)</span>
+<span class="n">rx90</span><span class="o">.</span><span class="n">enableGravity</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+<span class="k">print</span> <span class="s">&quot;To enable gravity, type: rx90.enableGravity(True)&quot;</span>
+
+<span class="c">##### Interactive shell</span>
+<span class="kn">import</span> <span class="nn">xdefw.interactive</span>
+<span class="n">shell</span> <span class="o">=</span> <span class="n">xdefw</span><span class="o">.</span><span class="n">interactive</span><span class="o">.</span><span class="n">shell_console</span><span class="p">()</span>
+<span class="n">shell</span><span class="p">()</span>
+
+<span class="c"># on obtient:</span>
+<span class="c"># ai</span>
+<span class="c"># aj</span>
+<span class="c"># gap</span>
+<span class="c"># ni</span>
+<span class="c"># nj</span>
+<span class="c"># normalForce</span>
+</pre></div>
+</div>
 </div>
 
 
