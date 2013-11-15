@@ -14,15 +14,15 @@ import agents.physic.core
 import agents.graphic.simple
 import agents.graphic.proto
 
+time_step = .01
 
 # Physic
-def get_physic_agent(time_step=.01, lmd_max=.01):
+def get_physic_agent(lmd_max=.01):
     phy = agents.physic.core.createAgent("physic", 0)                               # physic agent
     ms = agents.physic.core.createGVMScene(phy, "main", time_step=time_step)        # physic scene
     lmd = agents.physic.core.createXCDScene(phy, "xcd", "LMD", lmd_max=lmd_max)     # collision scene
 
     ms.setGeometricalScene(lmd) # link physic scene and collision scene
-    phy.s.setPeriod(time_step)
     
     return phy, ms, lmd
 

@@ -7,5 +7,5 @@ Contact information between RX90 and ground
    
    * :download:`main.py <01_RX90_with_contact/main.py>`.
 
-
+.. literalinclude:: 01_RX90_with_contact/main.py
 

@@ -64,8 +64,8 @@ def add_RX90_with_meshes(damping = 2, rx90_offset=0.001):
     desc.core.visitDepthFirst(setNodeMaterial, phy_root)
 
     for node_name, comp_name in zip(nodes_name, composites_name):
-        graph_node = desc.core.findInTree(world.scene.graphical_scene.root_node, node_name)
         composite = desc.collision.addCompositeMesh(world.scene.physical_scene.collision_scene, comp_name, offset=rx90_offset)
+        graph_node = desc.core.findInTree(world.scene.graphical_scene.root_node, node_name)
         desc.collision.copyFromGraphicalTree(composite.root_node, graph_node)
         composite.root_node.ClearField("position")
         composite.root_node.position.extend([0,0,0,1,0,0,0])
@@ -89,13 +89,21 @@ def add_RX90_with_meshes(damping = 2, rx90_offset=0.001):
 def addGround(world):
     current_path = os.path.dirname(os.path.abspath(inspect.getfile( inspect.currentframe())))
     ground_world = desc.simple.scene.parseColladaFile(current_path+"/ground.dae")
-    phy_ground_world = desc.simple.scene.parseColladaFile(current_path+"/ground_phy_50mm.dae", append_label_library=".phyground")
+    phy_ground_world = desc.simple.scene.parseColladaFile(current_path+"/ground_phy_50mm.dae", append_label_library=".phyground", append_label_graph_meshes = ".ground_50mm")
 
     desc.simple.graphic.addGraphicalTree(world, ground_world, node_name="ground")
-    desc.simple.collision.addCompositeMesh(world, phy_ground_world, composite_name="ground.comp", offset=0.05, clean_meshes=False, ignore_library_conflicts=False)
+    ground_node = desc.core.findInTree(ground_world.scene.graphical_scene.root_node, "node-ground")
+    comp_ground = desc.simple.collision.addCompositeMesh(world, phy_ground_world, composite_name="ground.comp", offset=0.05, clean_meshes=False, ignore_library_conflicts=False)
+    #desc.collision.copyFromGraphicalTree(comp_ground.root_node, ground_node)
     desc.simple.physic.addRigidBody(world, "ground", mass=1, contact_material="material.concrete")
-    desc.simple.physic.addFixedJoint(world, "ground.joint", "ground", lgsm.Displacementd(0,0,-0.1))
-    desc.simple.scene.addBinding(world, phy="ground", graph="ground", graph_ref="", coll="ground.comp")
+    ground_position = lgsm.Displacementd()
+    ground_position.setTranslation(lgsm.vector(0,0,-0.1))
+    desc.simple.physic.addFixedJoint(world, "ground.joint", "ground", ground_position)
+    #Binding graph, phy and coll object
+    ground_graph_node      = desc.core.findInTree(world.scene.graphical_scene.root_node, "ground")
+    ground_phy_node        = desc.physic.findInPhysicalScene(world.scene.physical_scene, "ground")
+    ground_graph_node.name = "ground" # it is suitable to have the same name for both graphics and physics.
+    ground_phy_node.rigid_body.composite_name="ground.comp"
 
 
 
@@ -110,8 +118,8 @@ def addContactLaws(world, friction_coeff=.4):
 
 
 def addCollisionPairs(world):
-    cp = world.scene.collision_pairs.add()
+    cp = world.scene.physical_scene.collision_pairs.add()
     cp.body_i = "ground"
-    cp.mechanism_i = "rx90"
-    cp.enabled = True
+    cp.mechanism_j = "rx90"
+    cp.queries.add(type=1, enabled=True)
 

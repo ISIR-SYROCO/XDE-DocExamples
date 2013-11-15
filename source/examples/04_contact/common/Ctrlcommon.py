@@ -1,6 +1,6 @@
 
 import rtt_interface
-import dsimi.rtt
+import xdefw.rtt
 import physicshelper
 
 import lgsm
@@ -12,11 +12,11 @@ import time
 # Create a new Task. This will be the Kinematic controller.
 #
 #-------------------------------------------------------------------------------
-class ContactController(dsimi.rtt.Task):
+class ContactController(xdefw.rtt.Task):
   
     def __init__(self, taskName, world, robotName):
         task = rtt_interface.PyTaskFactory.CreateTask(taskName)
-        dsimi.rtt.Task.__init__(self, task)
+        xdefw.rtt.Task.__init__(self, task)
 
         # model instance
         self.model = physicshelper.createDynamicModel(world, robotName)
