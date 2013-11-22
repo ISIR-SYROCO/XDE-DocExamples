@@ -71,3 +71,43 @@ we have to write a Python script that will be an equivalent of an OCL Deployer s
    :align:  center
 
    An example of a deployment in XDE.
+
+XDE Simulation
+--------------
+
+Scenes
+~~~~~~
+XDE use the concept of Scenes:
+There are two types of scene, the first one will represent what will be simulated and are used 
+in the physical and graphical agents.
+The second type of scene will describe the objects.
+
+Graphical and physical agents
+"""""""""""""""""""""""""""""
+The physical and the graphical agents have their own scenes. The object represented in those scenes
+will be considered for the dynamic simulation.
+The physical agent have two scenes:
+* The GVM Scene which contains the physical information of the objects.
+* The XCD Scene which contains the collision description of the objects.
+
+The graphical agent have one scene:
+* The MainScene which contains the visual description of the objects.
+
+World description
+"""""""""""""""""
+Generally speaking, in order to simulate an environment in XDE, the objects have to be described in three
+scenes: the graphical, the physical and the collision scene. A scene is a tree where each node represent a body
+with some properties. The children of the nodes will be used to define some hierarchy.
+For instance kinematic hierarchy.
+
+* The graphical scene describes the visual shape, the color, the texture... of the objects.
+* The physical scene describes the physical properties of the objects such as the mass, the moments of inertia, the contact material.
+* The collision scene describes the collision geometry of the objects which is used by the physic engine
+  to determine if two objects have collided. Usually this geometry and the graphical geometry are the same, unless
+  we want a simplified collision geometry to decrease computation time of the collision detection algorithm.
+
+The three scenes are stored in a structure called *world* and encoded in a Protobuf message.
+In order to simulate the objects described in a *world* structure, we have to inject the three scenes of the *world*
+into the scenes of the graphical and physical agents. This operation is called the ``deserialization``.
+
+
