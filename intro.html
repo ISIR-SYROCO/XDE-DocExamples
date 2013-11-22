@@ -120,6 +120,8 @@ is triggered by events (data on ports for example).</p>
 </ul>
 </dd>
 </dl>
+<p>The physical agent Physics will perform the resolution of the forces that affects the simulated objects.
+The graphical agent Graphics will handle the visualization of the simulation: OpenGL display, camera and viewport management...</p>
 <div class="section" id="python-interface">
 <h3>Python Interface<a class="headerlink" href="#python-interface" title="Permalink to this headline">¶</a></h3>
 <p>XDE framework contains Python interface for RTT. As a consequence,
@@ -146,12 +148,18 @@ The second type of scene will describe the objects.</p>
 <p>The physical and the graphical agents have their own scenes. The object represented in those scenes
 will be considered for the dynamic simulation.
 The physical agent have two scenes:</p>
-<ul class="simple">
+<blockquote>
+<div><ul class="simple">
 <li>The GVM Scene which contains the physical information of the objects.</li>
 <li>The XCD Scene which contains the collision description of the objects.</li>
 </ul>
-<p>The graphical agent have one scene:
-* The MainScene which contains the visual description of the objects.</p>
+</div></blockquote>
+<p>The graphical agent have one scene:</p>
+<blockquote>
+<div><ul class="simple">
+<li>The MainScene which contains the visual description of the objects.</li>
+</ul>
+</div></blockquote>
 </div>
 <div class="section" id="world-description">
 <h4>World description<a class="headerlink" href="#world-description" title="Permalink to this headline">¶</a></h4>
@@ -159,13 +167,15 @@ The physical agent have two scenes:</p>
 scenes: the graphical, the physical and the collision scene. A scene is a tree where each node represent a body
 with some properties. The children of the nodes will be used to define some hierarchy.
 For instance kinematic hierarchy.</p>
-<ul class="simple">
+<blockquote>
+<div><ul class="simple">
 <li>The graphical scene describes the visual shape, the color, the texture... of the objects.</li>
 <li>The physical scene describes the physical properties of the objects such as the mass, the moments of inertia, the contact material.</li>
-<li>The collision scene describes the collision geometry of the objects which is used by the physic engine
-to determine if two objects have collided. Usually this geometry and the graphical geometry are the same, unless
-we want a simplified collision geometry to decrease computation time of the collision detection algorithm.</li>
+<li>The collision scene describes the collision geometry of the objects which is used by the physic engine</li>
 </ul>
+<p>to determine if two objects have collided. Usually this geometry and the graphical geometry are the same, unless
+we want a simplified collision geometry to decrease computation time of the collision detection algorithm.</p>
+</div></blockquote>
 <p>The three scenes are stored in a structure called <em>world</em> and encoded in a Protobuf message.
 In order to simulate the objects described in a <em>world</em> structure, we have to inject the three scenes of the <em>world</em>
 into the scenes of the graphical and physical agents. This operation is called the <tt class="docutils literal"><span class="pre">deserialization</span></tt>.</p>

@@ -56,6 +56,9 @@ XDE framework is a set of Orocos components also called, in XDE applications, ag
   * Virtual human simulation
   * IO Devices
 
+The physical agent Physics will perform the resolution of the forces that affects the simulated objects.
+The graphical agent Graphics will handle the visualization of the simulation: OpenGL display, camera and viewport management...
+
 Python Interface
 ~~~~~~~~~~~~~~~~
 
@@ -88,11 +91,12 @@ The physical and the graphical agents have their own scenes. The object represen
 will be considered for the dynamic simulation.
 The physical agent have two scenes:
 
-* The GVM Scene which contains the physical information of the objects.
-* The XCD Scene which contains the collision description of the objects.
+  * The GVM Scene which contains the physical information of the objects.
+  * The XCD Scene which contains the collision description of the objects.
 
 The graphical agent have one scene:
-* The MainScene which contains the visual description of the objects.
+
+  * The MainScene which contains the visual description of the objects.
 
 World description
 """""""""""""""""
@@ -101,9 +105,10 @@ scenes: the graphical, the physical and the collision scene. A scene is a tree w
 with some properties. The children of the nodes will be used to define some hierarchy.
 For instance kinematic hierarchy.
 
-* The graphical scene describes the visual shape, the color, the texture... of the objects.
-* The physical scene describes the physical properties of the objects such as the mass, the moments of inertia, the contact material.
-* The collision scene describes the collision geometry of the objects which is used by the physic engine
+  * The graphical scene describes the visual shape, the color, the texture... of the objects.
+  * The physical scene describes the physical properties of the objects such as the mass, the moments of inertia, the contact material.
+  * The collision scene describes the collision geometry of the objects which is used by the physic engine
+
   to determine if two objects have collided. Usually this geometry and the graphical geometry are the same, unless
   we want a simplified collision geometry to decrease computation time of the collision detection algorithm.
 
