@@ -87,6 +87,7 @@ Graphical and physical agents
 The physical and the graphical agents have their own scenes. The object represented in those scenes
 will be considered for the dynamic simulation.
 The physical agent have two scenes:
+
 * The GVM Scene which contains the physical information of the objects.
 * The XCD Scene which contains the collision description of the objects.
 
