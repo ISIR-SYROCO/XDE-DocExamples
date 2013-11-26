@@ -61,7 +61,7 @@ controller = Ctrlcommon.ContactController("myCtrl", world, "tribo")
 # Common connections between agents
 #
 #-------------------------------------------------------------------------------
-common.connnectBodyState(phy, graph, world)
+common.connnectBodyState(phy, graph, gInterface, world)
 
 contactPairs = [("tribo", "ground"), ("tribo", "Obstacle"), ("ground", "Obstacle")]
 common.connnectContactVisualization(phy, graph, contactPairs)
@@ -121,8 +121,8 @@ controller.s.stop()
 
 
 ##### Interactive shell
-import dsimi.interactive
-shell = dsimi.interactive.shell()
+import xdefw.interactive
+shell = xdefw.interactive.shell_console()
 shell()
 
 # on obtient:

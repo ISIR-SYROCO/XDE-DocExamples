@@ -6,6 +6,7 @@ import physicshelper
 import lgsm
 
 import time
+import xde.desc.physic
 
 #-------------------------------------------------------------------------------
 #
@@ -19,7 +20,19 @@ class ContactController(xdefw.rtt.Task):
         xdefw.rtt.Task.__init__(self, task)
 
         # model instance
-        self.model = physicshelper.createDynamicModel(world, robotName)
+        multiBodyModel = xde.desc.physic.physic_pb2.MultiBodyModel()
+        mechanism_index = 0
+        for m in world.scene.physical_scene.mechanisms:
+            if robotName == m.name:
+                break
+            else:
+                mechanism_index = mechanism_index + 1
+
+        multiBodyModel.kinematic_tree.CopyFrom(world.scene.physical_scene.nodes[ mechanism_index ])
+        multiBodyModel.meshes.extend(world.library.meshes)
+        multiBodyModel.mechanism.CopyFrom(world.scene.physical_scene.mechanisms[ mechanism_index ])
+        multiBodyModel.composites.extend(world.scene.physical_scene.collision_scene.meshes)
+        self.model = physicshelper.createDynamicModel(multiBodyModel)
 
         # create input ports
         self.c_in = self.addCreateInputPort("cont", "SMsg", True)

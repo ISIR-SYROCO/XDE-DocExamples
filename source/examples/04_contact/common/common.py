@@ -48,15 +48,15 @@ def get_clock_agent(time_step=0.01):
     
     
 # Connection between agents
-def connnectBodyState(phy, graph, world):
+def connnectBodyState(phy, graph, gInterface, world):
     ocb = phy.s.Connectors.OConnectorBodyStateList.new("ocb", "body_state")
     graph.s.Connectors.IConnectorBody.new("icb", "body_state_H", "mainScene")
     graph.getPort("body_state_H").connectTo(phy.getPort("body_state_H"))
 
     # add markers on bodies
-    for b in world.scene.rigid_body_bindings:
-        if len(b.graph_node) and len(b.rigid_body):
-            ocb.addBody(str(b.rigid_body))
+    for n in phy.s.GVM.Scene("main").getBodyNames():
+        ocb.addBody(n)
+        gInterface.MarkersInterface.addMarker(n, False)
 
     return ocb
 
