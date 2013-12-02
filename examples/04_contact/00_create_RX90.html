@@ -62,7 +62,7 @@
 <p>Get source of this example:</p>
 <ul class="last simple">
 <li><a class="reference download internal" href="../../_downloads/main15.py"><tt class="xref download docutils literal"><span class="pre">main.py</span></tt></a>.</li>
-<li><a class="reference download internal" href="../../_downloads/common2.py"><tt class="xref download docutils literal"><span class="pre">common.py</span></tt></a>.</li>
+<li><a class="reference download internal" href="../../_downloads/common9.py"><tt class="xref download docutils literal"><span class="pre">common.py</span></tt></a>.</li>
 </ul>
 </div>
 <p>Common script:</p>
@@ -114,15 +114,15 @@
     
     
 <span class="c"># Connection between agents</span>
-<span class="k">def</span> <span class="nf">connnectBodyState</span><span class="p">(</span><span class="n">phy</span><span class="p">,</span> <span class="n">graph</span><span class="p">,</span> <span class="n">world</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">connnectBodyState</span><span class="p">(</span><span class="n">phy</span><span class="p">,</span> <span class="n">graph</span><span class="p">,</span> <span class="n">gInterface</span><span class="p">,</span> <span class="n">world</span><span class="p">):</span>
     <span class="n">ocb</span> <span class="o">=</span> <span class="n">phy</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">Connectors</span><span class="o">.</span><span class="n">OConnectorBodyStateList</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s">&quot;ocb&quot;</span><span class="p">,</span> <span class="s">&quot;body_state&quot;</span><span class="p">)</span>
     <span class="n">graph</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">Connectors</span><span class="o">.</span><span class="n">IConnectorBody</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s">&quot;icb&quot;</span><span class="p">,</span> <span class="s">&quot;body_state_H&quot;</span><span class="p">,</span> <span class="s">&quot;mainScene&quot;</span><span class="p">)</span>
     <span class="n">graph</span><span class="o">.</span><span class="n">getPort</span><span class="p">(</span><span class="s">&quot;body_state_H&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">connectTo</span><span class="p">(</span><span class="n">phy</span><span class="o">.</span><span class="n">getPort</span><span class="p">(</span><span class="s">&quot;body_state_H&quot;</span><span class="p">))</span>
 
     <span class="c"># add markers on bodies</span>
-    <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">world</span><span class="o">.</span><span class="n">scene</span><span class="o">.</span><span class="n">rigid_body_bindings</span><span class="p">:</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">graph_node</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">rigid_body</span><span class="p">):</span>
-            <span class="n">ocb</span><span class="o">.</span><span class="n">addBody</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">rigid_body</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">phy</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">GVM</span><span class="o">.</span><span class="n">Scene</span><span class="p">(</span><span class="s">&quot;main&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">getBodyNames</span><span class="p">():</span>
+        <span class="n">ocb</span><span class="o">.</span><span class="n">addBody</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+        <span class="n">gInterface</span><span class="o">.</span><span class="n">MarkersInterface</span><span class="o">.</span><span class="n">addMarker</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">ocb</span>
 

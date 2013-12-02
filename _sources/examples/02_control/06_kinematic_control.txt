@@ -8,6 +8,7 @@ Kinematic control
 .. note::
    Get source of this example:
    
+   * :download:`common.py <06_kinematic_control/common.py>`.
    * :download:`main.py <06_kinematic_control/main.py>`.
 
 The kinematic controller

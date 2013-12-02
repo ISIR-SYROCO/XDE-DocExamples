@@ -8,6 +8,7 @@ Cartesian control
 .. note::
    Get source of this example:
    
+   * :download:`common.py <05_cartesian_control/common.py>`.
    * :download:`main.py <05_cartesian_control/main.py>`.
 
 The cartesian controller

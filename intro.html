@@ -76,7 +76,7 @@ We will then introduce how the XDE framework is organised.</p>
 </ul>
 </dd>
 </dl>
-<p>The transition are triggered by hook function. The component can work in a synchronous mode, where
+<p>The transition are triggered by hook functions. The component can work in a synchronous mode, where
 the <tt class="docutils literal"><span class="pre">updateHook()</span></tt> is called periodically, and in an asynchronous mode where the <tt class="docutils literal"><span class="pre">updateHook()</span></tt>
 is triggered by events (data on ports for example).</p>
 <div class="figure align-center" id="component">
@@ -160,10 +160,15 @@ The physical agent have two scenes:</p>
 <li>The MainScene which contains the visual description of the objects.</li>
 </ul>
 </div></blockquote>
+<p>In order to setup a simulation, those scenes have to be populated through the API of the agents.
+However, this can be a difficult/non generic approach. That is why it is recommended to first store
+what we want to simulate in a data structure. Then inject that data structure into the agents.
+The data structure is refered as <tt class="docutils literal"><span class="pre">world</span> <span class="pre">description</span></tt> and it is described below.</p>
 </div>
 <div class="section" id="world-description">
 <h4>World description<a class="headerlink" href="#world-description" title="Permalink to this headline">¶</a></h4>
-<p>Generally speaking, in order to simulate an environment in XDE, the objects have to be described in three
+<p>The <tt class="docutils literal"><span class="pre">world</span> <span class="pre">description</span></tt> is a data structure that is useful but non mandatory.
+Generally speaking, in order to simulate an environment in XDE, the objects have to be described in three
 scenes: the graphical, the physical and the collision scene. A scene is a tree where each node represent a body
 with some properties. The children of the nodes will be used to define some hierarchy.
 For instance kinematic hierarchy.</p>
@@ -171,10 +176,8 @@ For instance kinematic hierarchy.</p>
 <div><ul class="simple">
 <li>The graphical scene describes the visual shape, the color, the texture... of the objects.</li>
 <li>The physical scene describes the physical properties of the objects such as the mass, the moments of inertia, the contact material.</li>
-<li>The collision scene describes the collision geometry of the objects which is used by the physic engine</li>
+<li>The collision scene describes the collision geometry of the objects which is used by the physic engine to determine if two objects have collided. Usually this geometry and the graphical geometry are the same, unless we want a simplified collision geometry to decrease computation time of the collision detection algorithm.</li>
 </ul>
-<p>to determine if two objects have collided. Usually this geometry and the graphical geometry are the same, unless
-we want a simplified collision geometry to decrease computation time of the collision detection algorithm.</p>
 </div></blockquote>
 <p>The three scenes are stored in a structure called <em>world</em> and encoded in a Protobuf message.
 In order to simulate the objects described in a <em>world</em> structure, we have to inject the three scenes of the <em>world</em>

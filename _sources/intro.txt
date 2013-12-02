@@ -22,7 +22,7 @@ Basically, an Orocos component_ is a state machine with three states:
   * Stopped
   * Running
 
-The transition are triggered by hook function. The component can work in a synchronous mode, where
+The transition are triggered by hook functions. The component can work in a synchronous mode, where
 the ``updateHook()`` is called periodically, and in an asynchronous mode where the ``updateHook()``
 is triggered by events (data on ports for example).
 
@@ -88,7 +88,7 @@ The second type of scene will describe the objects.
 Graphical and physical agents
 """""""""""""""""""""""""""""
 The physical and the graphical agents have their own scenes. The object represented in those scenes
-will be considered for the dynamic simulation.
+will be considered for the dynamic simulation. 
 The physical agent have two scenes:
 
   * The GVM Scene which contains the physical information of the objects.
@@ -98,8 +98,14 @@ The graphical agent have one scene:
 
   * The MainScene which contains the visual description of the objects.
 
+In order to setup a simulation, those scenes have to be populated through the API of the agents.
+However, this can be a difficult/non generic approach. That is why it is recommended to first store
+what we want to simulate in a data structure. Then inject that data structure into the agents.
+The data structure is refered as ``world description`` and it is described below.
+
 World description
 """""""""""""""""
+The ``world description`` is a data structure that is useful but non mandatory.
 Generally speaking, in order to simulate an environment in XDE, the objects have to be described in three
 scenes: the graphical, the physical and the collision scene. A scene is a tree where each node represent a body
 with some properties. The children of the nodes will be used to define some hierarchy.
@@ -107,10 +113,7 @@ For instance kinematic hierarchy.
 
   * The graphical scene describes the visual shape, the color, the texture... of the objects.
   * The physical scene describes the physical properties of the objects such as the mass, the moments of inertia, the contact material.
-  * The collision scene describes the collision geometry of the objects which is used by the physic engine
-
-  to determine if two objects have collided. Usually this geometry and the graphical geometry are the same, unless
-  we want a simplified collision geometry to decrease computation time of the collision detection algorithm.
+  * The collision scene describes the collision geometry of the objects which is used by the physic engine to determine if two objects have collided. Usually this geometry and the graphical geometry are the same, unless we want a simplified collision geometry to decrease computation time of the collision detection algorithm.
 
 The three scenes are stored in a structure called *world* and encoded in a Protobuf message.
 In order to simulate the objects described in a *world* structure, we have to inject the three scenes of the *world*
