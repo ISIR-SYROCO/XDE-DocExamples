@@ -5,6 +5,7 @@ Waiting for the controller for non-real time simulations
 .. note::
    Get source of this example:
    
+   * :download:`common.py <04_control_sync_with_clock_and_controller/common.py>`.
    * :download:`main.py <04_control_sync_with_clock_and_controller/main.py>`.
 
 
