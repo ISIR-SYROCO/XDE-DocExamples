@@ -15,6 +15,7 @@ Contents:
    intro
    examples/*
    api
+   xde-isir
 
 
 
